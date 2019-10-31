@@ -1,4 +1,14 @@
 
 # About the project
 
-*Write a short description about the course and add a link to your GitHub repository here. This is an R Markdown (.Rmd) file so you can use R Markdown syntax.*
+__Introduction to Open Data Science 2019__. A fast track on the basis of data science with an open data tools approach. 
+
+I was very lucky to see an email only a day apart from the last day to sing up for the course while cleaning up my inbox with over 300 messages - mostly junk. I got very interested right away and have not been this exited to learn new tools for many years.
+
+I have some experience with R long ago and have just startetd this year to learn coding properly, but must say it has been quite difficult due to the fast proceeding paste in Savonia Code Academy help in Kuopio. The studies are taking a lot of time, but I trust myself to get more into data science along the way.  So far I installed all necessary tools from scrach today --_actually tomorrow already_-- and did the R introductions, as well as an extra did a small course available on open data and science. I can well adobt to the ideas in this course and have actually published only on open access journals.
+
+Very optimistic about the course and feel __lucky__ to join. 
+
+[My IODS-project](https://github.com/ottomykkanen/IODS-project)
+
+[My diary web page](https://ottomykkanen.github.io/IODS-project/#insert-chapter-2-title-here)

@@ -1,7 +1,9 @@
-# Insert chapter 2 title here
+# First week lessons
 
-*Describe the work you have done this week and summarize your learning.*
+The beggining of my journey in IODS course - week one. *To be honest day one or two.*
 
-- Describe your work and results clearly. 
-- Assume the reader has an introductory course level understanding of writing and reading R code as well as statistical methods.
-- Assume the reader has no previous knowledge of your data or the more advanced methods you are using.
+- Installed all necessary tools described in the course section **Start me Up!**. (R, Rstudio and GitHub).
+- Got an extra open science and Research done (in finnish *Avoin tiede ja tutkimus*) and maybe will do the english part as well if time.
+- Did the Data Camp -- __R Short and sweet__ exercises to fresh up some R and get started with it. 
+- Remember how object oriented programming and using vectors and functions is really not that simple at all, but I will learn.
+- I had some problems creating the link, but could be due to the recognition of author. GitHub was asking "who am I" that was quite funny at 3 am with not much sleep. Felt a little odd, like texting with AI.

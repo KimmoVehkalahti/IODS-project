@@ -1,6 +1,8 @@
 ---
 title: "IODS course project"
-output:
+author: "Otto Mykkänen"
+date: "31.10.2019"
+output: 
   html_document:
     theme: cosmo
     toc: true
