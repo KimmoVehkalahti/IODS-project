@@ -1,4 +1,7 @@
 
+
 # About the project
 
 *Write a short description about the course and add a link to your GitHub repository here. This is an R Markdown (.Rmd) file so you can use R Markdown syntax.*
+I have always always been fasinated by numbers and enjoy doing basic statistics. So i was excited wen i got a mail about this course, but i was a bit drawn back when i read we had to use R because i have no prior knowledge of programming. But so far i have enjoyed the introduction to R, and i am looking forward to the more interesting stuffs, I'm going to learn from this course. 
+https://github.com/funmilara/lara.git
