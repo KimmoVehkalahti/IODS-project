@@ -1,4 +1,4 @@
-# First week lessons
+## Start me Up
 
 The beggining of my journey in IODS course - week one. *To be honest day one or two.*
 
@@ -7,3 +7,26 @@ The beggining of my journey in IODS course - week one. *To be honest day one or 
 - Did the Data Camp -- __R Short and sweet__ exercises to fresh up some R and get started with it. 
 - Remember how object oriented programming and using vectors and functions is really not that simple at all, but I will learn.
 - I had some problems creating the link, but could be due to the recognition of author. GitHub was asking "who am I" that was quite funny at 3 am with not much sleep. Felt a little odd, like texting with AI.
+
+## Regression and model validation
+
+- tried to do all the work last week but failed so left all work to be done allover again during the submissionday...how else.  
+
+#### The Data wrangling 
+
+- [My data wrangling script](https://github.com/ottomykkanen/IODS-project/blob/master/create_learning2019.R)
+
+#### The Data Analysis
+
+- [My Analysis script](https://github.com/ottomykkanen/IODS-project/blob/master/analysisOne.R) 
+
+- Selected visualizations of data: 
+
+ 
+[Attiutude vs. Points](https://github.com/ottomykkanen/IODS-project/blob/master/Fig1AttiutudeVsPoints.png)
+
+[Distribution matrix of data](https://github.com/ottomykkanen/IODS-project/blob/master/Fig2DistibutionMatrixAdvanced.png)
+
+[Model plot - combined attitude+deep+stra](https://github.com/ottomykkanen/IODS-project/blob/master/Fig3Model%20plot.png)
+
+
