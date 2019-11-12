@@ -16,17 +16,142 @@ The beggining of my journey in IODS course - week one. *To be honest day one or 
 
 - [My data wrangling script](https://github.com/ottomykkanen/IODS-project/blob/master/create_learning2019.R)
 
+
+
+__A biref summary of the steps taken with R scripts displayed here on Data wrangling__
+
+-Tasks (1-2) were to create a folder data n read the full learning data from [here](http://www.helsinki.fi/~kvehkala/JYTmooc/JYTOPKYS3-data.txt) and explore the data using RStudio (dim, str). 
+
+```
+lrn14 <- read.table("http://www.helsinki.fi/~kvehkala/JYTmooc/JYTOPKYS3-data.txt", sep="\t", header=TRUE)
+
+dim(lrn14)
+
+str(lrn14)
+
+```
+
+- Then (3) to create dataset with the the variables gender, age, attitude, deep, stra, surf and points as decribed in DataCamp excercises. Also described [here](http://www.helsinki.fi/~kvehkala/JYTmooc/JYTOPKYS2-meta.txt)
+
+-This took me a while since tried first to use packages such as stat4, base64 since the diplyr -package gave warnings, but overall combined the questions according to their types.
+
+```
+deep_questions <- c("D03", "D11", "D19", "D27", "D07", "D14", "D22", "D30","D06",  "D15", "D23", "D31")
+
+surface_questions <- c("SU02","SU10","SU18","SU26", "SU05","SU13","SU21","SU29","SU08","SU16","SU24","SU32")
+
+strategic_questions <- c("ST01","ST09","ST17","ST25","ST04","ST12","ST20","ST28")
+
+```
+And the selection of 7 variables
+
+```
+keep_columns <- c("gender","Age","attitude", "deep", "stra", "surf", "Points")
+
+learning2019OM <- select(lrn14, one_of(keep_columns))
+
+```
+
+- Last (4) but not least in wrangling exercises we needed to set the working directory and write and read our resulting datafile with 7 variables and 166 observations. 
+
+```
+write.csv(learning2019OM, file = "learning2019OM.csv")
+
+learning2019OM <- read.csv("~/IODS-project/learning2019OM.csv")
+```
+- The output was ok, with an added x vector (first column)
+data.frame':	166 obs. of  8 variables:
+
+``` 
+head(learning2019OM)
+
+```
+X gender age attitude   deep  stra   surf   points
+
+1   F  53      3.7 3.583333 3.375 2.583333     25
+
+2   M  55      3.1 2.916667 2.750 3.166667     12
+
+3   F  49      2.5 3.500000 3.625 2.250000     24
+
+4   M  53      3.5 3.500000 3.125 2.250000     10
+
+5   M  49      3.7 3.666667 3.625 2.833333     22
+
+6   F  38      3.8 4.750000 3.625 2.416667     21
+
+<br>
+
 #### The Data Analysis
 
 - [My Analysis script](https://github.com/ottomykkanen/IODS-project/blob/master/analysisOne.R) 
 
 - Selected visualizations of data: 
 
+(could so far only have links.. sorry)
  
-[Attiutude vs. Points](https://github.com/ottomykkanen/IODS-project/blob/master/Fig1AttiutudeVsPoints.png)
+- [Attiutude vs. Points](https://github.com/ottomykkanen/IODS-project/blob/master/Fig1AttiutudeVsPoints.png)
 
-[Distribution matrix of data](https://github.com/ottomykkanen/IODS-project/blob/master/Fig2DistibutionMatrixAdvanced.png)
+- [Distribution matrix of data](https://github.com/ottomykkanen/IODS-project/blob/master/Fig2DistibutionMatrixAdvanced.png)
 
-[Model plot - combined attitude+deep+stra](https://github.com/ottomykkanen/IODS-project/blob/master/Fig3Model%20plot.png)
+- [Model plot - combined attitude+deep+stra](https://github.com/ottomykkanen/IODS-project/blob/master/Fig3Model%20plot.png)
+
+<br>
+
+__A Brief of steps on the Data Analysis part__
+
+- Reading the data and Exploration of it 
+```
+[Workspace loaded from ~/IODS-project/.RData]
+learning2014 <- read_csv("http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/learning2014.txt")
+```
+-data seems to have 183 observations with 60 variables
+
+```
+str(learning2014)
+
+dim(learning2014)
+```
+The data is from a study ASSIST 2014 that was used to measure different learning approaches to statistics. A usefull description of the study can be found [here](https://helda.helsinki.fi//bitstream/handle/10138/163015/IPS043_P1_S.pdf?sequence=1
+).  
+
+
+
+To view data and summaries
+```
+install.packages("GGally")
+p <- ggpairs(learning2014, mapping = aes(col = gender, alpha = 0.3), lower = list(combo = wrap("facethist", bins = 20)))
+
+p
+
+```
+To select 3 variables as explanatory
+```
+library(ggplot2)
+
+my_models1 <- lm(points ~ attitude + deep + stra, data = learning2014)
+
+summary(my_models1)
+```
+
+resutlted with 
+- F-statistic: 14.33 on 3 and 162 DF,  p-value: 2.521e-08
+- Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  11.3915     3.4077   3.343  0.00103 ** 
+
+Model visualization
+```
+par(mfrow = c(2,2))
+plot(my_models2, which = c(1,2,5))
+
+```
+Result:
+- based on plots (QQ-plot) the normality assumption is met weel
+- constant variance assumption is lightly not met
+- the residuals vs leverage shows some outliers but mainly the model predicts well (outliers are displayed by numbers of obs)
+
+<br>
+
+## Logistic Regression 
 
 

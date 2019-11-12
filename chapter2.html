@@ -386,6 +386,48 @@ summary {
 <ul>
 <li><a href="https://github.com/ottomykkanen/IODS-project/blob/master/create_learning2019.R">My data wrangling script</a></li>
 </ul>
+<p><strong>A biref summary of the steps taken with R scripts displayed here on Data wrangling</strong></p>
+<p>-Tasks (1-2) were to create a folder data n read the full learning data from <a href="http://www.helsinki.fi/~kvehkala/JYTmooc/JYTOPKYS3-data.txt">here</a> and explore the data using RStudio (dim, str).</p>
+<pre><code>lrn14 &lt;- read.table(&quot;http://www.helsinki.fi/~kvehkala/JYTmooc/JYTOPKYS3-data.txt&quot;, sep=&quot;\t&quot;, header=TRUE)
+
+dim(lrn14)
+
+str(lrn14)
+</code></pre>
+<ul>
+<li>Then (3) to create dataset with the the variables gender, age, attitude, deep, stra, surf and points as decribed in DataCamp excercises. Also described <a href="http://www.helsinki.fi/~kvehkala/JYTmooc/JYTOPKYS2-meta.txt">here</a></li>
+</ul>
+<p>-This took me a while since tried first to use packages such as stat4, base64 since the diplyr -package gave warnings, but overall combined the questions according to their types.</p>
+<pre><code>deep_questions &lt;- c(&quot;D03&quot;, &quot;D11&quot;, &quot;D19&quot;, &quot;D27&quot;, &quot;D07&quot;, &quot;D14&quot;, &quot;D22&quot;, &quot;D30&quot;,&quot;D06&quot;,  &quot;D15&quot;, &quot;D23&quot;, &quot;D31&quot;)
+
+surface_questions &lt;- c(&quot;SU02&quot;,&quot;SU10&quot;,&quot;SU18&quot;,&quot;SU26&quot;, &quot;SU05&quot;,&quot;SU13&quot;,&quot;SU21&quot;,&quot;SU29&quot;,&quot;SU08&quot;,&quot;SU16&quot;,&quot;SU24&quot;,&quot;SU32&quot;)
+
+strategic_questions &lt;- c(&quot;ST01&quot;,&quot;ST09&quot;,&quot;ST17&quot;,&quot;ST25&quot;,&quot;ST04&quot;,&quot;ST12&quot;,&quot;ST20&quot;,&quot;ST28&quot;)
+</code></pre>
+<p>And the selection of 7 variables</p>
+<pre><code>keep_columns &lt;- c(&quot;gender&quot;,&quot;Age&quot;,&quot;attitude&quot;, &quot;deep&quot;, &quot;stra&quot;, &quot;surf&quot;, &quot;Points&quot;)
+
+learning2019OM &lt;- select(lrn14, one_of(keep_columns))
+</code></pre>
+<ul>
+<li>Last (4) but not least in wrangling exercises we needed to set the working directory and write and read our resulting datafile with 7 variables and 166 observations.</li>
+</ul>
+<pre><code>write.csv(learning2019OM, file = &quot;learning2019OM.csv&quot;)
+
+learning2019OM &lt;- read.csv(&quot;~/IODS-project/learning2019OM.csv&quot;)</code></pre>
+<ul>
+<li>The output was ok, with an added x vector (first column) data.frame’: 166 obs. of 8 variables:</li>
+</ul>
+<pre><code>head(learning2019OM)
+</code></pre>
+<p>X gender age attitude deep stra surf points</p>
+<p>1 F 53 3.7 3.583333 3.375 2.583333 25</p>
+<p>2 M 55 3.1 2.916667 2.750 3.166667 12</p>
+<p>3 F 49 2.5 3.500000 3.625 2.250000 24</p>
+<p>4 M 53 3.5 3.500000 3.125 2.250000 10</p>
+<p>5 M 49 3.7 3.666667 3.625 2.833333 22</p>
+<p>6 F 38 3.8 4.750000 3.625 2.416667 21</p>
+<p><br></p>
 </div>
 <div id="the-data-analysis" class="section level4">
 <h4>The Data Analysis</h4>
@@ -393,10 +435,48 @@ summary {
 <li><p><a href="https://github.com/ottomykkanen/IODS-project/blob/master/analysisOne.R">My Analysis script</a></p></li>
 <li><p>Selected visualizations of data:</p></li>
 </ul>
-<p><a href="https://github.com/ottomykkanen/IODS-project/blob/master/Fig1AttiutudeVsPoints.png">Attiutude vs. Points</a></p>
-<p><a href="https://github.com/ottomykkanen/IODS-project/blob/master/Fig2DistibutionMatrixAdvanced.png">Distribution matrix of data</a></p>
-<p><a href="https://github.com/ottomykkanen/IODS-project/blob/master/Fig3Model%20plot.png">Model plot - combined attitude+deep+stra</a></p>
+<p>(could so far only have links.. sorry)</p>
+<ul>
+<li><p><a href="https://github.com/ottomykkanen/IODS-project/blob/master/Fig1AttiutudeVsPoints.png">Attiutude vs. Points</a></p></li>
+<li><p><a href="https://github.com/ottomykkanen/IODS-project/blob/master/Fig2DistibutionMatrixAdvanced.png">Distribution matrix of data</a></p></li>
+<li><p><a href="https://github.com/ottomykkanen/IODS-project/blob/master/Fig3Model%20plot.png">Model plot - combined attitude+deep+stra</a></p></li>
+</ul>
+<p><br></p>
+<p><strong>A Brief of steps on the Data Analysis part</strong></p>
+<ul>
+<li>Reading the data and Exploration of it</li>
+</ul>
+<pre><code>[Workspace loaded from ~/IODS-project/.RData]
+learning2014 &lt;- read_csv(&quot;http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/learning2014.txt&quot;)</code></pre>
+<p>-data seems to have 183 observations with 60 variables</p>
+<pre><code>str(learning2014)
+
+dim(learning2014)</code></pre>
+<p>The data is from a study ASSIST 2014 that was used to measure different learning approaches to statistics. A usefull description of the study can be found <a href="https://helda.helsinki.fi//bitstream/handle/10138/163015/IPS043_P1_S.pdf?sequence=1">here</a>.</p>
+<p>To view data and summaries</p>
+<pre><code>install.packages(&quot;GGally&quot;)
+p &lt;- ggpairs(learning2014, mapping = aes(col = gender, alpha = 0.3), lower = list(combo = wrap(&quot;facethist&quot;, bins = 20)))
+
+p
+</code></pre>
+<p>To select 3 variables as explanatory</p>
+<pre><code>library(ggplot2)
+
+my_models1 &lt;- lm(points ~ attitude + deep + stra, data = learning2014)
+
+summary(my_models1)</code></pre>
+<p>resutlted with - F-statistic: 14.33 on 3 and 162 DF, p-value: 2.521e-08 - Estimate Std. Error t value Pr(&gt;|t|)<br />
+(Intercept) 11.3915 3.4077 3.343 0.00103 **</p>
+<p>Model visualization</p>
+<pre><code>par(mfrow = c(2,2))
+plot(my_models2, which = c(1,2,5))
+</code></pre>
+<p>Result: - based on plots (QQ-plot) the normality assumption is met weel - constant variance assumption is lightly not met - the residuals vs leverage shows some outliers but mainly the model predicts well (outliers are displayed by numbers of obs)</p>
+<p><br></p>
 </div>
+</div>
+<div id="logistic-regression" class="section level2">
+<h2>Logistic Regression</h2>
 </div>
 
 

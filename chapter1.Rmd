@@ -11,4 +11,21 @@ Very optimistic about the course and feel __lucky__ to join.
 
 [My IODS-project](https://github.com/ottomykkanen/IODS-project)
 
-[My diary web page](https://ottomykkanen.github.io/IODS-project/#insert-chapter-2-title-here)
+[My diary web page](https://ottomykkanen.github.io/IODS-project/index.html)
+
+
+### Course related information sites
+
+- [R project org](https://www.r-project.org/)
+- [RStudio](http://www.rstudio.com/ide/)
+- [GitHub](https://github.com/)
+
+### Cheat Sheets and books
+
+- [Course Book - IODS course](https://mooc.helsinki.fi/pluginfile.php/78192/course/section/3817/MABS4IODS.pdf)
+
+- [Statistical Analysis with R - for Dummies](http://library.sadjad.ac.ir/opac//temp/19241.pdf)
+
+- [RStudio related Cheat Sheets](https://rstudio.com/resources/cheatsheets/)
+
+__Some interesting history to our course - A proceedings publication__ [CHANGING THE COURSE: FROM BORING NUMERACY TO INSPIRING LITERACY](https://iase-web.org/icots/9/proceedings/pdfs/ICOTS9_7D2_VEHKALAHTI.pdf?1405041696)
