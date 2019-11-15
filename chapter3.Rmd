@@ -1,0 +1,320 @@
+## Logistic Regression 
+
+Logistic Regression belongs to a large staticical models faimly GLM (Generalized Linear Models) and the main idea is to predict the binary outcomes (happy vs sad, dead vs alive... ).
+
+Some places to dig into this
+
+- [medical related paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3936971/pdf/biochem-24-1-12-4.pdf)
+- [Intro_towards data science site](https://towardsdatascience.com/introduction-to-logistic-regression-66248243c148)
+- [Video Linear vs Logistic Regrression_edureka](https://www.youtube.com/watch?v=OCwZyYH14uw) *note! nice pictures allthough the english is with a colorful accent*
+
+***
+<br>
+#### The Data wrangling 
+
+- [My data wrangling script]((https://github.com/ottomykkanen/IODS-project/blob/master/create_alc.R) 
+<br>
+The packages used in the following tasks.
+```{r libraries, results='hide',message=FALSE}
+library(psych)
+library(pastecs)
+library(tidyr)
+library(dplyr)
+library(GGally)
+library(ggpubr)
+library(ggplot2)
+library(skimr)
+library(DataExplorer)
+```
+<br>
+<br>
+__A "biref" summary of the steps taken with R scripts displayed here on Data wrangling__
+
+The joining of two data files from a Machine Learning Repository:
+[web site](https://archive.ics.uci.edu/ml/datasets/Student+Performance). First steps were to download, unzip 2 files. Actually did all and there were 4 files, already a meged one and a file containing attributes to both datasets. 
+
+First read files and explore the structure and dimensions (str, dim). Since already in my files I read the data from there, not the web. 
+
+__Reading and explore the data (#1)__
+```{r}
+student.math <- read.csv("~/IODS-project/data/student-mat.csv", sep=";")
+student.por <- read.csv("~/IODS-project/data/student-por.csv", sep=";")
+```
+Expolring datasets with R
+
+- head() *displays the first 6 rows by default*
+- dim() *displays the type and a preview of all columns as a row*
+- glimpse() *display a vertical preview of the datase (pkg dplyr)*
+- summary() *displays data type and attributes which are especially useful for numeric attributes*
+- skim() *good addition to the summary function (pkg skimr)*
+- DataExplorer *fast track exploration try out using line "DataExplorer::create_report() works better in R cause issues with pandoc??* 
+
+```{r}
+#str(student.math) gives a long result of the data not necessary to display here
+dim(student.math)
+
+#str(student.por)
+dim(student.por)
+
+
+```
+Both datasets contain 33 variables, but language (por) is a collection of 649 objects (students) and mathematics (math) is a collection of 395 objects (students) results.
+
+<br>
+__Joining the two datasets (#4)__
+```{r}
+por <- read.table("~/IODS-project/data/student-por.csv", sep=";", header = TRUE)
+math <- read.table("~/IODS-project/data/student-mat.csv", sep=";", header = TRUE)
+join_by <- c("school","sex","age","address","famsize","Pstatus","Medu","Fedu","Mjob","Fjob","reason","nursery","internet")
+math_por <- inner_join(math, por, by = join_by, suffix = c(".math", ".por"))
+colnames(math_por)
+#str(math_por)
+dim(math_por)
+#DataExplorer::create_report(math_por)
+
+```
+
+<br>
+__Using if else structure to average or display only one result of dublicates (#5)- joined columns (alc).__
+
+```{r}
+dim(math_por)
+alc <- select(math_por, one_of(join_by))
+notjoined_columns <- colnames(math)[!colnames(math) %in% join_by]
+
+# for every column name not used for joining...
+for(column_name in notjoined_columns) {
+  # select two columns from 'math_por' with the same original name
+  two_columns <- select(math_por, starts_with(column_name))
+  # select the first column vector of those two columns
+  first_column <- select(two_columns, 1)[[1]]
+
+  # if that first column  vector is numeric...
+  if(is.numeric(first_column)) {
+    # take a rounded average of each row of the two columns and
+    # add the resulting vector to the alc data frame
+    alc[column_name] <- round(rowMeans(two_columns))
+  } else { # else if it's not numeric...
+    # add the first column vector to the alc data frame
+    alc[column_name] <- first_column
+  }
+}
+
+glimpse(alc)
+```
+
+<br>
+
+__Creating a high use column for high alcohol users >2 (#6)
+And plotted the data__
+
+```{r}
+alc <- mutate(alc, alc_use = (Dalc + Walc) / 2)
+alc <- mutate(alc, high_use = alc_use > 2)
+g2 <- ggplot(data = alc)
+g2 + geom_bar(data = alc, aes(x = alc_use))+ facet_wrap("sex")
+
+```
+<br>
+__Verify data is ok (#7)__
+```{r}
+dim(alc)
+glimpse(alc)
+```
+
+Saving joined and modified data 
+
+```{r}
+write.csv(math_por, file = "math_por.csv")
+write.csv(alc, file = "alc.csv")
+```
+<br>
+***
+
+#### The Data Analysis
+<br>
+__Read the joined dataset and explore (#2)__
+
+```{r}
+joined_alc<- read.table("http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/alc.txt", sep=",", header=TRUE) 
+#dim(joined_alc)
+glimpse(joined_alc)
+joined_alc %>% group_by(sex) %>% summarise(count = n(), mean_grade = mean(G3))
+#stat.desc(joined_alc)
+```
+
+__The dataset is a joined datase from student achievements studies in Portugese schools on mathematics and languange (Portugese). The target attributes display performance in 1-3 periods G3 beinf from final year grade.Students came from 2 schools and a total of 35 attributes are in the dataset displaying properties int the students performance and living context.__
+
+Some visualization of the dataset could show data better but the following pictures (script below) are too big (for now). Anyhow the high use does not display numerical values and thus is true or false
+
+```
+gather(joined_alc) %>% glimpse
+library(tidyr); library(dplyr); library(ggplot2)
+gather(joined_alc) %>% ggplot(aes(value)) + facet_wrap("key", scales = "free") + geom_bar()
+```
+ <br>
+__Choosing 4 variables in the data those are interesting in relation to alcohol high/low consumption. Including hypothesis (3#).__
+
+
+Based on my own life experiences and some data I choose the following variables from two contexts.*since numerical and logical*
+
+- From the living context: health (health) and quality of family relationships (famrel).
+- From the educational context: studytime(from 1-10) and absences (0-93). 
+
+*I suggest the context of living with poor health and poor family relationships have high consumption as well as students using less studytime or being more absent. We'll see : )*
+
+ <br>
+
+__Numeric and visual explorations(#4)__
+__*Exploration (numerical and graphical) of Variables (health (1-5), famrel (1-5), studytime (1-10 hour classes) and absences (0-93)).*__
+```{r}
+#select only the 4 variable columns and some extra to keep dataset smaller and easier for visualizations
+keep_columns <- c("gender","high_use", "absences","famrel", "health", "freetime", "studytime", "G3", "alc_use")
+smjoined_alc <- select(joined_alc, one_of(keep_columns))
+
+
+p1 <- ggplot(joined_alc, aes(health)) + geom_histogram(color="white", fill="aquamarine3", binwidth = 1)
+p2 <- ggplot(joined_alc, aes(famrel)) + geom_histogram(color="white", fill="aquamarine3", binwidth = 1)
+p3 <- ggplot(joined_alc, aes(studytime)) + geom_histogram(color="white", fill="aquamarine3", binwidth = 1)
+p4 <- ggplot(joined_alc, aes(absences)) + geom_histogram(color="white", fill="aquamarine3", binwidth = 1)
+
+
+figure <- ggarrange(p1, p2, p3, p4, 
+                    labels = c("health", "familyrelations", "studytime", "absences"),
+                    ncol = 2, nrow = 2)
+figure
+
+smjoined_alc %>% group_by(high_use) %>% summarise(count = n(), Health = mean(health))
+smjoined_alc %>% group_by(high_use) %>% summarise(count = n(), Family_relations = mean(famrel))
+smjoined_alc %>% group_by(high_use) %>% summarise(count = n(), Studytime_used = mean(studytime))
+joined_alc %>% group_by(high_use) %>% summarise(count = n(), smAbsences_time = mean(absences))
+
+
+```
+
+__So far the mean falues seem to be as suspected in the hypothesis with only the health aspect is slightly contradictory - meaning the mean health is slightly higher in the group called "high" alcohol users. This might be because the set limit to two?__
+
+<br>
+
+__Data overview labeled by high_users of alcohol__
+
+```{r}
+library(GGally)
+p <- ggpairs(smjoined_alc, mapping = aes(col = high_use), lower = list(combo = wrap("facethist", bins = 20)))
+p
+```
+
+__*Despite the above picture holding too much data you can see that. 1) the low users (red) display a group with lower number of absences, higher number of study time and slightly higher number of points (G3). Nor average values or distrbution of freetime or health are different in this study.*__
+
+__Using Logistic Regression to study the above selected variables (#5)__
+<br>
+R script for logistic regression
+```{r}
+model1 <- glm(high_use ~ health + famrel + studytime + absences, data = alc, family = "binomial")
+summary(model1)
+coef(model1)
+OR <- coef(model1) %>% exp
+CI <- confint(model1) %>% exp
+cbind(OR, CI)
+```
+
+__*The results show that health has no significance in this model. All the other factors are significantly contributing to the model. As seen in the prefixes the correlation is negative with famrel and studytime, meaning the higher these values the lower propability to belong in the high user group. According to the odds ratio the findings show similar results - the confidence limits for intercept is quite high and from below 1 to even over 5. Shortly according to the odds ratio increase study time and family relations have an estimate of 22% and 41% reduced odds chance of being in the group of high alcohol consuming students and the increased abscences an 8% increased odds respectively.*__
+
+<br>
+
+__The predictive power of the modified model (#6)__
+
+R script of the selected variables
+
+```{r}
+#fitting the model
+model2 <- glm(high_use ~ studytime + absences, data = alc, family = "binomial")
+#summary(model1) - not applied here
+coef(model2)
+OR <- coef(model2) %>% exp
+CI <- confint(model2) %>% exp
+cbind(OR, CI)
+# prediction the propability, adding to table, using them for prediction, making a table of 15 with the data and tabulating the "confusion matrix" 
+probabilities <- predict(model2, type = "response")
+smjoined_alc <- mutate(smjoined_alc, probability = probabilities)
+smjoined_alc <- mutate(smjoined_alc, prediction = probability > 0.5)
+select(smjoined_alc, studytime, absences, high_use, probability, prediction) %>% tail(10)
+table(high_use = smjoined_alc$high_use, prediction = smjoined_alc$prediction)
+g <- ggplot(smjoined_alc, aes(x = probability, y = high_use, col = prediction))
+g + geom_point()
+
+```
+
+__Based on the results not all predictions hit their target, but the model is quite strong with high users predicted not to be high consumer by over 90% of the cases (1 - 12/(258 + 12)). On the other hand the prediction to belong to the high users seems to be off the track same seen in the visuals *or I read the matrix wrong or the propability delimiter se at 0.5 was not the best idea to be adobted from DataCamp code*.__
+
+<br>
+_Cross-Validations  *(Bonus exercises #7 and #8)*_
+
+Defining value penalty (loss function)
+
+```{r library, results='hide',message=FALSE}
+library(boot)
+```
+
+
+```{r}
+loss_func <- function(class, prob) {
+  n_wrong <- abs(class - prob) > 0.5
+  mean(n_wrong)
+}
+loss_func(class = smjoined_alc$high_use, prob = smjoined_alc$probability)
+cv <- cv.glm(data = alc, cost = loss_func, glmfit = model2, K = 10)
+cv$delta[1]
+
+```
+
+
+The prediction error (0.28) is nearly the same as with the Datacamp data (0.26). Close but to quite there yet. 
+
+A better model might be found by using a separate model for each gender. *just a thought based on the distribution of data by gender*
+
+<br>
+
+__Finding out the idea of plotting the errors from training and testing by the number of predictors. I would guess this leads to the optimal number of predictors to be 3-5?__*will start from 10 down*
+
+R-script
+
+```{r}
+#model 10
+modeln10 <- glm(high_use ~ age + health + Medu + Fedu + traveltime + studytime + failures + famrel + freetime + absences, data = joined_alc, family = "binomial")
+summary(modeln10)
+probabilities <- predict(modeln10, type = "response")
+joined_alc <- mutate(alc, probability = probabilities)
+loss_func <- function(class, prob) {
+  n_wrong <- abs(class - prob) > 0.5
+  mte10 <- mean(n_wrong)
+  mte10
+}
+loss_func(class = joined_alc$high_use, prob = joined_alc$probability)
+cv <- cv.glm(data = joined_alc, cost = loss_func, glmfit = modeln10, K = 10)
+mtr10 <- cv$delta[1]
+mtr10
+```
+
+```{r}
+#data collected to vectors
+tested <- c(0.2879581,  0.2774869, 0.2801047, 0.3010471, 0.2774869, 0.2722513,  0.2670157, 0.2722513, 0.2591623,  0.2591623)
+trained <- c(0.2853403, 0.2827225, 0.2748691, 0.3010471, 0.2984293, 0.2774869,  0.2748691, 0.2905759, 0.2801047, 0.2827225)
+#range from 0 to max values in vectors
+g_range <- range(0, trained, tested)
+#plot
+plot(trained, type="o", col="darkgreen", ylim=g_range, ann=FALSE)
+#line
+lines(tested, type="o", pch=22, lty=2, col="red")
+#title
+title (main= "Training and testing errors vs.modelpredictors", col.main="darkgreen", font.main=1)
+title(xlab="Predictors", col.lab=rgb(0,0.5,0))
+title(ylab="Error", col.lab=rgb(0,0.5,0))
+```
+
+The Tested displays the lowest error values with 10 predictors (red line), but trained has minimum at 6 and 10 predictors.
+
+
+
+
+
