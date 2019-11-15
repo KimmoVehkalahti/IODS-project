@@ -390,7 +390,6 @@ summary {
 <ul>
 <li><a href="#about-the-project">About the project</a><ul>
 <li><a href="#start-me-up">Start me Up</a></li>
-<li><a href="#regression-and-model-validation">Regression and model validation</a></li>
 <li><a href="#logistic-regression">Logistic Regression</a></li>
 </ul></li>
 </ul>
@@ -427,17 +426,12 @@ summary {
 <h2>Start me Up</h2>
 <p>The beggining of my journey in IODS course - week one. <em>To be honest day one or two.</em></p>
 <ul>
-<li>Installed all necessary tools described in the course section <strong>Start me Up!</strong>. (R, Rstudio and GitHub).</li>
-<li>Got an extra open science and Research done (in finnish <em>Avoin tiede ja tutkimus</em>) and maybe will do the english part as well if time.</li>
-<li>Did the Data Camp – <strong>R Short and sweet</strong> exercises to fresh up some R and get started with it.</li>
-<li>Remember how object oriented programming and using vectors and functions is really not that simple at all, but I will learn.</li>
-<li>I had some problems creating the link, but could be due to the recognition of author. GitHub was asking “who am I” that was quite funny at 3 am with not much sleep. Felt a little odd, like texting with AI.</li>
-</ul>
-</div>
-<div id="regression-and-model-validation" class="section level2">
-<h2>Regression and model validation</h2>
-<ul>
-<li>tried to do all the work last week but failed so left all work to be done allover again during the submissionday…how else.</li>
+<li><p>Installed all necessary tools described in the course section <strong>Start me Up!</strong>. (R, Rstudio and GitHub).</p></li>
+<li><p>Got an extra open science and Research done (in finnish <em>Avoin tiede ja tutkimus</em>) and maybe will do the english part as well if time.</p></li>
+<li><p>Did the Data Camp – <strong>R Short and sweet</strong> exercises to fresh up some R and get started with it.</p></li>
+<li><p>Remember how object oriented programming and using vectors and functions is really not that simple at all, but I will learn.</p></li>
+<li><p>I had some problems creating the link, but could be due to the recognition of author. GitHub was asking “who am I” that was quite funny at 3 am with not much sleep. Felt a little odd, like texting with AI. *** ## Regression and model validation</p></li>
+<li><p>tried to do all the work last week but failed so left all work to be done allover again during the submissionday…how else.</p></li>
 </ul>
 <div id="the-data-wrangling" class="section level4">
 <h4>The Data wrangling</h4>
@@ -445,7 +439,9 @@ summary {
 <li><a href="https://github.com/ottomykkanen/IODS-project/blob/master/create_learning2019.R">My data wrangling script</a></li>
 </ul>
 <p><strong>A biref summary of the steps taken with R scripts displayed here on Data wrangling</strong></p>
-<p>-Tasks (1-2) were to create a folder data n read the full learning data from <a href="http://www.helsinki.fi/~kvehkala/JYTmooc/JYTOPKYS3-data.txt">here</a> and explore the data using RStudio (dim, str).</p>
+<ul>
+<li>Tasks (1-2) were to create a folder data n read the full learning data from <a href="http://www.helsinki.fi/~kvehkala/JYTmooc/JYTOPKYS3-data.txt">here</a> and explore the data using RStudio (dim, str).</li>
+</ul>
 <pre><code>lrn14 &lt;- read.table(&quot;http://www.helsinki.fi/~kvehkala/JYTmooc/JYTOPKYS3-data.txt&quot;, sep=&quot;\t&quot;, header=TRUE)
 
 dim(lrn14)
@@ -462,7 +458,7 @@ surface_questions &lt;- c(&quot;SU02&quot;,&quot;SU10&quot;,&quot;SU18&quot;,&qu
 
 strategic_questions &lt;- c(&quot;ST01&quot;,&quot;ST09&quot;,&quot;ST17&quot;,&quot;ST25&quot;,&quot;ST04&quot;,&quot;ST12&quot;,&quot;ST20&quot;,&quot;ST28&quot;)
 </code></pre>
-<p>And the selection of 7 variables</p>
+<p>-And the selection of 7 variables</p>
 <pre><code>keep_columns &lt;- c(&quot;gender&quot;,&quot;Age&quot;,&quot;attitude&quot;, &quot;deep&quot;, &quot;stra&quot;, &quot;surf&quot;, &quot;Points&quot;)
 
 learning2019OM &lt;- select(lrn14, one_of(keep_columns))
@@ -473,9 +469,7 @@ learning2019OM &lt;- select(lrn14, one_of(keep_columns))
 <pre><code>write.csv(learning2019OM, file = &quot;learning2019OM.csv&quot;)
 
 learning2019OM &lt;- read.csv(&quot;~/IODS-project/learning2019OM.csv&quot;)</code></pre>
-<ul>
-<li>The output was ok, with an added x vector (first column) data.frame’: 166 obs. of 8 variables:</li>
-</ul>
+<p>-The output was ok, with an added x vector (first column) data.frame’: 166 obs. of 8 variables:</p>
 <pre><code>head(learning2019OM)
 </code></pre>
 <p>X gender age attitude deep stra surf points</p>
@@ -486,6 +480,7 @@ learning2019OM &lt;- read.csv(&quot;~/IODS-project/learning2019OM.csv&quot;)</co
 <p>5 M 49 3.7 3.666667 3.625 2.833333 22</p>
 <p>6 F 38 3.8 4.750000 3.625 2.416667 21</p>
 <p><br></p>
+<hr />
 </div>
 <div id="the-data-analysis" class="section level4">
 <h4>The Data Analysis</h4>
@@ -511,31 +506,58 @@ learning2014 &lt;- read_csv(&quot;http://s3.amazonaws.com/assets.datacamp.com/pr
 
 dim(learning2014)</code></pre>
 <p>The data is from a study ASSIST 2014 that was used to measure different learning approaches to statistics. A usefull description of the study can be found <a href="https://helda.helsinki.fi//bitstream/handle/10138/163015/IPS043_P1_S.pdf?sequence=1">here</a>.</p>
-<p>To view data and summaries</p>
+<ul>
+<li>To view data and summaries</li>
+</ul>
 <pre><code>install.packages(&quot;GGally&quot;)
 p &lt;- ggpairs(learning2014, mapping = aes(col = gender, alpha = 0.3), lower = list(combo = wrap(&quot;facethist&quot;, bins = 20)))
 
 p
 </code></pre>
-<p>To select 3 variables as explanatory</p>
+<ul>
+<li>To select 3 variables as explanatory</li>
+</ul>
 <pre><code>library(ggplot2)
 
 my_models1 &lt;- lm(points ~ attitude + deep + stra, data = learning2014)
 
 summary(my_models1)</code></pre>
-<p>resutlted with - F-statistic: 14.33 on 3 and 162 DF, p-value: 2.521e-08 - Estimate Std. Error t value Pr(&gt;|t|)<br />
+<p>-resutlted with - F-statistic: 14.33 on 3 and 162 DF, p-value: 2.521e-08 - Estimate Std. Error t value Pr(&gt;|t|)<br />
 (Intercept) 11.3915 3.4077 3.343 0.00103 **</p>
 <p>Model visualization</p>
 <pre><code>par(mfrow = c(2,2))
 plot(my_models2, which = c(1,2,5))
 </code></pre>
-<p>Result: - based on plots (QQ-plot) the normality assumption is met weel - constant variance assumption is lightly not met - the residuals vs leverage shows some outliers but mainly the model predicts well (outliers are displayed by numbers of obs)</p>
-<p><br></p>
+<p>Result: - based on plots (QQ-plot) the normality assumption is met weel - constant variance assumption is lightly not met (outliers push up at center) - the residuals vs leverage shows some outliers but mainly the model predicts well (outliers are displayed by id numbers of obs)</p>
+<p><br> ***</p>
+<hr />
 </div>
 </div>
 <div id="logistic-regression" class="section level2">
 <h2>Logistic Regression</h2>
+<p>Logistic Regression belongs to a large staticical models faimly GLM (Generalized Linear Models) and the main idea is to predict the binary outcomes (happy vs sad, dead vs alive… ).</p>
+<p>Some places to dig into this below… - <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3936971/pdf/biochem-24-1-12-4.pdf">medical related paper</a> - <a href="https://towardsdatascience.com/introduction-to-logistic-regression-66248243c148">Intro_towards data science site</a> - <a href="https://www.youtube.com/watch?v=OCwZyYH14uw">Video Linear vs Logistic Regrression_edureka</a> <em>note! nice pictures allthough the english is with a colorful accent</em></p>
 <hr />
+<div id="the-data-wrangling-1" class="section level4">
+<h4>The Data wrangling</h4>
+<ul>
+<li>[My data wrangling script]((<a href="https://github.com/ottomykkanen/IODS-project/blob/master/create_alc.R" class="uri">https://github.com/ottomykkanen/IODS-project/blob/master/create_alc.R</a>)</li>
+</ul>
+<p><strong>A biref summary of the steps taken with R scripts displayed here on Data wrangling</strong></p>
+<p>The joining of two data files from a Machine Learning Repository: <a href="https://archive.ics.uci.edu/ml/datasets/Student+Performance">web site</a>. First steps were to download, unzip 2 files. Actually did all and there were 4 files, already a meged one and a file containing attributes to both datasets.</p>
+<p>First read files and explore the structure and dimensions (str, dim). Since already in my files I read the data from there, not the web.</p>
+<p>Reading the data</p>
+<pre class="r"><code>student.mat &lt;- read.csv(&quot;~/IODS-project/data/student-mat.csv&quot;, sep=&quot;;&quot;)
+student.por &lt;- read.csv(&quot;~/IODS-project/data/student-por.csv&quot;, sep=&quot;;&quot;)</code></pre>
+<p>Exploring the data</p>
+<pre class="r"><code>#str(student.mat)
+dim(student.mat)</code></pre>
+<pre><code>## [1] 395  33</code></pre>
+<pre class="r"><code>#str(student.por)
+dim(student.por)</code></pre>
+<pre><code>## [1] 649  33</code></pre>
+<hr />
+</div>
 </div>
 </div>
 
