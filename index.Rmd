@@ -1,7 +1,7 @@
 ---
 title: "IODS course project"
 author: "Otto Mykkänen"
-date: "31.10.2019"
+date: "31.10.2019-"
 output: 
   html_document:
     theme: cosmo
@@ -24,3 +24,11 @@ output:
 
 ***
 
+```{r child = "chapter3.Rmd"}
+```
+
+***
+```{r child = "chapter4.Rmd"}
+```
+
+***
