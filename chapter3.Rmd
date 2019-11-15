@@ -275,7 +275,7 @@ A better model might be found by using a separate model for each gender. *just a
 
 <br>
 
-__Finding out the idea of plotting the errors from training and testing by the number of predictors. I would guess this leads to the optimal number of predictors to be 3-5?__*will start from 10 down*
+__Finding out the idea of plotting the errors from training and testing by the number of predictors. I would guess this leads to the optimal number of predictors to be 3-5?__*will start from 10 down and select the order based on p values. Meaning I will take off the least significant one off one by one*
 
 R-script
 
@@ -295,6 +295,9 @@ cv <- cv.glm(data = joined_alc, cost = loss_func, glmfit = modeln10, K = 10)
 mtr10 <- cv$delta[1]
 mtr10
 ```
+<br>
+
+*Based on the runs The below results are collected into vectors and plotted. (R code in "Analysis_alc.R" -file)*
 
 ```{r}
 #data collected to vectors
@@ -312,7 +315,7 @@ title(xlab="Predictors", col.lab=rgb(0,0.5,0))
 title(ylab="Error", col.lab=rgb(0,0.5,0))
 ```
 
-The Tested displays the lowest error values with 10 predictors (red line), but trained has minimum at 6 and 10 predictors.
+The Tested displays the lowest error values (<0.26) with 10 predictors (red line), but trained has minimum at 6 and 10 predictors.
 
 
 

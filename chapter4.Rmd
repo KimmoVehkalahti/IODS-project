@@ -1,0 +1,30 @@
+## Clustering and classification
+
+Clustering and classification is the best way to visualize and validate data integrity and groups. One of the best ways to explore study group behaviour and most often also used as a good quality data analysis protocol. 
+
+Some places to dig into this
+
+- 1
+- 2
+- 3
+
+***
+<br>
+
+#### The Data wrangling 
+
+- file link 
+<br>
+<br>
+<br>
+<br>
+<br>
+
+***
+
+#### The Data Analysis
+<br>
+
+ 
+
+***

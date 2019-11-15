@@ -14,7 +14,7 @@ Very optimistic about the course and feel __lucky__ to join.
 [My diary web page](https://ottomykkanen.github.io/IODS-project/index.html)
 
 
-### Course related information sites
+### Course related basic information sites
 
 - [R project org](https://www.r-project.org/)
 - [RStudio](http://www.rstudio.com/ide/)
@@ -28,4 +28,30 @@ Very optimistic about the course and feel __lucky__ to join.
 
 - [RStudio related Cheat Sheets](https://rstudio.com/resources/cheatsheets/)
 
-__Some interesting history to our course - A proceedings publication__ [CHANGING THE COURSE: FROM BORING NUMERACY TO INSPIRING LITERACY](https://iase-web.org/icots/9/proceedings/pdfs/ICOTS9_7D2_VEHKALAHTI.pdf?1405041696)
+- [CHANGING THE COURSE: FROM BORING NUMERACY TO INSPIRING: LITERACY](https://iase-web.org/icots/9/proceedings/pdfs/ICOTS9_7D2_VEHKALAHTI.pdf?1405041696) *course historical*
+
+### R Info
+
+__*Data Explorations*__
+
+- __head()__ *displays the first 6 rows by default*
+- __dim()__ *displays the type and a preview of all columns as a row*
+- __glimpse()__ *display a vertical preview of the datase (pkg dplyr)*
+- __summary()__ *displays data type and attributes which are especially useful for numeric attributes*
+- __skim()__ *good addition to the summary function (pkg skimr)*
+- __DataExplorer__ *fast track exploration try out using line "DataExplorer::create_report() works better in R cause issues with pandoc??*
+
+__*Most used pakages*__
+
+- library(psych)
+- library(pastecs)
+- library(tidyr)
+- library(dplyr)
+- library(GGally)
+- library(ggpubr)
+- library(ggplot2)
+- library(skimr)
+- library(DataExplorer)
+
+***
+
