@@ -39,13 +39,13 @@ my_model <- lm(points ~ attitude, data = learning2014)
 # print out a summary of the model
 summary(my_model)
 
-# create an plot matrix with ggpairs()
+# an plot matrix with ggpairs()
 ggpairs(learning2014, lower = list(combo = wrap("facethist", bins = 20)))
 
-# create a regression model with multiple explanatory variables
+#a regression model with multiple explanatory variables
 my_model2 <- lm(points ~ attitude + stra + surf, data = learning2014)
 
-# print out a summary of the model
+#summary of the model
 summary(my_model2)
 
 # draw diagnostic plots using the plot() function. Choose the plots 1, 2 and 5

@@ -1,61 +1,79 @@
 ---
-Name: Omolara Mofikoya
 Date: 18/11/2019
-#chapter3
+Name: Omolara Mofikoya
 ---
 
 
+```R
+read.csv("http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/alc.txt",sep=";",header = TRUE)
+```
 
-read.csv("~/IODS-project/data/create_alc.R",sep = ";", header=TRUE)
-glimpse(alc)
 #this data shows student achievement in secondary education of two Portuguese schools in mat and por ,
+```R
 
-str(alc)
+glimpse(alc)
+
+``
+```R
 # lets study the relationship between high and low users of alcohol by using some variables
 # access the tidyverse libraries dplyr and ggplot2
+
 library(dplyr); library(ggplot2); library(tidyr)
 
 # produce summary statistics by group
+```R
 alc %>% group_by(sex, high_use) %>% summarise(count = n(), mean_grade = mean(G3)) 
+``
+
+```R
 #alc %>% group_by(sex, absences, health,activities, high_use) %>% summarise(count = n(), mean_grade = mean(G3))
 #From the gender, we can see that ther are less high alcohol consumers in both male and female , and for the females the high alcohol consumers tend to have an higer grade while it is the opposite for males
+```R
 alc %>% group_by(sex, high_use) %>% summarise(count = n(), mean_absences = mean(absences))
+``
+
+```R
 # high users of alcohol have more school absence than low users, for both male and female.
+```R
 alc %>% group_by( high_use, activities) %>% summarise(count = n())
+``
+
+```R
 #High users of alcohol have lowere activities
+```R
 alc %>% group_by(sex, high_use) %>% summarise(count = n(), health = mean(health))
-
+``
+```R
 # initialize a plot of high_use and grades
-g1 <- ggplot(alc, aes(x = high_use, y = G3, col = sex))
 # define the plot as a boxplot and draw it
-
-g1 + geom_boxplot() + ylab("grade")
-#more female are high users of alcohol
-
 # initialize a plot of high_use and absences
-g2 <- ggplot(alc, aes(x = high_use, y = absences, col = sex))
-# define the plot as a boxplot and draw it
-
-g2 + geom_boxplot() +ggtitle("Student absences by alcohol consumption and sex")
-#high users have more absence days
-
-# initialize a plot of high_use and actvities
-g3 <- ggplot(alc, aes(x = high_use, y = activities, col = sex))
-# define the plot as a boxplot and draw it
-
-g3 + geom_boxplot() +ggtitle("Student activities by alcohol consumption and sex")
-
+# initialize a plot of high_use and activities
 # initialize a plot of high_use and health
+```R
+g1 <- ggplot(alc, aes(x = high_use, y = G3, col = sex))
+g1 + geom_boxplot() + ylab("grade")
+g2 <- ggplot(alc, aes(x = high_use, y = absences, col = sex))
+g2 + geom_boxplot() +ggtitle("Student absences by alcohol consumption and sex")
+g3 <- ggplot(alc, aes(x = high_use, y = activities, col = sex))
+g3 + geom_boxplot() +ggtitle("Student activities by alcohol consumption and sex")
 g4 <- ggplot(alc, aes(x = high_use, y = health, col = sex))
-# define the plot as a boxplot and draw it
-
 g4 + geom_boxplot() +ggtitle("Student health by alcohol consumption and sex")
-
+``
+```R
+#more female are high users of alcohol
+#high users have more absence days
+#more female are high users of alcohol
 # find the model with glm()
+```R
 m <- glm(high_use ~ absences + sex + activities + health + G3, data = alc, family = "binomial")
+``
 
-# print out a summary of the model
+```R
+
 summary(m)
+``
+
+
 #based on the result from the coefficent, the grades and health is not a good predictor variable because their p  values ig greater than 0.05
 # for sex for male = -1.03092 + 1.00755 * 1
 #            female  = -1.03092 + 1.00755 * 0
@@ -65,45 +83,66 @@ summary(m)
 
 
 # compute odds ratios (OR)
-OR <- coef(m) %>% exp
-
 # compute confidence intervals (CI)
- CI <- confint(m)%>% exp
-
 # print out the odds ratios with their confidence intervals
-cbind(OR, CI)
 # fit the model
+# predict() the probability of high_use
+# add the predicted probabilities to 'alc'
+# use the probabilities to make a prediction of high_use
+
+```R
+OR <- coef(m) %>% exp
+ CI <- confint(m)%>% exp
+cbind(OR, CI)
+``
+```R
 m <- glm(high_use ~  absences + sex + activities , data = alc, family = "binomial")
 
-# predict() the probability of high_use
+
 probabilities <- predict(m, type = "response")
 
-# add the predicted probabilities to 'alc'
+
 alc <- mutate(alc, probability = probabilities)
 
-# use the probabilities to make a prediction of high_use
+
 alc <- mutate(alc, prediction = probability > 0.5)
+``
 
 # see the last ten original classes, predicted probabilities, and class predictions
-select(alc, absences, sex,activities, high_use, probability, prediction) %>% tail(10)
 
 # tabulate the target variable versus the predictions
-table(high_use = alc$high_use, prediction = alc$prediction)
-
 # initialize a plot of 'high_use' versus 'probability' in 'alc'
-g <- ggplot(alc, aes(x = probability, y = high_use, col = prediction))
 
 # define the geom as points and draw the plot
+# tabulate the target variable versus the predictions
+# define a loss function (average prediction error)
+# call loss_func to compute the average number of wrong predictions in the (training) data
+
+```R
+select(alc, absences, sex,activities, high_use, probability, prediction) %>% tail(10)
+
+
+table(high_use = alc$high_use, prediction = alc$prediction)
+
+
+g <- ggplot(alc, aes(x = probability, y = high_use, col = prediction))
+
 g + geom_point()
 
-# tabulate the target variable versus the predictions
+
 table(high_use = alc$high_use, prediction = alc$prediction)%>% prop.table()%>% addmargins()
 
-# define a loss function (average prediction error)
+
 loss_func <- function(class, prob) {
   n_wrong <- abs(class - prob) > 0.5
   mean(n_wrong)
 }
 
-# call loss_func to compute the average number of wrong predictions in the (training) data
+
+
 loss_func(class = alc$high_use, prob = alc$probability)
+
+``
+
+```R
+# the error is 24%

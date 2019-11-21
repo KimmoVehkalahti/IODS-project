@@ -388,7 +388,33 @@ summary {
 <div id="TOC">
 <ul>
 <li><a href="#about-the-project">About the project</a></li>
-<li><a href="#insert-chapter-2-title-here">Insert chapter 2 title here</a></li>
+<li><a href="#regression-and-model-validation">Regression and model validation</a></li>
+<li><a href="#describe-your-work-and-results-clearly.">Describe your work and results clearly.</a></li>
+<li><a href="#assume-the-reader-has-an-introductory-course-level-understanding-of-writing-and-reading-r-code-as-well-as-statistical-methods.">Assume the reader has an introductory course level understanding of writing and reading R code as well as statistical methods.</a></li>
+<li><a href="#assume-the-reader-has-no-previous-knowledge-of-your-data-or-the-more-advanced-methods-you-are-using.">Assume the reader has no previous knowledge of your data or the more advanced methods you are using.</a></li>
+<li><a href="#print-out-a-summary-of-the-model">print out a summary of the model</a></li>
+<li><a href="#an-plot-matrix-with-ggpairs">an plot matrix with ggpairs()</a></li>
+<li><a href="#draw-diagnostic-plots-using-the-plot-function.-choose-the-plots-1-2-and-5">draw diagnostic plots using the plot() function. Choose the plots 1, 2 and 5</a></li>
+<li><a href="#produce-summary-statistics-by-group">produce summary statistics by group</a></li>
+<li><a href="#initialize-a-plot-of-high_use-and-grades">initialize a plot of high_use and grades</a></li>
+<li><a href="#initialize-a-plot-of-high_use-and-absences">initialize a plot of high_use and absences</a></li>
+<li><a href="#initialize-a-plot-of-high_use-and-actvities">initialize a plot of high_use and actvities</a></li>
+<li><a href="#initialize-a-plot-of-high_use-and-health">initialize a plot of high_use and health</a></li>
+<li><a href="#find-the-model-with-glm">find the model with glm()</a></li>
+<li><a href="#print-out-a-summary-of-the-model-1">print out a summary of the model</a></li>
+<li><a href="#compute-odds-ratios-or">compute odds ratios (OR)</a></li>
+<li><a href="#compute-confidence-intervals-ci">compute confidence intervals (CI)</a></li>
+<li><a href="#print-out-the-odds-ratios-with-their-confidence-intervals">print out the odds ratios with their confidence intervals</a></li>
+<li><a href="#predict-the-probability-of-high_use">predict() the probability of high_use</a></li>
+<li><a href="#add-the-predicted-probabilities-to-alc">add the predicted probabilities to ‘alc’</a></li>
+<li><a href="#use-the-probabilities-to-make-a-prediction-of-high_use">use the probabilities to make a prediction of high_use</a></li>
+<li><a href="#see-the-last-ten-original-classes-predicted-probabilities-and-class-predictions">see the last ten original classes, predicted probabilities, and class predictions</a></li>
+<li><a href="#tabulate-the-target-variable-versus-the-predictions">tabulate the target variable versus the predictions</a></li>
+<li><a href="#initialize-a-plot-of-high_use-versus-probability-in-alc">initialize a plot of ‘high_use’ versus ‘probability’ in ‘alc’</a></li>
+<li><a href="#define-the-geom-as-points-and-draw-the-plot">define the geom as points and draw the plot</a></li>
+<li><a href="#tabulate-the-target-variable-versus-the-predictions-1">tabulate the target variable versus the predictions</a></li>
+<li><a href="#define-a-loss-function-average-prediction-error">define a loss function (average prediction error)</a></li>
+<li><a href="#call-loss_func-to-compute-the-average-number-of-wrong-predictions-in-the-training-data">call loss_func to compute the average number of wrong predictions in the (training) data</a></li>
 </ul>
 </div>
 
@@ -398,15 +424,122 @@ summary {
 <p><em>Write a short description about the course and add a link to your GitHub repository here. This is an R Markdown (.Rmd) file so you can use R Markdown syntax.</em> I have always always been fasinated by numbers and enjoy doing basic statistics. So i was excited wen i got a mail about this course, but i was a bit drawn back when i read we had to use R because i have no prior knowledge of programming. But so far i have enjoyed the introduction to R, and i am looking forward to the more interesting stuffs, I’m going to learn from this course. <a href="https://github.com/funmilara/lara.git" class="uri">https://github.com/funmilara/lara.git</a></p>
 <hr />
 </div>
-<div id="insert-chapter-2-title-here" class="section level1">
-<h1>Insert chapter 2 title here</h1>
+<div id="regression-and-model-validation" class="section level1">
+<h1>Regression and model validation</h1>
 <p><em>Describe the work you have done this week and summarize your learning.</em></p>
-<ul>
-<li>Describe your work and results clearly.</li>
-<li>Assume the reader has an introductory course level understanding of writing and reading R code as well as statistical methods.</li>
-<li>Assume the reader has no previous knowledge of your data or the more advanced methods you are using.</li>
-</ul>
+</div>
+<div id="describe-your-work-and-results-clearly." class="section level1">
+<h1>Describe your work and results clearly.</h1>
+</div>
+<div id="assume-the-reader-has-an-introductory-course-level-understanding-of-writing-and-reading-r-code-as-well-as-statistical-methods." class="section level1">
+<h1>Assume the reader has an introductory course level understanding of writing and reading R code as well as statistical methods.</h1>
+</div>
+<div id="assume-the-reader-has-no-previous-knowledge-of-your-data-or-the-more-advanced-methods-you-are-using." class="section level1">
+<h1>Assume the reader has no previous knowledge of your data or the more advanced methods you are using.</h1>
+<p>setwd(“~/IODS-project”) library(dplyr) learning2014 &lt;- readxl::read_excel(“~/IODS-project/learnings2014.xlsx”) #structure of data str(learning2014)</p>
+<p>#Dimension of data dim(learning2014) names(“learning2014”) library(dplyr) learning2014 &lt;- readxl::read_excel(“~/IODS-project/data/learning2014.xlsx”) %&gt;% mutate_at(vars(gender), factor) #c(“gender”) pairs(learning2014[-1], col=learning2014<span class="math inline">\(gender) #pairs(learning2014[!names(learning2014) %in% c(&quot;gender&quot;)],col=learning2014\)</span>gender) #install.packages(“GGally”,repos = c(“<a href="http://rstudio.org/_packages" class="uri">http://rstudio.org/_packages</a>”,“<a href="http://cran.rstudio.com" class="uri">http://cran.rstudio.com</a>”)</p>
+<p>#install.packages(“ggplot2”,repos = c(“<a href="http://rstudio.org/_packages" class="uri">http://rstudio.org/_packages</a>”,“<a href="http://cran.rstudio.com" class="uri">http://cran.rstudio.com</a>”) # access the GGally and ggplot2 libraries library(GGally) library(ggplot2) # create a more advanced plot matrix with ggpairs() p &lt;- ggpairs(learning2014, mapping = aes(col = gender, alpha = 0.3), lower = list(combo = wrap(“facethist”, bins = 20))) #draw plot p p #a scatter plot of point versus attitude qplot(attitude, points, data = learning2014) + geom_smooth(method = “lm”) # fit a linear model my_model &lt;- lm(points ~ attitude, data = learning2014)</p>
+</div>
+<div id="print-out-a-summary-of-the-model" class="section level1">
+<h1>print out a summary of the model</h1>
+<p>summary(my_model)</p>
+</div>
+<div id="an-plot-matrix-with-ggpairs" class="section level1">
+<h1>an plot matrix with ggpairs()</h1>
+<p>ggpairs(learning2014, lower = list(combo = wrap(“facethist”, bins = 20)))</p>
+<p>#a regression model with multiple explanatory variables my_model2 &lt;- lm(points ~ attitude + stra + surf, data = learning2014)</p>
+<p>#summary of the model summary(my_model2)</p>
+</div>
+<div id="draw-diagnostic-plots-using-the-plot-function.-choose-the-plots-1-2-and-5" class="section level1">
+<h1>draw diagnostic plots using the plot() function. Choose the plots 1, 2 and 5</h1>
+<p>par(mfrow = c(2,2)) plot(my_model2, which = c(1,2,5))</p>
 <hr />
+<p>read.csv(“~/IODS-project/data/create_alc.R”,sep = “;”, header=TRUE) glimpse(alc) #this data shows student achievement in secondary education of two Portuguese schools in mat and por ,</p>
+<p>str(alc) # lets study the relationship between high and low users of alcohol by using some variables # access the tidyverse libraries dplyr and ggplot2 library(dplyr); library(ggplot2); library(tidyr)</p>
+</div>
+<div id="produce-summary-statistics-by-group" class="section level1">
+<h1>produce summary statistics by group</h1>
+<p>alc %&gt;% group_by(sex, high_use) %&gt;% summarise(count = n(), mean_grade = mean(G3)) #alc %&gt;% group_by(sex, absences, health,activities, high_use) %&gt;% summarise(count = n(), mean_grade = mean(G3)) #From the gender, we can see that ther are less high alcohol consumers in both male and female , and for the females the high alcohol consumers tend to have an higer grade while it is the opposite for males alc %&gt;% group_by(sex, high_use) %&gt;% summarise(count = n(), mean_absences = mean(absences)) # high users of alcohol have more school absence than low users, for both male and female. alc %&gt;% group_by( high_use, activities) %&gt;% summarise(count = n()) #High users of alcohol have lowere activities alc %&gt;% group_by(sex, high_use) %&gt;% summarise(count = n(), health = mean(health))</p>
+</div>
+<div id="initialize-a-plot-of-high_use-and-grades" class="section level1">
+<h1>initialize a plot of high_use and grades</h1>
+<p>g1 &lt;- ggplot(alc, aes(x = high_use, y = G3, col = sex)) # define the plot as a boxplot and draw it</p>
+<p>g1 + geom_boxplot() + ylab(“grade”) #more female are high users of alcohol</p>
+</div>
+<div id="initialize-a-plot-of-high_use-and-absences" class="section level1">
+<h1>initialize a plot of high_use and absences</h1>
+<p>g2 &lt;- ggplot(alc, aes(x = high_use, y = absences, col = sex)) # define the plot as a boxplot and draw it</p>
+<p>g2 + geom_boxplot() +ggtitle(“Student absences by alcohol consumption and sex”) #high users have more absence days</p>
+</div>
+<div id="initialize-a-plot-of-high_use-and-actvities" class="section level1">
+<h1>initialize a plot of high_use and actvities</h1>
+<p>g3 &lt;- ggplot(alc, aes(x = high_use, y = activities, col = sex)) # define the plot as a boxplot and draw it</p>
+<p>g3 + geom_boxplot() +ggtitle(“Student activities by alcohol consumption and sex”)</p>
+</div>
+<div id="initialize-a-plot-of-high_use-and-health" class="section level1">
+<h1>initialize a plot of high_use and health</h1>
+<p>g4 &lt;- ggplot(alc, aes(x = high_use, y = health, col = sex)) # define the plot as a boxplot and draw it</p>
+<p>g4 + geom_boxplot() +ggtitle(“Student health by alcohol consumption and sex”)</p>
+</div>
+<div id="find-the-model-with-glm" class="section level1">
+<h1>find the model with glm()</h1>
+<p>m &lt;- glm(high_use ~ absences + sex + activities + health + G3, data = alc, family = “binomial”)</p>
+</div>
+<div id="print-out-a-summary-of-the-model-1" class="section level1">
+<h1>print out a summary of the model</h1>
+<p>summary(m) #based on the result from the coefficent, the grades and health is not a good predictor variable because their p values ig greater than 0.05 # for sex for male = -1.03092 + 1.00755 * 1 # female = -1.03092 + 1.00755 * 0 # The odd ratio of a male having high alcohol intake is over the odds that a female will have an high intake # For activities, the odd ratio for high user partaking in activities is lower than high users not taking part in activities.</p>
+</div>
+<div id="compute-odds-ratios-or" class="section level1">
+<h1>compute odds ratios (OR)</h1>
+<p>OR &lt;- coef(m) %&gt;% exp</p>
+</div>
+<div id="compute-confidence-intervals-ci" class="section level1">
+<h1>compute confidence intervals (CI)</h1>
+<p>CI &lt;- confint(m)%&gt;% exp</p>
+</div>
+<div id="print-out-the-odds-ratios-with-their-confidence-intervals" class="section level1">
+<h1>print out the odds ratios with their confidence intervals</h1>
+<p>cbind(OR, CI) # fit the model m &lt;- glm(high_use ~ absences + sex + activities , data = alc, family = “binomial”)</p>
+</div>
+<div id="predict-the-probability-of-high_use" class="section level1">
+<h1>predict() the probability of high_use</h1>
+<p>probabilities &lt;- predict(m, type = “response”)</p>
+</div>
+<div id="add-the-predicted-probabilities-to-alc" class="section level1">
+<h1>add the predicted probabilities to ‘alc’</h1>
+<p>alc &lt;- mutate(alc, probability = probabilities)</p>
+</div>
+<div id="use-the-probabilities-to-make-a-prediction-of-high_use" class="section level1">
+<h1>use the probabilities to make a prediction of high_use</h1>
+<p>alc &lt;- mutate(alc, prediction = probability &gt; 0.5)</p>
+</div>
+<div id="see-the-last-ten-original-classes-predicted-probabilities-and-class-predictions" class="section level1">
+<h1>see the last ten original classes, predicted probabilities, and class predictions</h1>
+<p>select(alc, absences, sex,activities, high_use, probability, prediction) %&gt;% tail(10)</p>
+</div>
+<div id="tabulate-the-target-variable-versus-the-predictions" class="section level1">
+<h1>tabulate the target variable versus the predictions</h1>
+<p>table(high_use = alc<span class="math inline">\(high_use, prediction = alc\)</span>prediction)</p>
+</div>
+<div id="initialize-a-plot-of-high_use-versus-probability-in-alc" class="section level1">
+<h1>initialize a plot of ‘high_use’ versus ‘probability’ in ‘alc’</h1>
+<p>g &lt;- ggplot(alc, aes(x = probability, y = high_use, col = prediction))</p>
+</div>
+<div id="define-the-geom-as-points-and-draw-the-plot" class="section level1">
+<h1>define the geom as points and draw the plot</h1>
+<p>g + geom_point()</p>
+</div>
+<div id="tabulate-the-target-variable-versus-the-predictions-1" class="section level1">
+<h1>tabulate the target variable versus the predictions</h1>
+<p>table(high_use = alc<span class="math inline">\(high_use, prediction = alc\)</span>prediction)%&gt;% prop.table()%&gt;% addmargins()</p>
+</div>
+<div id="define-a-loss-function-average-prediction-error" class="section level1">
+<h1>define a loss function (average prediction error)</h1>
+<p>loss_func &lt;- function(class, prob) { n_wrong &lt;- abs(class - prob) &gt; 0.5 mean(n_wrong) }</p>
+</div>
+<div id="call-loss_func-to-compute-the-average-number-of-wrong-predictions-in-the-training-data" class="section level1">
+<h1>call loss_func to compute the average number of wrong predictions in the (training) data</h1>
+<p>loss_func(class = alc<span class="math inline">\(high_use, prob = alc\)</span>probability)</p>
 </div>
 
 
