@@ -5,7 +5,7 @@ date: "21 11 2019"
 output: html_document
 ---
 
-# Clustering and Classification
+# 4. Clustering and Classification
 ```{r include=FALSE}
 library(MASS)
 data("Boston")
@@ -15,9 +15,10 @@ dim(Boston)
 
 This data set contains 506 rows(observation) and 14 columns(variables). It contains various information about the city of Boston.
 
-### An overview of the data
+## 4.1 An overview of the data
 ````{r}
-pairs(Boston)
+pairs(Boston[1:7])
+pairs(Boston[8:14])
 summary(Boston)
 ````
 
@@ -61,7 +62,7 @@ test <- dplyr::select(test,-crimes)
 dim(test)
 ````
 
-### Linear Discriminate Analysis
+## 4.2 Linear Discriminate Analysis
 ```{r}
 lda.fit<- lda(crimes ~., data = train)
 lda.fit
@@ -80,7 +81,7 @@ lda.arrows(lda.fit, myscale = 1)
 Fron the result given in the proportion of trace, the seperation achieved by the first discriminant function is 95.03% and the second is 3.89%.
 There is a very large overlap between the low, med_low and med_high, high is well seperated fom the others and has somr med_high figures overlapping with it.
 
-### Predicting the values
+## 4.3 Predicting the values
 ```{r}
 lda.pred <- predict(lda.fit, newdata = test )
 lda.pred$class
@@ -90,7 +91,7 @@ sum(diag(tab))/sum(tab)
 ````
 Our predictor pricted 80 observation correctly out of 104 obersation. The classifify pridiction of the crime rate is 76.47%
 
-### K-means clusterring
+## 4.4 K-means clusterring
 ```{r}
 library(MASS)
 data("Boston")
