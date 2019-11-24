@@ -34,7 +34,7 @@ boston_scaled <- scale(Boston)
 summary(boston_scaled)
 
 ````
-Scaling meand subtrating from the mean and dividing by the standdard deviation, after scaling, we can see that all the mean variable is 0
+Scaling means subtrating from the mean and dividing by the standdard deviation, after scaling, we can see that all the mean variable is 0
 
 Change the data back to data.frame
 
@@ -78,8 +78,8 @@ lda.arrows <- function(x, myscale = 1, arrow_heads = 0.1, color = "orange", tex 
   plot(lda.fit, dimen = 2, col = classes, pch = classes)
 lda.arrows(lda.fit, myscale = 1)
 ````
-Fron the result given in the proportion of trace, the seperation achieved by the first discriminant function is 95.03% and the second is 3.89%.
-There is a very large overlap between the low, med_low and med_high, high is well seperated fom the others and has somr med_high figures overlapping with it.
+From the result given in the proportion of trace, the seperation achieved by the first discriminant function is 95.03% and the second is 3.89%.
+There is a very large overlap between the low, med_low and med_high, high is well seperated fom the others and has some med_high figures overlapping with it.
 
 ## 4.3 Predicting the values
 ```{r}
