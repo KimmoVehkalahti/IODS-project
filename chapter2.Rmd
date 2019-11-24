@@ -1,4 +1,4 @@
-# Regression and model validation
+# 2.0  Regression and model validation
 
 *Describe the work you have done this week and summarize your learning.*
 
@@ -6,16 +6,17 @@
 # Assume the reader has an introductory course level understanding of writing and reading R code as well as statistical methods.
 # Assume the reader has no previous knowledge of your data or the more advanced methods you are using.
 
+```{r}
 setwd("~/IODS-project")
 library(dplyr)
 learning2014 <- readxl::read_excel("~/IODS-project/learnings2014.xlsx")
-#structure of data
-str(learning2014)
-
-#Dimension of data
-dim(learning2014)
+str(learning2014) #structure of data
+dim(learning2014) #Dimension of data
 names("learning2014")
 library(dplyr)
+````
+
+```{r}
 learning2014 <- readxl::read_excel("~/IODS-project/data/learning2014.xlsx") %>%
   mutate_at(vars(gender), factor)
 #c("gender")
@@ -25,13 +26,21 @@ pairs(learning2014[-1], col=learning2014$gender)
 
 #install.packages("ggplot2",repos = c("http://rstudio.org/_packages","http://cran.rstudio.com")
 # access the GGally and ggplot2 libraries
+
+````
+
+# create a more advanced plot matrix with ggpairs()
+```{r}
 library(GGally)
 library(ggplot2)
-# create a more advanced plot matrix with ggpairs()
-p <- ggpairs(learning2014, mapping = aes(col = gender, alpha = 0.3), lower = list(combo = wrap("facethist", bins = 20)))
-#draw plot p
-p
+````
+
+
+
+```{r}
 #a scatter plot of point versus attitude
+
+
 qplot(attitude, points, data = learning2014) + geom_smooth(method = "lm")
 # fit a linear model
 my_model <- lm(points ~ attitude, data = learning2014)
@@ -51,5 +60,5 @@ summary(my_model2)
 # draw diagnostic plots using the plot() function. Choose the plots 1, 2 and 5
 par(mfrow = c(2,2))
 plot(my_model2, which = c(1,2,5))
-  
+```` 
 

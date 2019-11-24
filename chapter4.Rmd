@@ -1,0 +1,107 @@
+---
+title: "Chapter 4"
+author: "Omolara Mofikoya"
+date: "21 11 2019"
+output: html_document
+---
+
+# Clustering and Classification
+```{r include=FALSE}
+library(MASS)
+data("Boston")
+str(Boston)
+dim(Boston)
+````
+
+This data set contains 506 rows(observation) and 14 columns(variables). It contains various information about the city of Boston.
+
+### An overview of the data
+````{r}
+pairs(Boston)
+summary(Boston)
+````
+
+
+````{r}
+library(corrplot)
+cor_matrix<- cor(Boston)
+corrplot(cor_matrix)
+````
+
+````{r}
+boston_scaled <- scale(Boston)
+summary(boston_scaled)
+
+````
+Scaling meand subtrating from the mean and dividing by the standdard deviation, after scaling, we can see that all the mean variable is 0
+
+Change the data back to data.frame
+
+````{r}
+
+boston_scaled<- as.data.frame(boston_scaled)
+
+summary(boston_scaled$crim)
+crime <- quantile(boston_scaled$crim)
+crime
+crimes <- cut(boston_scaled$crim, breaks = crime, include.lowest = TRUE, labels = c("low", "med_low",  "med_high", "high"))
+table(crimes)
+boston_scaled <- dplyr::select(boston_scaled, -crim)
+boston_scaled <- data.frame(boston_scaled, crimes)
+summary(boston_scaled)
+````
+
+````{r}
+n <- nrow(boston_scaled)
+ind <- sample(n, size = n*0.8)
+train <- boston_scaled[ind,]
+test <- boston_scaled[-ind,]
+correct_classes <- test$crimes
+test <- dplyr::select(test,-crimes)
+dim(test)
+````
+
+### Linear Discriminate Analysis
+```{r}
+lda.fit<- lda(crimes ~., data = train)
+lda.fit
+lda.arrows <- function(x, myscale = 1, arrow_heads = 0.1, color = "orange", tex = 0.75, choices = c(1,2)){
+  heads <- coef(x)
+  arrows(x0 = 0, y0 = 0, 
+         x1 = myscale * heads[,choices[1]], 
+         y1 = myscale * heads[,choices[2]], col=color, length = arrow_heads)
+  text(myscale * heads[,choices], labels = row.names(heads), 
+       cex = tex, col=color, pos=3)
+}
+  classes <- as.numeric(train$crime)
+  plot(lda.fit, dimen = 2, col = classes, pch = classes)
+lda.arrows(lda.fit, myscale = 1)
+````
+Fron the result given in the proportion of trace, the seperation achieved by the first discriminant function is 95.03% and the second is 3.89%.
+There is a very large overlap between the low, med_low and med_high, high is well seperated fom the others and has somr med_high figures overlapping with it.
+
+### Predicting the values
+```{r}
+lda.pred <- predict(lda.fit, newdata = test )
+lda.pred$class
+tab<- table(correct = correct_classes, predicted = lda.pred$class)
+tab
+sum(diag(tab))/sum(tab)
+````
+Our predictor pricted 80 observation correctly out of 104 obersation. The classifify pridiction of the crime rate is 76.47%
+
+### K-means clusterring
+```{r}
+library(MASS)
+data("Boston")
+boston_scaledd <- scale(Boston)
+boston_scaledd <- as.data.frame(boston_scaledd)
+dist_eu<- dist(boston_scaledd)
+summary(dist_eu)
+dist_man <- dist(Boston, method = 'manhattan')
+summary(dist_man)
+km <- kmeans(Boston, centers = 3)
+pairs(Boston[1:7], col = km$cluster)
+pairs(Boston[8:14], col = km$cluster)
+````
+
