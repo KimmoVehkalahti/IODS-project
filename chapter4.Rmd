@@ -1,7 +1,7 @@
 ## Clustering and classification
 <br>
 
-Clustering and classification is the best way to visualize and validate data integrity and groups. One of the best ways to explore study group behaviour and most often also used as a good quality data analysis protocol. 
+Clustering and classification is the best way to visualize and validate data integrity and groups. This is one of the best ways to explore study group behaviour and most often also used as a good quality data analysis protocol. 
 
 Some places to dig into this
 
@@ -64,7 +64,7 @@ corrplot(cor_matrix, method="circle", type="upper", cl.pos="b", tl.pos="d", tl.c
 ```
 
 
-COMMENTS: 
+__COMMENTS: The data sits mostly withing the same range but has high variance. The correlations betweeen data is mostly negative (red)__
 
 
 <br>
@@ -83,7 +83,7 @@ boston_scaled<-as.data.frame(boston_scaled)
 class(boston_scaled)
 ```
 
-COMMENTS: All The mean values are zero and the variance has been mimnimized.   
+__COMMENTS: All The mean values are zero and the variance has been mimnimized.__   
 <br>
 __*creating a categorical variable from crim to crime using quantiles as break points and dividing dataset to training and testing sets (20% and 80% respectively).*__ 
 ```{r}
