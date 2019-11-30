@@ -1,0 +1,245 @@
+## Dimensionality reduction techniques
+
+
+large selection of statistical methods making the world less messy - we reduce the dimensions to getter a better picture. 
+
+
+Some places to dig into this
+
+- 
+
+***
+<br>
+#### The Data wrangling 
+
+<br>
+The packages justncase
+```{r libraries, results='hide',message=FALSE}
+library(psych)
+library(pastecs)
+library(tidyr)
+library(dplyr)
+library(GGally)
+library(ggpubr)
+library(ggplot2)
+library(skimr)
+library(DataExplorer)
+library(stringr)
+library(corrplot)
+```
+<br>
+<br>
+__A "biref" summary of the steps taken with R scripts displayed here on Data wrangling__
+
+
+__Reading data__
+```{r}
+human <- read.csv("http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/human1.txt", sep  =",", header = T)
+dim(human)
+```
+<br>
+__Mutate the data (#1)__
+
+```{r}
+
+str(human$GNI)
+str_replace(human$gni, pattern=",", replace ="") %>% as.numeric
+
+```
+
+
+Expolring datasets with R
+
+- head() *displays the first 6 rows by default*
+- dim() *displays the type and a preview of all columns as a row*
+- glimpse() *display a vertical preview of the datase (pkg dplyr)*
+- summary() *displays data type and attributes which are especially useful for numeric attributes*
+- skim() *good addition to the summary function (pkg skimr)*
+- DataExplorer *fast track exploration try out using line "DataExplorer::create_report() works better in R cause issues with pandoc??* 
+
+
+<br>
+__Exclude the unneeded variables (#2)__
+```{r}
+keep <- c("Country", "Edu2.FM", "Labo.FM", "Life.Exp", "Edu.Exp", "GNI", "Mat.Mor", "Ado.Birth", "Parli.F")
+human <- select(human, one_of(keep))
+dim(human)
+```
+<br>
+__Remove all rows with missing values (#3)__
+```{r}
+complete.cases(human)
+data.frame(human[-1], comp = complete.cases(human))
+human_ <- filter(human, complete.cases(human))
+dim(human_)
+```
+
+<br>
+__Remove observations not relating to countries (#4)__
+```{r}
+tail(human_, 10)
+last <- nrow(human_) - 7
+human_ <- human[1:last, ]
+dim(human_)
+```
+<br>
+__Define the row names of the data by the country names (#5)__
+```{r}
+rownames(human_) <- human_$Country
+human_ <- human_[-1]
+dim(human_)
+colnames(human_)
+```
+
+
+__Saving file with rownames__
+```{r}
+write.csv(human_, file = "humandata.csv", row.names = TRUE)
+
+```
+
+<br>
+
+#### The Data Analysis
+
+<br>
+__graphical overview of the data and summaries of the variables__
+
+```{r}
+human <- read.csv("http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/human2.txt", header = TRUE, sep = ",")
+head(human)
+summary(human)
+ggpairs(human)
+cor(human) %>% corrplot
+```
+
+COMMENTS:
+
+
+
+
+
+<br>
+__PCA Analysis__
+<br>
+__*from non-standardized data*__
+```{r}
+pca_human1 <- prcomp(human)
+s1 <- summary(pca_human1)
+#rounding to prencentages
+pca_pr1 <- round(100*s1$importance[2,], digits = 1) 
+pca_pr1
+pc_lab1 <- paste0(names(pca_pr1), " (", pca_pr1, "%)")
+biplot(pca_human1, cex = c(0.8, 1), col = c("grey40", "deeppink2"), xlab = pc_lab1[1], ylab = pc_lab1[2])
+
+```
+
+
+COMMENTS: 
+
+All features are seemingly pointing towards the PC2 -component and thus contributing mainly to it with the raw data.
+
+
+
+<br>
+__*from standardized data*__
+```{r}
+human_std <- scale(human)
+pca_human2 <- prcomp(human_std)
+s2 <- summary(pca_human2)
+#roubding to precentages
+pca_pr2 <- round(100*s2$importance[2,], digits = 1) 
+pca_pr2
+pc_lab2 <- paste0(names(pca_pr2), " (", pca_pr2, "%)")
+biplot(pca_human2, cex = c(0.8, 1), col = c("grey40", "deeppink2"), xlab = pc_lab2[1], ylab = pc_lab2[2])
+
+```
+
+
+COMMENTS: 
+
+
+
+
+<br>
+
+
+__MCA Analysis (#5)__
+<br>
+__Loading data (tea data / FactoMineR) and visualizations and summaries__
+
+
+
+This ted dataset is from a package __FactoMiner__.
+
+- [R Documentation](https://www.rdocumentation.org/packages/FactoMineR/versions/1.42)
+
+- [FactoMiner site](http://factominer.free.fr/)
+
+- [Cran site](https://cran.r-project.org/web/packages/FactoMineR/index.html)
+
+- 36 variables from using 18 questions from 300 individuals on tea habbits.
+
+
+Script: loading data and visualizations.
+```{r}
+library(FactoMineR)
+
+data(tea)
+dim(tea)
+head(tea)
+#ggpairs(tea)
+#cor(tea) %>% corrplot
+
+```
+
+
+
+
+
+
+COMMENTS:
+
+
+
+
+
+
+
+__MCA Analysis of selected variables__
+
+```{r}
+# Looking at the selected data
+keep_columns <- c("Tea", "How", "lunch", "relaxing", "healthy", "effect.on.health" )
+tea_time <- select(tea, one_of(keep_columns))
+summary(tea_time)
+gather(tea_time) %>% ggplot(aes(value)) + facet_wrap("key", scales = "free") + geom_bar() + theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 7))
+head(tea_time)
+#ggpairs(tea)
+
+```
+
+
+
+
+
+
+```{r}
+# multiple correspondence analysis
+mca <- MCA(tea_time, graph = FALSE)
+# summary of the model
+summary(mca)
+# visualize MCA
+plot(mca, invisible=c("ind"), habillage = "quali")
+
+```
+
+COMMENTS: 
+
+
+
+
+
+
+
+
