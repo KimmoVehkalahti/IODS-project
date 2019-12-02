@@ -4,7 +4,7 @@
 large selection of statistical methods making the world less messy - we reduce the dimensions to getter a better picture. 
 
 
-Some places to dig into this
+
 
 - 
 
@@ -62,7 +62,7 @@ Expolring datasets with R
 __Exclude the unneeded variables (#2)__
 ```{r}
 keep <- c("Country", "Edu2.FM", "Labo.FM", "Life.Exp", "Edu.Exp", "GNI", "Mat.Mor", "Ado.Birth", "Parli.F")
-human <- select(human, one_of(keep))
+human <- dplyr::select(human, one_of(keep))
 dim(human)
 ```
 <br>
@@ -113,7 +113,7 @@ ggpairs(human)
 cor(human) %>% corrplot
 ```
 
-COMMENTS:
+__COMMENTS: The data displays quite obvious negative correlations among maternl morbitity mratio and the educational factors to life expectansy at birth. This data displays similar associations as the data fro WHO reprts very well seen if one uses GapMinder.__ 
 
 
 
@@ -156,7 +156,7 @@ biplot(pca_human2, cex = c(0.8, 1), col = c("grey40", "deeppink2"), xlab = pc_la
 ```
 
 
-COMMENTS: 
+__COMMENTS: The precentage of females in parliament and labor force factors show closer clustering compared to other factors.__ 
 
 
 
@@ -192,15 +192,6 @@ head(tea)
 #cor(tea) %>% corrplot
 
 ```
-
-
-
-
-
-
-COMMENTS:
-
-
 
 
 
