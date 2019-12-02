@@ -1,6 +1,6 @@
 ---
 title: "IODS course project"
-author: Omolara
+author: Omolara.M
 output:
   html_document:
     theme: cosmo

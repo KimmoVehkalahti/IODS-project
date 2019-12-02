@@ -6,8 +6,8 @@ output: html_document
 ---
 
 
-# 3. Dimensionality reduction techniques
-## 3.1 Graphical representation of the data
+# 5. Dimensionality reduction techniques
+## 5.1 Graphical representation of the data
 ```{r include=FALSE}
 human <- readxl::read_excel("~/IODS-project/human_.xlsx")
 str(human)
@@ -37,7 +37,7 @@ parl = share of female representatives in the national parliament.
 
 There is a positive correlation between expectected years of education(edu.x) and adolescent brith rate(birthR), also between maternal mortality rate(mort) and adolescent birth rate(birthR). A negative correlation between ratio of Female and Male populations with secondary education in each country(edu.y) and maternal mortality rate(mort).
 
-## 3.2 Principal component analysis
+## 5.2 Principal component analysis
 Not standardize human data
 ```{r}
 pca_human <- prcomp(human)
@@ -73,7 +73,7 @@ There is a high positive correlation between mort and birthR with gender equalit
 There is a positive correlation between mort and birthR.
 
 
-## 3.3 Tea data set
+## 5.3 Tea data set
 ```{r}
 library(FactoMineR)
 library(tidyr)
