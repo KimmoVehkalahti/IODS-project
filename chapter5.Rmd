@@ -1,0 +1,98 @@
+---
+title: "Chapter 5"
+author: "Omolara Mofikoya"
+date: "2 12 2019"
+output: html_document
+---
+
+
+# 3. Dimensionality reduction techniques
+## 3.1 Graphical representation of the data
+```{r include=FALSE}
+human <- readxl::read_excel("~/IODS-project/human_.xlsx")
+str(human)
+summary(human)
+library(GGally)
+library(corrplot)
+ggpairs(human)
+cor_human <- cor(human)
+corrplot(cor_human)
+````
+This data has 155 observation and 8 variables. The variables are:
+edu.y = ratio of Female and Male populations with secondary education in each country (i.e. edu2F / edu2M).
+
+lab = ratio of labour force participation of females and males in each country (i.e. labF / labM).
+
+birth = Life expentency at birth.
+
+edu.x = Expected years of education.
+
+income = gross national income (GNI) per capita (dollars, purchasing power parity).
+
+mort = maternal mortality rate.
+
+birthR = adolescent birth rate.
+
+parl = share of female representatives in the national parliament.
+
+There is a positive correlation between expectected years of education(edu.x) and adolescent brith rate(birthR), also between maternal mortality rate(mort) and adolescent birth rate(birthR). A negative correlation between ratio of Female and Male populations with secondary education in each country(edu.y) and maternal mortality rate(mort).
+
+## 3.2 Principal component analysis
+Not standardize human data
+```{r}
+pca_human <- prcomp(human)
+s_pca_human <- summary(pca_human)
+pca_pr <- round(100*s_pca_human$importance[2, ], digits = 1)
+# create object pc_lab to be used as axis labels
+paste0(names(pca_pr), " (", pca_pr, "%)")
+pc_lab <- paste0(names(pca_pr), " (", pca_pr, "%)")
+# draw a biplot
+biplot(pca_human, cex = c(0.8, 1), col = c("grey40", "deeppink2"), xlab = pc_lab[1], ylab = pc_lab[2])
+
+````
+
+Standardized human data
+```{r}
+human_std <- scale(human)
+summary(human_std)
+pca_human <- prcomp(human_std)
+s_pca_human <- summary(pca_human)
+pca_pr <- round(100*s_pca_human$importance[2, ], digits = 1)
+paste0(names(pca_pr), " (", pca_pr, "%)")
+pc_lab <- paste0(names(pca_pr), " (", pca_pr, "%)")
+# draw a biplot
+biplot(pca_human, cex = c(0.8, 1), col = c("grey40", "deeppink2"), xlab = pc_lab[1], ylab = pc_lab[2])
+````
+
+The data that was not standardize does not give much information about the variation of the data.
+
+For the standardized data. PC2 contributes to the variables about gender equality (parl and lab). While PC2 contributes to the other variables. Most of the variance in the data comes from PC1.
+
+There is a high positive correlation between mort and birthR with gender equality.
+
+There is a positive correlation between mort and birthR.
+
+
+## 3.3 Tea data set
+```{r}
+library(FactoMineR)
+library(tidyr)
+library(dplyr)
+data("tea")
+glimpse(tea)
+keep_columns <- c("Tea", "How", "how", "sugar", "where", "lunch")
+#tea_time <- dplyr::select(tea, one_of(keep_columns))
+tea_time <- dplyr::select(tea,one_of(keep_columns))
+glimpse(tea_time)
+summary(tea_time)
+str(tea_time)
+dim(tea_time)
+gather(tea_time) %>% ggplot(aes(value)) + geom_bar() + facet_wrap("key", scales = "free") + theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8))
+````
+
+```{r}
+mca <- MCA(tea_time, graph = FALSE)
+summary(mca)
+plot(mca, invisible=c("ind"), habillage = "quali")
+````
+
