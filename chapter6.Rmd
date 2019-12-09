@@ -1,0 +1,408 @@
+## Analysis of longitudinal data
+
+
+How to work with repoeated measurements. The use of linear mixed effects models. A field challenging but necessary to see the effect of time on individuals with repeated measurements. 
+
+Some places to dig into this
+
+- 
+
+***
+<br>
+#### The Data wrangling 
+
+<br>
+The packages justncase
+```{r libraries, results='hide',message=FALSE}
+library(psych)
+library(pastecs)
+library(tidyr)
+library(dplyr)
+library(GGally)
+library(ggpubr)
+library(ggplot2)
+library(skimr)
+library(DataExplorer)
+library(lme4)
+library(stringr)
+library(corrplot)
+
+```
+<br>
+<br>
+__A "biref" summary of the steps taken with R scripts displayed here on Data wrangling__
+
+
+__Reading and short explorations
+```{r}
+BPRS <- read.csv("https://raw.githubusercontent.com/KimmoVehkalahti/MABS/master/Examples/data/BPRS.txt", sep  = " ", header = T)
+
+RATS <- read.csv("https://raw.githubusercontent.com/KimmoVehkalahti/MABS/master/Examples/data/rats.txt", sep  = "\t", header = T)
+# better loaded with "import dataset and used whitespace as separator
+
+head(BPRS)
+colnames(BPRS)
+str(BPRS)
+
+head(RATS)
+colnames(RATS)
+str(RATS)
+
+#Saving data 
+write.table(RATS, file = "rats_original.txt")
+write.table(BPRS, file = "bprs_original.txt")
+
+```
+<br>
+
+COMMENTS AND DATA DESCRIPTION:
+
+"In the first part we will dwelve in to the BPRS data, in which 40 male subjects were randomly assigned to one of two treatment groups and each subject was rated on the brief psychiatric rating scale (BPRS) measured before treatment began (week 0) and then at weekly intervals for eight weeks. The BPRS assesses the level of 18 symptom constructs such as hostility, suspiciousness, hallucinations and grandiosity; each of these is rated from one (not present) to seven (extremely severe). The scale is used to evaluate patients suspected of having schizophrenia."
+
+
+<br>
+__Using mutate to convert the kategorials in data to vectors (#2)__
+
+The categorial variables found in BPRS (treatment and subject) and (Group) in the dataset of RATS transformend to vectors 
+```{r}
+#BPRRSL data
+BPRS$treatment <- factor(BPRS$treatment)
+BPRS$subject <- factor(BPRS$subject)
+
+#RATS data
+RATS$Group <- factor(RATS$Group)
+RATS$ID <- factor(RATS$ID)
+```
+
+
+
+__Conversion of datasets  to long form and adding a (weeks) variable to BPRS and a (Time) variable to RATS and Explorations of wide vs long forms of data (#3, #4)__
+```{r}
+#BPRRSLong data
+BPRSL <-  BPRS %>% gather(key = weeks, value = bprs, -treatment, -subject)
+
+BPRSL <-  BPRSL %>% mutate(week = as.integer(substr(weeks,5,5)))
+#checking up
+head(BPRS)
+head(BPRSL)
+dim(BPRS)
+dim(BPRSL)
+ggplot(BPRSL, aes(x = week, y = bprs, linetype = subject)) +
+  geom_line() +
+  scale_linetype_manual(values = rep(1:10, times=4)) +
+  facet_grid(. ~ treatment, labeller = label_both) +
+  theme(legend.position = "none") + 
+  scale_y_continuous(limits = c(min(BPRSL$bprs), max(BPRSL$bprs)))
+
+#RATSLong data
+
+RATSL <- RATS %>%
+  gather(key = WD, value = Weight, -ID, -Group) %>%
+  mutate(Time = as.integer(substr(WD,3,4))) 
+#checking up
+head(RATS)
+head(RATSL)
+dim(RATS)
+dim(RATSL)
+ggplot(RATSL, aes(x = Time, y = Weight, group = ID)) +
+  geom_line(aes(linetype = Group)) +
+  scale_x_continuous(name = "Time (days)", breaks = seq(0, 60, 10)) +
+  scale_y_continuous(name = "Weight (grams)") +
+  theme(legend.position = "top")
+View(RATSL)
+View(BPRSL)
+```
+
+<br>
+<br>
+
+###__ANALYSIS__ 
+<br>
+####__Analysis of Longitudinal Data I (RATSL): Graphical Displays and Summary Measure Approach__
+<br>
+
+The dataset consist of individual rats weight measurements from da1 to day 64 with a total of 11 days expressed while on 3 different supplements in their diets. 
+
+Instructions:Implement the analyses of Chapter 8 of MABS using the RATS data. (0-7 points: 0-4 points for graphs or analysis results + 0-3 points for their interpretations).
+
+
+Same dataset also found here, [link](https://rdrr.io/cran/R330/man/rats.df.html#heading-3)
+
+
+Table 1. Measuremets from RATS dataset.
+```{r}
+view(RATSL)
+
+```
+<br>
+
+
+
+```{r}
+#RATS data ggplot
+
+ggplot(RATSL, aes(x = Time, y = Weight, linetype = ID)) +
+  geom_line() +
+  scale_linetype_manual(values = rep(1:16, times=4)) +
+  facet_grid(. ~ Group, labeller = label_both) +
+  theme(legend.position = "none") + 
+  scale_y_continuous(limits = c(min(RATSL$Weight), max(RATSL$Weight)))
+
+```
+__Figure 1. The weight of individual rats in three groups__.
+<br>
+__COMMENTS: The weight of these rats vary between groups and to the best of my knowledge, I would say group 1 are really one ones. The slope is still more steep with groups 2 and 3 , but would be nice to evaluate the relative weight gain (delta value). The groups also differ in size this makes the comparison of variances very difficult (#ID).__
+<br>
+
+
+```{r}
+#RATSL data
+# Standardise the variable bprs
+RATSL <- RATSL %>%
+  group_by(Group) %>%
+  mutate(stweight = (Weight - mean(Weight))/sd(Weight) ) %>%
+  ungroup()
+
+ggplot(RATSL, aes(x = Time, y = stweight, linetype = ID)) +
+  geom_line() +
+  scale_linetype_manual(values = rep(1:16, times=4)) +
+  facet_grid(. ~ Group, labeller = label_both) +
+  theme(legend.position = "none") + 
+  scale_y_continuous(name = "standardized weight")
+
+```
+__Figure 2. The weight of individual rats in three groups with standardized values__.
+<br>
+
+__COMMENTS: The standardized values are better evaluated between groups due to high differences in the initial levels.__ 
+
+<br>
+
+
+
+
+
+
+```{r}
+#Additional plots
+# Number of weeks, baseline (week 0) included
+n <- RATSL$Time %>% unique() %>% length()
+# Summary data with mean and standard error of bprs by treatment and week 
+RATSS <- RATSL %>%
+  group_by(Group, Time) %>%
+  summarise(mean = mean(Weight), se = sd(Weight)/sqrt(n)) %>%
+  ungroup()
+
+ggplot(RATSS, aes(x = Time, y = mean, linetype = Group, shape = Group)) +
+  geom_line() + scale_linetype_manual(values = c(1,2,3)) +
+  geom_point(size=3) + scale_shape_manual(values = c(1,2,3)) + geom_errorbar(aes(ymin = mean - se, ymax = mean + se, linetype="1"), width=0.3) + theme(legend.position = c(0.9,0.5)) + scale_y_continuous(name = "mean(weight) +/- se(weight)")
+
+```
+__Figure 3. Mean weight profile in groups of rats (Time in days).__ 
+<br>
+
+
+
+
+
+
+
+```{r}
+# Create a summary data by G anroupd subject with mean as the summary variable (ignoring baseline week 0).
+RATSL8S <- RATSL %>%
+  filter(Time > 0) %>%
+  group_by(Group, ID) %>%
+  summarise( mean=mean(Weight) ) %>%
+  ungroup()
+
+# Draw a boxplot of the mean versus Group
+ggplot(RATSL8S , aes(x = Group, y = mean)) +
+  geom_boxplot() +
+  stat_summary(fun.y = "mean", geom = "point", shape=23, size=2, fill = "white") +
+  scale_y_continuous(name = "mean(weight), Time (days) 0-70")
+
+```
+__Figure 4a. Boxblot of weights in groups of rats.__ 
+<br>
+__COMMENTS: The boxblot shows and outliar in the second group that could contribute to the data mean significantly. Other outliars in groups should not be removed based on their distributions within other groups values.__
+
+<br>
+
+```{r}
+# Create a new data by filtering the outlier and plot again 
+RATSL8S1 <- RATSL8S %>%
+  filter(mean < 560)
+ggplot(RATSL8S1 , aes(x = Group, y = mean)) +
+  geom_boxplot() +
+  stat_summary(fun.y = "mean", geom = "point", shape=23, size=2, fill = "white") +
+  scale_y_continuous(name = "mean(weight), Time (days) 0-70")
+```
+__Figure 4b. Boxblot of weights in groups of rats without the outliar in Group 2.__ 
+ 
+<br>
+__COMMENTS: The variations are now more equal.__ 
+
+
+<br>
+
+
+__Table 2. Two sample t-test with or without the outliar. 
+
+
+STATISTICAL TESTING RATS GROUP
+
+
+```{r}
+#t.test(mean ~ Group, data = RATSL8S, var.equal = 
+levels(RATSL8S1$Group)
+ggboxplot(RATSL8S1, x = "Group", y = "mean", 
+          color = "Group", palette = c("#00AFBB", "#E7B800", "#FC4E07"),
+          order = c("1", "2", "3"),
+          ylab = "Weight", xlab = "Group")
+
+ggline(RATSL8S1, x = "Group", y = "mean", 
+       add = c("mean_se", "jitter"), 
+       order = c("1", "2", "3"),
+       ylab = "Weight", xlab = "Group")
+
+# Compute the analysis of variance
+res.aov2 <- aov(mean ~ Group, data = RATSL8S1)
+# Summary of the analysis
+summary(res.aov2) 
+res.aov1 <- aov(mean ~ Group, data = RATSL8S)
+# Summary of the analysis
+summary(res.aov1) 
+#anova(mean ~ Group, data = RATSL8S1, var.equal = TRUE)
+#TukeyHSD(res.aov)
+#summary(glht(res.aov, linfct = mcp(group = "Tukey")))
+```
+
+
+
+__COMMENTS:
+
+
+
+
+
+
+
+```{r}
+# Add the baseline from the original data 
+RATSL8S2 <- RATSL8S %>%
+  mutate(baseline = RATS$WD1)
+# Fit the linear model with the mean as the response 
+fit <- lm(mean ~ baseline + Group, data = RATSL8S2)
+# Compute the analysis of variance table for the fitted model with anova()
+anova(fit)
+
+```
+
+__COMMENTS: The baseline values of weight are significantly related to the differences in weight between the groups, but now the signicance previously observed in the performance of group 2 is lost (just and just).__
+
+
+
+
+
+<br>
+#### Analysis of Longitudinal Data II (BPRS): Linear Mixed Effects Models for Normal Response Variables
+<br>
+
+The data used in here is from 40 male subjects randomly assigned into two groups with different treatments for 8 weeks. The outcome measured was brief psychiatric rating scale, hence the abberviation (BPRS). 
+
+Instructions: Implement the analyses of Chapter 9 of MABS using the BPRS data. (0-8 points: 0-4 points for graphs or analysis results + 0-4 points for their interpretations).
+
+
+```{r}
+ggplot(BPRSL, aes(x = week, y = bprs, linetype = subject)) +
+  geom_line() +
+  scale_linetype_manual(values = rep(1:10, times=4)) +
+  facet_grid(. ~ treatment, labeller = label_both) +
+  theme(legend.position = "none") + 
+  scale_y_continuous(limits = c(min(BPRSL$bprs), max(BPRSL$bprs)))
+
+# MORE VISUALIZATIONS
+
+
+
+
+
+
+
+```
+__Figure X. Linegraph representing all subjects pbrs score during the treatment.__
+<br>
+<br>
+
+
+__Fitting Linear Mixed Models to the BPRS Data__
+<br>
+```{r}
+# create a regression model PBRS_reg
+BPRS_reg <- lm(bprs ~ week + treatment, data = BPRSL)
+
+# print out a summary of the model
+summary(BPRS_reg)
+
+
+
+```
+
+
+__COMMENTS: Time explains more significantly the prediction power of this model.__ 
+
+
+
+<br>
+
+__Results from Fitting Random Intercept Model, with Time and Group as Explanatory Variables, to BPRS Data__
+
+```{r}
+# Create a random intercept model
+BPRS_ref <- lmer(bprs ~ week + treatment + (1 | subject), data = BPRSL, REML = FALSE)
+# Print the summary of the model
+summary(BPRS_ref)
+```
+
+
+
+
+
+__Results from Fitting the Random Intercept and Slope Model, with Time and Group as Explanatory Variables, to the BPRS Data__
+
+```{r}
+# create a random intercept and random slope model
+BPRS_ref1 <- lmer(bprs ~ week + treatment + (week | subject), data = BPRSL, REML = FALSE)
+
+# print a summary of the model
+summary(BPRS_ref1)
+
+# perform an ANOVA test on the two models
+anova(BPRS_ref1, BPRS_ref)
+```
+
+
+
+
+
+<br>
+__Other analyses__
+```{r}
+# create a random intercept and random slope model
+BPRS_ref2 <- lmer(bprs ~ week * treatment + (week | subject), data = BPRSL, REML = FALSE)
+# print a summary of the model
+summary(BPRS_ref2)
+
+# perform an ANOVA test on the two models
+anova(BPRS_ref2, BPRS_ref1)
+```
+
+
+
+
+
+
+
+
+
+
