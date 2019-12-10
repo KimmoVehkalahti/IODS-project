@@ -12,6 +12,7 @@ The data is based on the brief psychiatric rating scale (BPRS) measured before t
 Treatment variable is either 1 or 2 and it tells which was the taken treatment. Subject refers to patient ids and week to the measurement week.  Ratings are done during 9 weeks and for each patient both treatments are done.
 
 Ten data is first loaded in a wide form. The basic checks show 40 rows and 11 variables. Weeks are rows in the data. In the wide data format there is a single row for every data point with multiple columns to hold the values of various attributes.
+
 ```{r setup, include=FALSE}
 BPRS <- read.table("https://raw.githubusercontent.com/KimmoVehkalahti/MABS/master/Examples/data/BPRS.txt", sep  =" ", header = T)
 names(BPRS)
