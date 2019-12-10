@@ -1,0 +1,193 @@
+---
+title: "chapter6"
+author: "Omolara Mofikoya"
+date: "10 12 2019"
+output: html_document
+---
+
+
+# 6. Analysis of longitudinal data
+The data is based on the brief psychiatric rating scale (BPRS) measured before the beginning of treatment and then at weekly intervals for eight weeks. It assesses the level of 18 symptom constructs each of these is rated from one (not present) to seven (extremely severe). The scale is used to evaluate patients suspected of having schizophrenia.
+
+Treatment variable is either 1 or 2 and it tells which was the taken treatment. Subject refers to patient ids and week to the measurement week.  Ratings are done during 9 weeks and for each patient both treatments are done.
+
+Ten data is first loaded in a wide form. The basic checks show 40 rows and 11 variables. Weeks are rows in the data. In the wide data format there is a single row for every data point with multiple columns to hold the values of various attributes.
+```{r setup, include=FALSE}
+BPRS <- read.table("https://raw.githubusercontent.com/KimmoVehkalahti/MABS/master/Examples/data/BPRS.txt", sep  =" ", header = T)
+names(BPRS)
+#glimpse(BPRS)
+str(BPRS)
+summary(BPRS)
+```
+The same is done to the RATS data. The RATS data is collected in a nutrition study conducted in three groups of rats. The groups were put on different diets, and each animal’s body weight (grams) was recorded repeatedly (approximately) weekly, except in week seven when two recordings were taken) over a 9-week period. 
+
+```{r}
+RATS <- read.table("https://raw.githubusercontent.com/KimmoVehkalahti/MABS/master/Examples/data/rats.txt", header = TRUE, sep = '\t')
+#data BPRS
+
+
+#data RATS
+str(RATS)
+names(RATS)
+#glimpse(RATS)
+summary(RATS)
+```
+
+ In the long format, for each data point, there are as many rows as the number of attributes and each row contains the value of a particular attribute for a given data point.
+
+In RATS, there are now 5 variables and 176 observations. In the wide format, there were 16 rows and 13 columns. 
+```{r}
+library(dplyr)
+library(tidyr)
+#convert variables to factors
+BPRS$treatment <- factor(BPRS$treatment)
+BPRS$subject <- factor(BPRS$subject)
+
+#convert to long form
+#BPRS %>% gather(key = weeks, value = bprs, -treatment, -subject)
+#BPRSL <- BPRSL %>% mutate(week = as.integer(substr(weeks,5,5)))
+# Convert to long form
+BPRSL <-  BPRS %>% gather(key = weeks, value = bprs, -treatment, -subject)
+
+# Extract the week number
+BPRSL <-  BPRSL %>% mutate(week = as.integer(substr(weeks,5,5)))
+
+#look at the data
+names(BPRSL)
+str(BPRSL)
+glimpse(BPRSL)
+summary(BPRSL)
+```
+````{r}
+# RATS data, convert variable to factor
+RATS$ID <- factor(RATS$ID)
+RATS$Group <- factor(RATS$Group)
+
+#convert to long form
+RATSL <- RATS %>%
+  gather(key = WD, value = Weight, -ID, -Group) %>%
+  mutate(Time = as.integer(substr(WD,3,4))) 
+#look at the data
+names(RATSL)
+str(RATSL)
+glimpse(RATSL)
+summary(RATSL)
+```
+## 6.1 Analysis
+````{r}
+
+library(ggplot2)
+
+
+ggplot(BPRSL, aes(x = week, y = bprs, linetype = subject)) +
+  geom_line() +
+  scale_linetype_manual(values = rep(1:10, times=4)) +
+  facet_grid(. ~ treatment, labeller = label_both) +
+  theme(legend.position = "none") + 
+  scale_y_continuous(limits = c(min(BPRSL$bprs), max(BPRSL$bprs)))
+```
+The people that had an high score at the beginning, tend to continnue with an high score ton the end, to view this properly the data has to be standardised.
+
+````{r}
+library(dplyr)
+library(tidyr)
+BPRSL <- BPRSL %>%
+  group_by(week) %>%
+  mutate(stdbprs = (bprs - mean(bprs))/sd(bprs) ) %>%
+  ungroup()
+
+
+glimpse(BPRSL)
+
+
+ggplot(BPRSL, aes(x = week, y = stdbprs, linetype = subject)) +
+  geom_line() +
+  scale_linetype_manual(values = rep(1:10, times=4)) +
+  facet_grid(. ~ treatment, labeller = label_both) +
+  scale_y_continuous(name = "standardized bprs")
+```
+##Simple linear model
+
+```{r}
+BPRS_lm <- lm(bprs ~ treatment + week, data = BPRSL)
+summary(BPRS_lm)
+```
+## Random intercept model
+```{r}
+library(lme4)
+BPRS_ref <- lmer(bprs ~ week + treatment + (1 | subject), data = BPRSL, REML = FALSE)
+
+summary(BPRS_ref)
+```
+
+```{r}
+BPRS_ref1 <- lmer(bprs ~ week + treatment + (week | subject), data = BPRSL, REML = FALSE)
+
+
+anova(BPRS_ref1, BPRS_ref)
+```
+
+```{r}
+BPRS_ref1 <- lmer(bprs ~ week * treatment + (week | subject), data = BPRSL, REML = FALSE)
+
+
+anova(BPRS_ref1, BPRS_ref)
+````
+
+## RATS Data
+````{r}
+library(ggplot2)
+ggplot(RATSL, aes(x = Time, y = Weight, linetype = ID)) +
+  geom_line() +
+  scale_linetype_manual(values = rep(1:10, times=4)) +
+  facet_grid(. ~ Group, labeller = label_both) +
+  theme(legend.position = "right") + 
+  scale_y_continuous(limits = c(min(RATSL$Weight), max(RATSL$Weight)))
+```
+We can see the gifference between the 3 groups, Group 1 has lower weights compared to group 2 and group 3
+Let's standardize the data
+
+
+```{r}
+RATSL <- RATSL %>%
+  group_by(Time) %>%
+  mutate(stdweight = (Weight - mean(Weight))/sd(Weight)) %>%
+  ungroup()
+ggplot(RATSL, aes(x = Time, y = stdweight, linetype = ID)) +
+  geom_line() +
+  scale_linetype_manual(values = rep(1:10, times=4)) +
+  facet_grid(. ~ Group, labeller = label_both) +
+  scale_y_continuous(name = "standardized weight")
+```
+
+```{r}
+n <- RATSL$Time %>% unique() %>% length()
+
+RATSS <- RATSL %>%
+  group_by(Group, Time) %>%
+  summarise( mean = mean(Weight), se = (sd(Weight)/sqrt(n)) ) %>%
+  ungroup()
+
+ggplot(RATSS, aes(x = Time, y = mean, linetype = Group, shape = Group)) +
+  geom_line() +
+  scale_linetype_manual(values = c(1,2, 3)) +
+  geom_point(size=3) +
+  scale_shape_manual(values = c(1,2 ,3)) +
+  #geom_errorbar(aes(ymin=mean-se, ymax=mean+se, linetype="1"), width=0.3) +
+  theme(legend.position = c(0.8,0.8)) +
+  scale_y_continuous(name = "mean(Weight) +/- se(Weight)")
+```
+```{r}
+ggplot(RATSS, aes(x = Group, y = mean)) +
+  geom_boxplot() +
+  stat_summary(fun.y = "mean", geom = "point", shape=23, size=4, fill = "white") + scale_y_continuous(name = "mean(Weight), days 1-64")
+```
+
+```{r}
+library(lme4)
+
+
+RATS_ref <- lmer(Weight ~ Time + Group + (1 | ID), data = RATSL, REML = FALSE)
+
+summary(RATS_ref)
+```
