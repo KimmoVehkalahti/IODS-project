@@ -1,13 +1,3 @@
-# Insert chapter 2 title here
-
-*Describe the work you have done this week and summarize your learning.*
-
-- Describe your work and results clearly. 
-- Assume the reader has an introductory course level understanding of writing and reading R code as well as statistical methods.
-- Assume the reader has no previous knowledge of your data or the more advanced methods you are using.
-
-```{r}
-date()
 ####################################
 ### Jussi Pekka Vehviläinen 08112022
 ### IODS 2022 Exercise set 2
@@ -132,7 +122,7 @@ Multiple R-squared is the proportion of the variation in dependent variable that
 # Study more our model with diagnostic plots
 plot(my_model3, which=c(1,2,5))
 
-# From the Residual vs leveragre plot we can check which and how many of observation are influential. In our case data seems good and there isnt any point outside Cook distance lines.
+# From the Residual vs leveragre plot we can check which and how many of observation are influential. In our case data seems good and there isn't any point outside Cook distance lines.
 # Also residual vs Fitted plot seems good. Data is divided evenly in x - and y-axel.
 # QQ-plot also indicates goodness of our model. If the points runs out too early from the line, there migth be some other variables effecting our relationship more than the Attitude variable.
-#In this case QQplot seems to be really nice, but no perfect.
+# In this case QQplot seems to be really nice, but no perfect.
