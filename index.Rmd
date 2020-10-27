@@ -1,5 +1,6 @@
 ---
 title: "IODS course project"
+author: "Liyuan E"
 output:
   html_document:
     theme: cosmo
