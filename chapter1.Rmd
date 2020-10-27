@@ -10,4 +10,5 @@ date()
 
 ```
 The text continues here.
+
 I feel that this course would be a challenging experience for me, since I am a beginner of R. I would like to learn something that I can use in my own study and research that can improve my working efficiency. I select this course from WebOodi and was attracted by the introduction of the course.
