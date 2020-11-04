@@ -1,4 +1,4 @@
-# started to be hooked
+# continue to be amazed
 
 *I did finally realized that the editing and commiting was in the github not in RStudio, I was desperate even though I was trying to understand, I hope this will begin to be simple now.*
 
