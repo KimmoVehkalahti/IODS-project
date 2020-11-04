@@ -4,7 +4,7 @@
 
 - I installed R, then RStudio and finally Git, I created an account and tried to update my profile. 
 - I learned how to execute some data camp stuff.
-- I could say that this project is designated to people who would like to share their project to public so that others can use them also or for team work so that they can edit together a specifi project.
+- I could say that this project is designated to people who would like to share their project to public so that others can use them also or for team work so that they can share and edit together a specific project.
 
 ```{r}
 date()
