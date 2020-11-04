@@ -1,11 +1,11 @@
 
 # IODS project
 
-*Trying to learn something new.*
+*Trying to learn something new.the link to my github is: https://github.com/sanaakadi/IODS-projechttps-github.com-sanaakadi-IODS-project-settingst*
 
 ```{r}
 # This is a so-called "R chunk" where you can write R code.
-https://github.com/sanaakadi/IODS-projechttps-github.com-sanaakadi-IODS-project-settingst
+
 date()
 
 ```
