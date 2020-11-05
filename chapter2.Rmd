@@ -48,3 +48,5 @@ Command is like below:
 
 par(mfrow = c(2,2))
 plot(my_model, which = c(1,2,5))
+
+It is really challenging for me!
