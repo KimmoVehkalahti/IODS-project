@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 
+
 <html>
 
 <head>
@@ -451,9 +452,8 @@ summary {
 <pre class="r"><code># This is a so-called &quot;R chunk&quot; where you can write R code.
 
 date()</code></pre>
-<pre><code>## [1] &quot;Thu Oct 29 11:15:37 2020&quot;</code></pre>
-<p>The text continues here.</p>
-<p>I really feel that this course would be a challenging experience for me, since I am a beginner of R. I would like to learn something that I can use in my own study and research that can improve my working efficiency. I select this course from WebOodi and was attracted by the introduction of the course.</p>
+<pre><code>## [1] &quot;Thu Nov 05 22:52:10 2020&quot;</code></pre>
+<p>I really feel that this course would be a challenging experience for me, since I am a beginner of R. I would like to learn something that I can use in my own study and research that can improve my working efficiency. I select this course from WebOodi and was attracted by the introduction of the course. The link to my GitHub repository: <a href="https://github.com/Liyuan202/IODS-project" class="uri">https://github.com/Liyuan202/IODS-project</a></p>
 <hr />
 </div>
 <div id="insert-chapter-2-title-here" class="section level1">
@@ -465,9 +465,20 @@ date()</code></pre>
 <li>Assume the reader has no previous knowledge of your data or the more advanced methods you are using.</li>
 </ul>
 <pre class="r"><code>date()</code></pre>
-<pre><code>## [1] &quot;Thu Oct 29 11:15:37 2020&quot;</code></pre>
-<p>Here we go again…</p>
-<hr />
+<pre><code>## [1] &quot;Thu Nov 05 22:52:10 2020&quot;</code></pre>
+<p>Here we go again… First, we need to read the data by using the right command on reading the table “<a href="http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/learning2014.txt" class="uri">http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/learning2014.txt</a>”, and dim(dimension) and str(structure)is the command to see the dimensions and structures of the table. we can see that this table has 166 observations and 7 variables including “gender”,“age”,“attitude”,“deep”,“stra”, “surf” and “points”.the first six variables are the explanatory variables and the last one(points) is the dependent variable.</p>
+<p>Command is like below:</p>
+<p>lrn14 &lt;-read.table(“<a href="http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/learning2014.txt" class="uri">http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/learning2014.txt</a>”, sep = “,”, header = TRUE) dim(lrn14) str(lrn14)</p>
+<p>Second, For using the gglot2 library by the command library(ggplot2), but here the thing that we need to pay attention is that we have to install the library(gglot2) first by utilizing the command “install.packages(”ggplot2“)”. From the graphical overview showed that the intercept is around 16, and the points increased with the increased attitude, and the distribution is normal.</p>
+<p>Commands are like below:</p>
+<p>library(ggplot2) p1&lt;-ggplot(lrn14,aes(x=attitude,y=points) + ) p1&lt;-ggplot(lrn14,aes(x=attitude,y=points)) p2&lt;-p1+geom_point() p2 p3&lt;-p2+geom_smooth(method=“lm”) p4&lt;-p3+ggtitle(“student’s attitude versus exam points”) p4</p>
+<p>Third, the summary of the model: the residuals is -17.4506 (Min) and 11.4820 (Max). And attitude (p = 4.24e-08) has statistically significant relationship with points, and the p value of other explanatory variables are all above 0.05, which means they do not have significant relationship with the target variable points.</p>
+<p>Command is like below:</p>
+<p>my_model &lt;- lm(points~attitude+stra+deep, data =lrn14) summary(my_model) my_model2 &lt;- lm(points~attitude, data =lrn14) summary(my_model2)</p>
+<p>Fourth, for the model validity, the three plots all showed that the errors of the model are nomally distributed.</p>
+<p>Command is like below:</p>
+<p>par(mfrow = c(2,2)) plot(my_model, which = c(1,2,5))</p>
+<p>It is really challenging for me! <strong><em> </em></strong> ***</p>
 <p>(more chapters to be added similarly as we proceed with the course!)</p>
 </div>
 
