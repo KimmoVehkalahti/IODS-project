@@ -11,3 +11,8 @@ date()
 ```
 
 Here we go again...
+First, we need to read the data by using the right command on reading the table "http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/learning2014.txt", and dim(dimension) and str(structure)is the command to see the dimensions and structures of the table. we can see that this table has 166 observations and 7 variables including "gender","age","attitude","deep","stra", "surf" and "points".the first six variables are the explanatory variables and the last one(points) is the dependent variable.
+Second, For using the gglot2 library by the command library(ggplot2), but here the thing that we need to pay attention is that we have to install the library(gglot2) first by utilizing the command "install.packages("ggplot2")"
+From the graphical overview showed that the intercept is around 16, and the points increased with the increased attitude, and the distribution is normal.
+The summary of the model: the residuals is -17.4506 (Min) and 11.4820 (Max). And attitude (p = 4.24e-08) has statistically significant relationship with points, and the p value of other explanatory variables are all above 0.05, which means they do not have significant relationship with the target variable points.
+For the model validity, the three plots all showed that the errors of the model are nomally distributed.

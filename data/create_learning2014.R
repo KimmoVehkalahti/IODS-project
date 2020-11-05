@@ -1,0 +1,1 @@
+Liyuan E, 05.11.2020, This is the first formal exercise after the warming up in introduction to open data science 2020.
