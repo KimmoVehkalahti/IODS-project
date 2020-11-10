@@ -54,5 +54,7 @@ alc
 
 glimpse(alc)
 
+
 write.csv(alc,file="data/third_homework.csv")
+
 
