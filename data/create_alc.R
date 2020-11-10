@@ -50,11 +50,11 @@ alc <- mutate (alc, alc_use = (Dalc + Walc)/2)
 alc <- mutate (alc, high_use = alc_use > 2)
 alc
 
-# Glimpse at the joined and modified data
+# Glimpse at the joined and modified data and save
 
 glimpse(alc)
-
-
 write.csv(alc,file="data/third_homework.csv")
+
+
 
 
