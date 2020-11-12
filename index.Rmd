@@ -1,6 +1,6 @@
 ---
 title: "IODS course project"
-author: "Liyuan Ee"
+author: "Liyuan E"
 output:
   html_document:
     theme: cosmo
@@ -24,9 +24,10 @@ output:
 ```{r child = "chapter2.Rmd"}
 # This will include Chapter 2 (that is updated in its own file) in the document.
 ```
-***
-***
+
 ***
 
-(more chapters to be added similarly as we proceed with the course!)
+
+```{r child = "chapter3.Rmd"}
+# This will include Chapter 3 (that is updated in its own file) in the document.
 

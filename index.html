@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 
-
 <html>
 
 <head>
@@ -10,7 +9,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Liyuan Ee" />
+<meta name="author" content="Liyuan E" />
+
 
 
 <title>IODS course project</title>
@@ -430,7 +430,7 @@ summary {
 
 
 <h1 class="title toc-ignore">IODS course project</h1>
-<h4 class="author">Liyuan Ee</h4>
+<h4 class="author">Liyuan E</h4>
 
 </div>
 
@@ -438,7 +438,16 @@ summary {
 <ul>
 <li><a href="#introduction-to-open-data-science---course-project">Introduction to Open Data Science - Course Project</a></li>
 <li><a href="#about-the-project">About the project</a></li>
-<li><a href="#insert-chapter-2-title-here">Insert chapter 2 title here</a></li>
+<li><a href="#insert-chapter-2-title-here">Insert chapter 2 title here</a><ul>
+<li><a href="#chapter-3">Chapter 3</a></li>
+</ul></li>
+<li><a href="#read-the-datadescription-this-data-is-the-student-alcohol-consumption-data-and-there-are-37-variables-in-this-data.-i-am-going-to-select-four-variables-from-this-data-for-my-analysis.">read the data(Description: this data is the student alcohol consumption data, and there are 37 variables in this data. I am going to select four variables from this data for my analysis.)</a></li>
+<li><a href="#analysis-the-relationship-between-high-alcohol-consumption-and-age-failures-absences-and-sex">analysis the relationship between high alcohol consumption and age, failures, absences and sex</a></li>
+<li><a href="#numerically-and-graphically-explore-the-distribution-of-the-data-comments-the-cross-tabulation-and-charts-showed-that-the-distribution-of-age-failures-absences-and-sex-for-highlow-alcohol-use-and-they-showed-that-for-age-the-proportion-of-age-17-is-the-biggest-proportion-35-of-high-alcohol-use-than-other-age-group-but-not-that-different-from-other-groups-and-male-are-more-likely-to-be-high-alcohol-use-compared-to-female-failures-0-are-more-likely-to-be-high-alcohol-use-absences-0-is-more-likely-to-be-high-use.-these-may-partly-comfirmed-our-hypothesis-only-failures-absences-and-sex-have-statistical-significant-relationship-with-alcohol-consumption">Numerically and graphically explore the distribution of the data (comments: the cross tabulation and charts showed that the distribution of age, failures, absences and sex for high/low alcohol use, and they showed that for age, the proportion of age 17 is the biggest proportion (35) of high alcohol use than other age group, but not that different from other groups; and male are more likely to be high alcohol use compared to female; failures 0 are more likely to be high alcohol use; absences 0 is more likely to be high use. These may partly comfirmed our Hypothesis: only failures, absences and sex have statistical significant relationship with alcohol consumption)</a></li>
+<li><a href="#cross-tabulation">Cross tabulation</a></li>
+<li><a href="#logistic-regression-to-explore-the-relationship-between-highlow-alcohol-consumption-and-age-failures-absences-and-sex-interpretation-the-summary-of-the-fitted-model-showed-that-failures-absences-and-sex-have-statistically-significant-relationship-with-highlow-alcohol-use-the-p-value-of-failures-absences-and-sex-are-all-below-0.05-while-age-do-not-have-statistically-relationship-with-highlow-alcohol-use-the-p-value-of-age-is-above-0.05-interpret-coefficients-as-odds-ratio-use-intercept-of-age-3.82-estimate-od-age-0.11-the-students-is-age-what-since-the-original-data-can-not-see-the-category-of-the-varibles-so-it-cannot-calculated-now-the-odds-ratio-of-age-is-1.12-1-with-95-ci-being-0.0007-and-0.6274-it-means-that-age-15-is-more-likely-to-become-alcohol-consumption-compared-to-other-age-the-odds-ratio-of-failures-is-1.461-with-95-ci-being-1.0796-and-1.9778-it-means-that-the-participates-who-are-failures-are-more-likely-to-become-alcohol-consumption-the-odds-ratio-of-absences-is-1.071-with-95-ci-being-1.0383-and-1.1138-it-means-that-the-participates-who-absences-are-more-likely-to-be-alcohol-consumption-than-those-who-not-absences-the-odds-ratio-of-sex-is-2.691-it-means-that-male-are-more-likely-to-be-alcohol-consumption.-these-also-partly-confirmed-our-hypothesis.">logistic regression to explore the relationship between high/low alcohol consumption and age, failures, absences and sex (Interpretation: the summary of the fitted model showed that failures, absences and sex have statistically significant relationship with high/low alcohol use (the p value of failures, absences and sex are all below 0.05), while age do not have statistically relationship with high/low alcohol use (the p value of age is above 0.05); interpret coefficients as odds ratio, use intercept of age(-3.82) + estimate od age (0.11) * the students is age what (since the original data can not see the category of the varibles, so it cannot calculated now); the odds ratio of age is 1.12 (&gt;1), with 95% CI being 0.0007 and 0.6274, it means that age 15 is more likely to become alcohol consumption compared to other age, the odds ratio of failures is 1.46(&gt;1), with 95% CI being 1.0796 and 1.9778, it means that the participates who are failures are more likely to become alcohol consumption, the odds ratio of absences is 1.07(&gt;1), with 95% CI being 1.0383 and 1.1138, it means that the participates who absences are more likely to be alcohol consumption than those who not absences, the odds ratio of sex is 2.69(&gt;1), it means that male are more likely to be alcohol consumption. These also partly confirmed our hypothesis.)</a></li>
+<li><a href="#using-failures-absences-and-sex-have-statistically-significant-with-highlow-alcohol-consumption-to-explore-the-predictive-power-of-model-and-crosstab-comments-the-results-showed-that-the-model-can-well-predict-the-target-variables-the-accuracy-is-74.35.-the-probabilities-of-the-first-ten-participants-are-0.18-0.16-0.50-0.14-0.16-0.44-0.28-0.18-0.28-0.28.-and-there-is-12-86-98-individuals-about-25.65-individuals-are-inaccurately-calssified.-a-strategy-that-reveals-on-average-a-30-chance-of-getting-the-guess-right-and-for-this-model-74.35-chance-can-get-the-explanary-variables-for-target-variables-right-so-this-model-is-more-better-than-simple-guessing-strategy.">Using failures, absences and sex (have statistically significant) with high/low alcohol consumption to explore the predictive power of model and crosstab (comments: The results showed that the model can well predict the target variables, the accuracy is 74.35%. The probabilities of the first ten participants are 0.18, 0.16, 0.50, 0.14, 0.16, 0.44, 0.28, 0.18, 0.28, 0.28. And there is 12 + 86 = 98 individuals, about 25.65%, individuals are inaccurately calssified. A strategy that reveals, on average, a 30% chance of getting the guess right, and for this model, 74.35% chance can get the explanary variables for target variables right, so this model is more better than simple guessing strategy.)</a></li>
+<li><a href="#fold-cross-validation-comments-the-prediction-error-of-my-model-is-not-higher-but-equal-to-the-model-introduced-in-datacamp.-since-i-choose-age-failures-absences-and-sex-as-selected-variables-but-the-age-do-not-have-statistically-relationship-with-highlow-alcohol-use-so-the-error-is-0.2670157-so-the-variables-used-in-my-model-is-bigger-to-datacamp.">10-fold cross-validation (Comments: the prediction error of my model is not higher but equal to the model introduced in DataCamp. Since, I choose age, failures, absences and sex as selected variables, but the age do not have statistically relationship with high/low alcohol use, so the error is 0.2670157, so the variables used in my model is bigger to Datacamp.)</a></li>
 </ul>
 </div>
 
@@ -452,7 +461,7 @@ summary {
 <pre class="r"><code># This is a so-called &quot;R chunk&quot; where you can write R code.
 
 date()</code></pre>
-<pre><code>## [1] &quot;Thu Nov 05 22:52:10 2020&quot;</code></pre>
+<pre><code>## [1] &quot;Thu Nov 12 22:34:21 2020&quot;</code></pre>
 <p>I really feel that this course would be a challenging experience for me, since I am a beginner of R. I would like to learn something that I can use in my own study and research that can improve my working efficiency. I select this course from WebOodi and was attracted by the introduction of the course. The link to my GitHub repository: <a href="https://github.com/Liyuan202/IODS-project" class="uri">https://github.com/Liyuan202/IODS-project</a></p>
 <hr />
 </div>
@@ -465,7 +474,7 @@ date()</code></pre>
 <li>Assume the reader has no previous knowledge of your data or the more advanced methods you are using.</li>
 </ul>
 <pre class="r"><code>date()</code></pre>
-<pre><code>## [1] &quot;Thu Nov 05 22:52:10 2020&quot;</code></pre>
+<pre><code>## [1] &quot;Thu Nov 12 22:34:21 2020&quot;</code></pre>
 <p>Here we go again… First, we need to read the data by using the right command on reading the table “<a href="http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/learning2014.txt" class="uri">http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/learning2014.txt</a>”, and dim(dimension) and str(structure)is the command to see the dimensions and structures of the table. we can see that this table has 166 observations and 7 variables including “gender”,“age”,“attitude”,“deep”,“stra”, “surf” and “points”.the first six variables are the explanatory variables and the last one(points) is the dependent variable.</p>
 <p>Command is like below:</p>
 <p>lrn14 &lt;-read.table(“<a href="http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/learning2014.txt" class="uri">http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/learning2014.txt</a>”, sep = “,”, header = TRUE) dim(lrn14) str(lrn14)</p>
@@ -478,8 +487,50 @@ date()</code></pre>
 <p>Fourth, for the model validity, the three plots all showed that the errors of the model are nomally distributed.</p>
 <p>Command is like below:</p>
 <p>par(mfrow = c(2,2)) plot(my_model, which = c(1,2,5))</p>
-<p>It is really challenging for me! <strong><em> </em></strong> ***</p>
-<p>(more chapters to be added similarly as we proceed with the course!)</p>
+<p>It is really challenging for me!!</p>
+<hr />
+<div id="chapter-3" class="section level2">
+<h2>Chapter 3</h2>
+<pre class="r"><code>summary(cars)</code></pre>
+<pre><code>##      speed           dist       
+##  Min.   : 4.0   Min.   :  2.00  
+##  1st Qu.:12.0   1st Qu.: 26.00  
+##  Median :15.0   Median : 36.00  
+##  Mean   :15.4   Mean   : 42.98  
+##  3rd Qu.:19.0   3rd Qu.: 56.00  
+##  Max.   :25.0   Max.   :120.00</code></pre>
+</div>
+</div>
+<div id="read-the-datadescription-this-data-is-the-student-alcohol-consumption-data-and-there-are-37-variables-in-this-data.-i-am-going-to-select-four-variables-from-this-data-for-my-analysis." class="section level1">
+<h1>read the data(Description: this data is the student alcohol consumption data, and there are 37 variables in this data. I am going to select four variables from this data for my analysis.)</h1>
+<p>url &lt;- “<a href="http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/alc.txt" class="uri">http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/alc.txt</a>” alc &lt;- read.table(url, sep = “,”, header = TRUE)</p>
+</div>
+<div id="analysis-the-relationship-between-high-alcohol-consumption-and-age-failures-absences-and-sex" class="section level1">
+<h1>analysis the relationship between high alcohol consumption and age, failures, absences and sex</h1>
+<p>Four variables that I selected: Age, failures, absences and sex</p>
+<p>Hypothesis: 1. Age, sex, failures and absences can all predict the high alcohol consumption.</p>
+</div>
+<div id="numerically-and-graphically-explore-the-distribution-of-the-data-comments-the-cross-tabulation-and-charts-showed-that-the-distribution-of-age-failures-absences-and-sex-for-highlow-alcohol-use-and-they-showed-that-for-age-the-proportion-of-age-17-is-the-biggest-proportion-35-of-high-alcohol-use-than-other-age-group-but-not-that-different-from-other-groups-and-male-are-more-likely-to-be-high-alcohol-use-compared-to-female-failures-0-are-more-likely-to-be-high-alcohol-use-absences-0-is-more-likely-to-be-high-use.-these-may-partly-comfirmed-our-hypothesis-only-failures-absences-and-sex-have-statistical-significant-relationship-with-alcohol-consumption" class="section level1">
+<h1>Numerically and graphically explore the distribution of the data (comments: the cross tabulation and charts showed that the distribution of age, failures, absences and sex for high/low alcohol use, and they showed that for age, the proportion of age 17 is the biggest proportion (35) of high alcohol use than other age group, but not that different from other groups; and male are more likely to be high alcohol use compared to female; failures 0 are more likely to be high alcohol use; absences 0 is more likely to be high use. These may partly comfirmed our Hypothesis: only failures, absences and sex have statistical significant relationship with alcohol consumption)</h1>
+</div>
+<div id="cross-tabulation" class="section level1">
+<h1>Cross tabulation</h1>
+<p>malc &lt;- glm(high_use ~ age + failures + absences + sex, data = alc, family = “binomial”) summary(malc) summary(alc) probabilities &lt;- predict(malc, type = “response”) alc &lt;- mutate (alc, probability = probabilities) alc &lt;- mutate(alc, prediction = probability &gt; 0.5) select(alc, age, failures, absences, sex, high_use, probability, prediction) %&gt;% tail(382) table(high_use = alc<span class="math inline">\(high_use, prediction = alc\)</span>prediction) table(high_use = alc<span class="math inline">\(high_use, age = alc\)</span>age) table(high_use = alc<span class="math inline">\(high_use, sex = alc\)</span>sex) table(high_use = alc<span class="math inline">\(high_use, failures = alc\)</span>failures) table(high_use = alc<span class="math inline">\(high_use, absences = alc\)</span>absences)</p>
+<p>#graphically</p>
+<p>library(dplyr); library(ggplot2) malc &lt;- glm(high_use ~ failures + absences + sex, data = alc, family = “binomial”)</p>
+<p>g1 &lt;- ggplot(data = alc, aes(x = alc_use, fill = sex)) g1 + geom_bar() alc &lt;- mutate(alc, high_use = alc_use &gt; 2) g2 &lt;- ggplot (alc, aes(high_use)) g2 + facet_wrap(“age”) + geom_bar() g2 + facet_wrap(“failures”) + geom_bar() g2 + facet_wrap(“absences”) + geom_bar() g2 + facet_wrap(“sex”) + geom_bar() library(tidyr) glimpse(alc) gather(alc) %&gt;% glimpse gather(alc) %&gt;% ggplot(aes(value))+ facet_wrap(“key”, scales = “free”)+ geom_bar()</p>
+</div>
+<div id="logistic-regression-to-explore-the-relationship-between-highlow-alcohol-consumption-and-age-failures-absences-and-sex-interpretation-the-summary-of-the-fitted-model-showed-that-failures-absences-and-sex-have-statistically-significant-relationship-with-highlow-alcohol-use-the-p-value-of-failures-absences-and-sex-are-all-below-0.05-while-age-do-not-have-statistically-relationship-with-highlow-alcohol-use-the-p-value-of-age-is-above-0.05-interpret-coefficients-as-odds-ratio-use-intercept-of-age-3.82-estimate-od-age-0.11-the-students-is-age-what-since-the-original-data-can-not-see-the-category-of-the-varibles-so-it-cannot-calculated-now-the-odds-ratio-of-age-is-1.12-1-with-95-ci-being-0.0007-and-0.6274-it-means-that-age-15-is-more-likely-to-become-alcohol-consumption-compared-to-other-age-the-odds-ratio-of-failures-is-1.461-with-95-ci-being-1.0796-and-1.9778-it-means-that-the-participates-who-are-failures-are-more-likely-to-become-alcohol-consumption-the-odds-ratio-of-absences-is-1.071-with-95-ci-being-1.0383-and-1.1138-it-means-that-the-participates-who-absences-are-more-likely-to-be-alcohol-consumption-than-those-who-not-absences-the-odds-ratio-of-sex-is-2.691-it-means-that-male-are-more-likely-to-be-alcohol-consumption.-these-also-partly-confirmed-our-hypothesis." class="section level1">
+<h1>logistic regression to explore the relationship between high/low alcohol consumption and age, failures, absences and sex (Interpretation: the summary of the fitted model showed that failures, absences and sex have statistically significant relationship with high/low alcohol use (the p value of failures, absences and sex are all below 0.05), while age do not have statistically relationship with high/low alcohol use (the p value of age is above 0.05); interpret coefficients as odds ratio, use intercept of age(-3.82) + estimate od age (0.11) * the students is age what (since the original data can not see the category of the varibles, so it cannot calculated now); the odds ratio of age is 1.12 (&gt;1), with 95% CI being 0.0007 and 0.6274, it means that age 15 is more likely to become alcohol consumption compared to other age, the odds ratio of failures is 1.46(&gt;1), with 95% CI being 1.0796 and 1.9778, it means that the participates who are failures are more likely to become alcohol consumption, the odds ratio of absences is 1.07(&gt;1), with 95% CI being 1.0383 and 1.1138, it means that the participates who absences are more likely to be alcohol consumption than those who not absences, the odds ratio of sex is 2.69(&gt;1), it means that male are more likely to be alcohol consumption. These also partly confirmed our hypothesis.)</h1>
+<p>malc &lt;- glm(high_use ~ age + failures + absences + sex, data = alc, family = “binomial”) summary(malc) OR &lt;- coef (malc) %&gt;% exp CI &lt;- confint(malc) %&gt;% exp cbind (OR, CI)</p>
+</div>
+<div id="using-failures-absences-and-sex-have-statistically-significant-with-highlow-alcohol-consumption-to-explore-the-predictive-power-of-model-and-crosstab-comments-the-results-showed-that-the-model-can-well-predict-the-target-variables-the-accuracy-is-74.35.-the-probabilities-of-the-first-ten-participants-are-0.18-0.16-0.50-0.14-0.16-0.44-0.28-0.18-0.28-0.28.-and-there-is-12-86-98-individuals-about-25.65-individuals-are-inaccurately-calssified.-a-strategy-that-reveals-on-average-a-30-chance-of-getting-the-guess-right-and-for-this-model-74.35-chance-can-get-the-explanary-variables-for-target-variables-right-so-this-model-is-more-better-than-simple-guessing-strategy." class="section level1">
+<h1>Using failures, absences and sex (have statistically significant) with high/low alcohol consumption to explore the predictive power of model and crosstab (comments: The results showed that the model can well predict the target variables, the accuracy is 74.35%. The probabilities of the first ten participants are 0.18, 0.16, 0.50, 0.14, 0.16, 0.44, 0.28, 0.18, 0.28, 0.28. And there is 12 + 86 = 98 individuals, about 25.65%, individuals are inaccurately calssified. A strategy that reveals, on average, a 30% chance of getting the guess right, and for this model, 74.35% chance can get the explanary variables for target variables right, so this model is more better than simple guessing strategy.)</h1>
+<p>malc &lt;- glm(high_use ~ failures + absences + sex, data = alc, family = “binomial”) summary(malc) probabilities &lt;- predict (malc, type = “response”) alc &lt;- mutate(alc, probability = probabilities) alc &lt;- mutate(alc, prediction = probability &gt; 0.5) select (alc, failures, absences, sex, high_use, probability, prediction) %&gt;% tail(382) table(high_use = alc<span class="math inline">\(high_use, prediction = alc\)</span>prediction) library(dplyr); library(ggplot2) galc &lt;- ggplot (alc, aes(x = age, y = high_use, col = prediction)) galc + geom_point() galc &lt;- ggplot (alc, aes(x = failures, y = high_use, col = prediction)) galc + geom_point() galc &lt;- ggplot (alc, aes(x = absences, y = high_use, col = prediction)) galc + geom_point() galc &lt;- ggplot (alc, aes(x = sex, y = high_use, col = prediction)) galc + geom_point() table(high_use = alc<span class="math inline">\(high_use, prediction = alc\)</span>prediction) %&gt;% prop.table %&gt;% addmargins</p>
+</div>
+<div id="fold-cross-validation-comments-the-prediction-error-of-my-model-is-not-higher-but-equal-to-the-model-introduced-in-datacamp.-since-i-choose-age-failures-absences-and-sex-as-selected-variables-but-the-age-do-not-have-statistically-relationship-with-highlow-alcohol-use-so-the-error-is-0.2670157-so-the-variables-used-in-my-model-is-bigger-to-datacamp." class="section level1">
+<h1>10-fold cross-validation (Comments: the prediction error of my model is not higher but equal to the model introduced in DataCamp. Since, I choose age, failures, absences and sex as selected variables, but the age do not have statistically relationship with high/low alcohol use, so the error is 0.2670157, so the variables used in my model is bigger to Datacamp.)</h1>
+<p>library(boot) cv &lt;- cv.glm(data = alc, cost = loss_func, glmfit = malc, K = 10) cv$delta[1]</p>
 </div>
 
 
