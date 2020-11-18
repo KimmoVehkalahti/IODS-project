@@ -1,17 +1,6 @@
----
-title: "chapter3.Rmd"
-output: html_document
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
 ## Chapter 3
 
-```{r cars}
-summary(cars)
-```
 # read the data(Description: this data is the student alcohol consumption data, and there are 37 variables in this data. I am going to select four variables from this data for my analysis.)
 
 url <- "http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/alc.txt"
