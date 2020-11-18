@@ -1,6 +1,7 @@
 
 ## Chapter 4
 
+
 # 1.Load the Boston data (Comments: The Boston data is about the housing value in suburbs of Boston. It has 506 rows and 14 columns. The columns include crim, zn, chas, nox, rm, age, dis, rad, tax, ptratio, black, lstat and medv.)
 library(MASS)
 data("Boston")
