@@ -240,3 +240,41 @@ summary(Boston)
 # plot matrix of the variables
 pairs(Boston)
 
+# MASS, corrplot, tidyr and Boston dataset are available
+# calculate the correlation matrix and round it
+cor_matrix<-cor(Boston) %>% round(digits = 2)
+# print the correlation matrix
+cor_matrix
+         crim    zn indus  chas   nox    rm   age   dis   rad   tax ptratio
+crim     1.00 -0.20  0.41 -0.06  0.42 -0.22  0.35 -0.38  0.63  0.58    0.29
+zn      -0.20  1.00 -0.53 -0.04 -0.52  0.31 -0.57  0.66 -0.31 -0.31   -0.39
+indus    0.41 -0.53  1.00  0.06  0.76 -0.39  0.64 -0.71  0.60  0.72    0.38
+chas    -0.06 -0.04  0.06  1.00  0.09  0.09  0.09 -0.10 -0.01 -0.04   -0.12
+nox      0.42 -0.52  0.76  0.09  1.00 -0.30  0.73 -0.77  0.61  0.67    0.19
+rm      -0.22  0.31 -0.39  0.09 -0.30  1.00 -0.24  0.21 -0.21 -0.29   -0.36
+age      0.35 -0.57  0.64  0.09  0.73 -0.24  1.00 -0.75  0.46  0.51    0.26
+dis     -0.38  0.66 -0.71 -0.10 -0.77  0.21 -0.75  1.00 -0.49 -0.53   -0.23
+rad      0.63 -0.31  0.60 -0.01  0.61 -0.21  0.46 -0.49  1.00  0.91    0.46
+tax      0.58 -0.31  0.72 -0.04  0.67 -0.29  0.51 -0.53  0.91  1.00    0.46
+ptratio  0.29 -0.39  0.38 -0.12  0.19 -0.36  0.26 -0.23  0.46  0.46    1.00
+black   -0.39  0.18 -0.36  0.05 -0.38  0.13 -0.27  0.29 -0.44 -0.44   -0.18
+lstat    0.46 -0.41  0.60 -0.05  0.59 -0.61  0.60 -0.50  0.49  0.54    0.37
+medv    -0.39  0.36 -0.48  0.18 -0.43  0.70 -0.38  0.25 -0.38 -0.47   -0.51
+        black lstat  medv
+crim    -0.39  0.46 -0.39
+zn       0.18 -0.41  0.36
+indus   -0.36  0.60 -0.48
+chas     0.05 -0.05  0.18
+nox     -0.38  0.59 -0.43
+rm       0.13 -0.61  0.70
+age     -0.27  0.60 -0.38
+dis      0.29 -0.50  0.25
+rad     -0.44  0.49 -0.38
+tax     -0.44  0.54 -0.47
+ptratio -0.18  0.37 -0.51
+black    1.00 -0.37  0.33
+lstat   -0.37  1.00 -0.74
+medv     0.33 -0.74  1.00
+# visualize the correlation matrix
+corrplot(cor_matrix, method="circle", type="upper", cl.pos="b", tl.pos="d", tl.cex = 0.6)
+>
