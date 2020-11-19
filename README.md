@@ -278,3 +278,41 @@ medv     0.33 -0.74  1.00
 # visualize the correlation matrix
 corrplot(cor_matrix, method="circle", type="upper", cl.pos="b", tl.pos="d", tl.cex = 0.6)
 >
+# MASS and Boston dataset are available
+# center and standardize variables
+boston_scaled <- scale(Boston)
+# summaries of the scaled variables
+summary(boston_scaled)
+      crim                 zn               indus              chas        
+ Min.   :-0.419367   Min.   :-0.48724   Min.   :-1.5563   Min.   :-0.2723  
+ 1st Qu.:-0.410563   1st Qu.:-0.48724   1st Qu.:-0.8668   1st Qu.:-0.2723  
+ Median :-0.390280   Median :-0.48724   Median :-0.2109   Median :-0.2723  
+ Mean   : 0.000000   Mean   : 0.00000   Mean   : 0.0000   Mean   : 0.0000  
+ 3rd Qu.: 0.007389   3rd Qu.: 0.04872   3rd Qu.: 1.0150   3rd Qu.:-0.2723  
+ Max.   : 9.924110   Max.   : 3.80047   Max.   : 2.4202   Max.   : 3.6648  
+      nox                rm               age               dis         
+ Min.   :-1.4644   Min.   :-3.8764   Min.   :-2.3331   Min.   :-1.2658  
+ 1st Qu.:-0.9121   1st Qu.:-0.5681   1st Qu.:-0.8366   1st Qu.:-0.8049  
+ Median :-0.1441   Median :-0.1084   Median : 0.3171   Median :-0.2790  
+ Mean   : 0.0000   Mean   : 0.0000   Mean   : 0.0000   Mean   : 0.0000  
+ 3rd Qu.: 0.5981   3rd Qu.: 0.4823   3rd Qu.: 0.9059   3rd Qu.: 0.6617  
+ Max.   : 2.7296   Max.   : 3.5515   Max.   : 1.1164   Max.   : 3.9566  
+      rad               tax             ptratio            black        
+ Min.   :-0.9819   Min.   :-1.3127   Min.   :-2.7047   Min.   :-3.9033  
+ 1st Qu.:-0.6373   1st Qu.:-0.7668   1st Qu.:-0.4876   1st Qu.: 0.2049  
+ Median :-0.5225   Median :-0.4642   Median : 0.2746   Median : 0.3808  
+ Mean   : 0.0000   Mean   : 0.0000   Mean   : 0.0000   Mean   : 0.0000  
+ 3rd Qu.: 1.6596   3rd Qu.: 1.5294   3rd Qu.: 0.8058   3rd Qu.: 0.4332  
+ Max.   : 1.6596   Max.   : 1.7964   Max.   : 1.6372   Max.   : 0.4406  
+     lstat              medv        
+ Min.   :-1.5296   Min.   :-1.9063  
+ 1st Qu.:-0.7986   1st Qu.:-0.5989  
+ Median :-0.1811   Median :-0.1449  
+ Mean   : 0.0000   Mean   : 0.0000  
+ 3rd Qu.: 0.6024   3rd Qu.: 0.2683  
+ Max.   : 3.5453   Max.   : 2.9865  
+# class of the boston_scaled object
+class(boston_scaled)
+[1] "matrix"
+# change the object to data frame
+boston_scaled <- as.data.frame(boston_scaled)
