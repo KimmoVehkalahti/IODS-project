@@ -18,8 +18,9 @@ colnames(human)[7] <- "GNI."
 
 # Mutate
 library(dplyr)
-Gender <- mutate(Gender, edu2F / edu2M = ratio of Female and Male populations with secondary education in each country)
-Gender <- mutate(Gender, i.e. labF / labM = ratio of labour force participation of females and males in each country)
+Gender <- mutate(Gender, edu2FMratio = Population.with.Secondary.Education..Female. / Population.with.Secondary.Education..Male.)
+Gender <- mutate(Gender, lab2FMratio = Labour.Force.Participation.Rate..Female. / Labour.Force.Participation.Rate..Male.)
+colnames(Gender)
 
 # Join together the two datasets using the variable Country as the identifier
 join_by <- c("Country")
