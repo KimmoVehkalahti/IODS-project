@@ -1,32 +1,36 @@
 # Read the data
-human <- read.table("http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/human_development.csv", stringsAsFactors = F, sep =",", header = T)
-Gender <- read.table("http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/gender_inequality.csv", stringsAsFactors = F, na.strings = "..", sep =",", header = T)
+Human <- read.csv("http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/human_development.csv", stringsAsFactors = F)
+Gender <- read.csv("http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/gender_inequality.csv", stringsAsFactors = F, na.strings = "..")
 
 # See the structure and dimension of the data 
-str(human)
-dim(human)
+str(Human)
+dim(Human)
 str(Gender)
 dim(Gender)
 
 # rename the varaibles
-colnames(human)
-colnames(human)[3] <- "HDI." 
-colnames(human)[4] <- "Birth" 
-colnames(human)[5] <- "EEducation" 
-colnames(human)[6] <- "MEducation" 
-colnames(human)[7] <- "GNI." 
+names(Human)
+names(Human) <- c('hdi_rank', 'country', 'hdi', 'life_exp', 'exp_edu', 'mean_edu', 'gni', 'gni_minus_hdi')
+names(Human)
+
+names(Gender)
+names(Gender) <- c('gii_rank','country','gii','mat_mortality', 'adol_birth', 'parl_seats',
+'f_2edu', 'm_2edu', 'f_lab', 'm_lab' )
+names(Gender)
 
 # Mutate
 library(dplyr)
-Gender <- mutate(Gender, edu2FMratio = Population.with.Secondary.Education..Female. / Population.with.Secondary.Education..Male.)
-Gender <- mutate(Gender, lab2FMratio = Labour.Force.Participation.Rate..Female. / Labour.Force.Participation.Rate..Male.)
-colnames(Gender)
+Gender <- Gender %>% mutate(edu2FMratio = f_2edu/m_2edu)
+Gender <- Gender %>% mutate(lab2FMratio = f_lab/m_lab)
+glimpse (Gender)
+
 
 # Join together the two datasets using the variable Country as the identifier
-join_by <- c("Country")
-human_Gender <- inner_join(human, Gender, by = join_by, suffix = c(".human", ".Gender"))
+join_by <- c("country")
+human_Gender <- inner_join(Human, Gender, by = join_by, suffix = c(".Human", ".Gender"))
 colnames(human_Gender)
 glimpse(human_Gender)
 dim(human_Gender)
-human <- inner_join(human, Gender, by = join_by, suffix = c(".human", ".Gender"))
-dim(human)
+
+#save the data
+write.csv(human,file="data/human.csv", row.names = F)
