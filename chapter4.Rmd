@@ -56,6 +56,8 @@ cor_matrix<-cor(Boston) %>% round(digits=2)
 cor_matrix
 library(corrplot)
 corrplot(cor_matrix, method="circle", type="upper", cl.pos="b", tl.pos="d", tl.cex = 0.6)
+pairs(Boston, col = "blue", pch = 18,
+main = "Matrix plot of the variables")
 
 #        crim    zn indus  chas   nox    rm   age   dis
 crim     1.00 -0.20  0.41 -0.06  0.42 -0.22  0.35 -0.38
@@ -149,11 +151,11 @@ boston_scaled <- scale(Boston)
 summary(boston_scaled)
 
 # (2)Calculate the distance between the variables
-dist_woman <- dist(Boston, method = 'manhattan')
+dist_woman <- dist(boston_scaled, method = 'manhattan')
 summary(dist_woman)
 
 # (3)Run k-means algorithm
-km <- kmeans(Boston, centers = 3)
+km <- kmeans(boston_scaled, centers = 3)
 
 # (4)Investigate the optimal number clusters and run algorithm again
 set.seed(123)
@@ -162,12 +164,12 @@ twcss <- sapply(1:k_max, function(k){kmeans(Boston, k)$tot.withinss})
 
 # (5)Investigate the best optimal cluster number and run it again and visualize the clusters
 qplot(x = 1:k_max, y = twcss, geom = 'line')
-km <-kmeans(Boston, centers = 2)
-pairs(Boston, col = km$cluster)
+km <-kmeans(boston_scaled, centers = 2)
+pairs(boston_scaled, col = km$cluster)
 
 # Bonus: Perform the k-means with >2 clusters
-km2 <-kmeans(Boston, centers = 4)
-pairs(Boston, col = km2$cluster)
+km2 <-kmeans(boston_scaled, centers = 4)
+pairs(boston_scaled, col = km2$cluster)
 
 # Super bonus
 model_predictors <- dplyr::select(train, -crime)

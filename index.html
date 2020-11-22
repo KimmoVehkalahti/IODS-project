@@ -473,7 +473,7 @@ summary {
 <pre class="r"><code># This is a so-called &quot;R chunk&quot; where you can write R code.
 
 date()</code></pre>
-<pre><code>## [1] &quot;Wed Nov 18 21:35:32 2020&quot;</code></pre>
+<pre><code>## [1] &quot;Sun Nov 22 12:26:13 2020&quot;</code></pre>
 <p>I really feel that this course would be a challenging experience for me, since I am a beginner of R. I would like to learn something that I can use in my own study and research that can improve my working efficiency. I select this course from WebOodi and was attracted by the introduction of the course. The link to my GitHub repository: <a href="https://github.com/Liyuan202/IODS-project" class="uri">https://github.com/Liyuan202/IODS-project</a></p>
 <hr />
 </div>
@@ -486,7 +486,7 @@ date()</code></pre>
 <li>Assume the reader has no previous knowledge of your data or the more advanced methods you are using.</li>
 </ul>
 <pre class="r"><code>date()</code></pre>
-<pre><code>## [1] &quot;Wed Nov 18 21:35:32 2020&quot;</code></pre>
+<pre><code>## [1] &quot;Sun Nov 22 12:26:13 2020&quot;</code></pre>
 <p>Here we go again… First, we need to read the data by using the right command on reading the table “<a href="http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/learning2014.txt" class="uri">http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/learning2014.txt</a>”, and dim(dimension) and str(structure)is the command to see the dimensions and structures of the table. we can see that this table has 166 observations and 7 variables including “gender”,“age”,“attitude”,“deep”,“stra”, “surf” and “points”.the first six variables are the explanatory variables and the last one(points) is the dependent variable.</p>
 <p>Command is like below:</p>
 <p>lrn14 &lt;-read.table(“<a href="http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/learning2014.txt" class="uri">http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/learning2014.txt</a>”, sep = “,”, header = TRUE) dim(lrn14) str(lrn14)</p>
@@ -582,7 +582,7 @@ Mean :12.65 Mean :22.53<br />
 3rd Qu.:16.95 3rd Qu.:25.00<br />
 Max. :37.97 Max. :50.00</p>
 <p>#(2)correlation and graph</p>
-<p>library(magrittr) cor_matrix&lt;-cor(Boston) %&gt;% round(digits=2) cor_matrix library(corrplot) corrplot(cor_matrix, method=“circle”, type=“upper”, cl.pos=“b”, tl.pos=“d”, tl.cex = 0.6)</p>
+<p>library(magrittr) cor_matrix&lt;-cor(Boston) %&gt;% round(digits=2) cor_matrix library(corrplot) corrplot(cor_matrix, method=“circle”, type=“upper”, cl.pos=“b”, tl.pos=“d”, tl.cex = 0.6) pairs(Boston, col = “blue”, pch = 18, main = “Matrix plot of the variables”)</p>
 </div>
 <div id="crim-zn-indus-chas-nox-rm-age-dis" class="section level1">
 <h1>crim zn indus chas nox rm age dis</h1>
@@ -605,11 +605,11 @@ Max. :37.97 Max. :50.00</p>
 </div>
 <div id="calculate-the-distance-between-the-variables" class="section level1">
 <h1>(2)Calculate the distance between the variables</h1>
-<p>dist_woman &lt;- dist(Boston, method = ‘manhattan’) summary(dist_woman)</p>
+<p>dist_woman &lt;- dist(boston_scaled, method = ‘manhattan’) summary(dist_woman)</p>
 </div>
 <div id="run-k-means-algorithm" class="section level1">
 <h1>(3)Run k-means algorithm</h1>
-<p>km &lt;- kmeans(Boston, centers = 3)</p>
+<p>km &lt;- kmeans(boston_scaled, centers = 3)</p>
 </div>
 <div id="investigate-the-optimal-number-clusters-and-run-algorithm-again" class="section level1">
 <h1>(4)Investigate the optimal number clusters and run algorithm again</h1>
@@ -617,11 +617,11 @@ Max. :37.97 Max. :50.00</p>
 </div>
 <div id="investigate-the-best-optimal-cluster-number-and-run-it-again-and-visualize-the-clusters" class="section level1">
 <h1>(5)Investigate the best optimal cluster number and run it again and visualize the clusters</h1>
-<p>qplot(x = 1:k_max, y = twcss, geom = ‘line’) km &lt;-kmeans(Boston, centers = 2) pairs(Boston, col = km$cluster)</p>
+<p>qplot(x = 1:k_max, y = twcss, geom = ‘line’) km &lt;-kmeans(boston_scaled, centers = 2) pairs(boston_scaled, col = km$cluster)</p>
 </div>
 <div id="bonus-perform-the-k-means-with-2-clusters" class="section level1">
 <h1>Bonus: Perform the k-means with &gt;2 clusters</h1>
-<p>km2 &lt;-kmeans(Boston, centers = 4) pairs(Boston, col = km2$cluster)</p>
+<p>km2 &lt;-kmeans(boston_scaled, centers = 4) pairs(boston_scaled, col = km2$cluster)</p>
 </div>
 <div id="super-bonus" class="section level1">
 <h1>Super bonus</h1>

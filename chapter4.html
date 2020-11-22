@@ -459,7 +459,7 @@ Mean :12.65 Mean :22.53<br />
 3rd Qu.:16.95 3rd Qu.:25.00<br />
 Max. :37.97 Max. :50.00</p>
 <p>#(2)correlation and graph</p>
-<p>library(magrittr) cor_matrix&lt;-cor(Boston) %&gt;% round(digits=2) cor_matrix library(corrplot) corrplot(cor_matrix, method=“circle”, type=“upper”, cl.pos=“b”, tl.pos=“d”, tl.cex = 0.6)</p>
+<p>library(magrittr) cor_matrix&lt;-cor(Boston) %&gt;% round(digits=2) cor_matrix library(corrplot) corrplot(cor_matrix, method=“circle”, type=“upper”, cl.pos=“b”, tl.pos=“d”, tl.cex = 0.6) pairs(Boston, col = “blue”, pch = 18, main = “Matrix plot of the variables”)</p>
 </div>
 <div id="crim-zn-indus-chas-nox-rm-age-dis" class="section level1">
 <h1>crim zn indus chas nox rm age dis</h1>
@@ -482,11 +482,11 @@ Max. :37.97 Max. :50.00</p>
 </div>
 <div id="calculate-the-distance-between-the-variables" class="section level1">
 <h1>(2)Calculate the distance between the variables</h1>
-<p>dist_woman &lt;- dist(Boston, method = ‘manhattan’) summary(dist_woman)</p>
+<p>dist_woman &lt;- dist(boston_scaled, method = ‘manhattan’) summary(dist_woman)</p>
 </div>
 <div id="run-k-means-algorithm" class="section level1">
 <h1>(3)Run k-means algorithm</h1>
-<p>km &lt;- kmeans(Boston, centers = 3)</p>
+<p>km &lt;- kmeans(boston_scaled, centers = 3)</p>
 </div>
 <div id="investigate-the-optimal-number-clusters-and-run-algorithm-again" class="section level1">
 <h1>(4)Investigate the optimal number clusters and run algorithm again</h1>
@@ -494,11 +494,11 @@ Max. :37.97 Max. :50.00</p>
 </div>
 <div id="investigate-the-best-optimal-cluster-number-and-run-it-again-and-visualize-the-clusters" class="section level1">
 <h1>(5)Investigate the best optimal cluster number and run it again and visualize the clusters</h1>
-<p>qplot(x = 1:k_max, y = twcss, geom = ‘line’) km &lt;-kmeans(Boston, centers = 2) pairs(Boston, col = km$cluster)</p>
+<p>qplot(x = 1:k_max, y = twcss, geom = ‘line’) km &lt;-kmeans(boston_scaled, centers = 2) pairs(boston_scaled, col = km$cluster)</p>
 </div>
 <div id="bonus-perform-the-k-means-with-2-clusters" class="section level1">
 <h1>Bonus: Perform the k-means with &gt;2 clusters</h1>
-<p>km2 &lt;-kmeans(Boston, centers = 4) pairs(Boston, col = km2$cluster)</p>
+<p>km2 &lt;-kmeans(boston_scaled, centers = 4) pairs(boston_scaled, col = km2$cluster)</p>
 </div>
 <div id="super-bonus" class="section level1">
 <h1>Super bonus</h1>
