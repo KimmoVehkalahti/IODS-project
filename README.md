@@ -539,3 +539,56 @@ data.frame(human[-1], comp = complete.cases(human))
 
 # filter out all rows with NA values
 human_ <- filter(human, complete.cases(human))
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+# continue to be amazed
+
+*I did finally realized that the editing and commiting was in the github not in RStudio, I was desperate even though I was trying to understand, I hope this will begin to be simple now.*
+
+- I installed R, then RStudio and finally Git, I created an account and tried to update my profile. 
+- I learned how to execute some data camp stuff.
+- I could say that this project is designated to people who would like to share their project to public so that others can use them also or for team work so that they can share and edit together a specific project.
+
+```{r}
+date()
+```
+
+Let's learn more this week...
+# human with modified GNI and dplyr are available
+
+# columns to keep
+keep <- c("Country", "Edu2.FM", "Labo.FM", "Life.Exp", "Edu.Exp", "GNI", "Mat.Mor", "Ado.Birth", "Parli.F")
+
+# select the 'keep' columns
+human <- select(human, one_of(keep))
+
+# print out a completeness indicator of the 'human' data
+complete.cases(human)
+
+# print out the data along with a completeness indicator as the last column
+data.frame(human[-1], comp = complete.cases(human))
+
+# filter out all rows with NA values
+human_ <- filter(human, complete.cases(human))
+```{r}
+```
+
+
+`# human without NA is available
+
+# look at the last 10 observations
+tail(human, 10)
+
+# last indice we want to keep
+last <- nrow(human) - 7
+
+# choose everything until the last 7 observations
+human_ <- human[1:last, ]
+
+# add countries as rownames
+rownames(human) <- human$Country
+``{r}
+```
