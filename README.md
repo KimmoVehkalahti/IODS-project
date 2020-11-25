@@ -513,3 +513,13 @@ NA,"Latin America and the Caribbean",0.748,75,14,8.2,"14,242",NA,NA,0.415,85,68.
 NA,"South Asia",0.607,68.4,11.2,5.5,"5,605",NA,NA,0.536,183,38.7,17.5,29.1,54.6,29.8,80.3,0.532967032967033,0.371108343711083
 NA,"Sub-Saharan Africa",0.518,58.5,9.6,5.2,"3,363",NA,NA,0.575,506,109.7,22.5,22.1,31.5,65.4,76.6,0.701587301587302,0.85378590078329
 NA,"World",0.711,71.5,12.2,7.9,"14,301",NA,NA,0.449,210,47.4,21.8,54.5,65.4,50.3,76.7,0.833333333333333,0.655801825293351
+# tidyr package and human are available
+
+# access the stringr package
+library(stringr)
+
+# look at the structure of the GNI column in 'human'
+str(human$GNI)
+
+# remove the commas from GNI and print out a numeric version of it
+str_replace(human$GNI, pattern=",", replace ="") %>% as.numeric
