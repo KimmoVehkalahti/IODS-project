@@ -523,3 +523,19 @@ str(human$GNI)
 
 # remove the commas from GNI and print out a numeric version of it
 str_replace(human$GNI, pattern=",", replace ="") %>% as.numeric
+# human with modified GNI and dplyr are available
+
+# columns to keep
+keep <- c("Country", "Edu2.FM", "Labo.FM", "Life.Exp", "Edu.Exp", "GNI", "Mat.Mor", "Ado.Birth", "Parli.F")
+
+# select the 'keep' columns
+human <- select(human, one_of(keep))
+
+# print out a completeness indicator of the 'human' data
+complete.cases(human)
+
+# print out the data along with a completeness indicator as the last column
+data.frame(human[-1], comp = complete.cases(human))
+
+# filter out all rows with NA values
+human_ <- filter(human, complete.cases(human))
