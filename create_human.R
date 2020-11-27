@@ -72,7 +72,7 @@ human_Gender_ <- human[1:last, ]
 
 # define the row names of the data by the country names and remove the country name column
 
-rownames(human_Gender_) <- human_Gender$country 
+rownames(human_Gender) <- human_Gender$country 
 human_Gender_ <- dplyr::select(human_Gender, - country)
 
 # save the data
