@@ -1,0 +1,64 @@
+
+# Chapter 5
+
+## show a graphical overview of the data and summary of the variables 
+
+```{r}
+human <- read.table("http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/human2.txt", sep  =",", header = T)
+library(GGally)
+ggpairs(human)
+summary(human)
+library(corrplot)
+library(dplyr)
+cor(human) %>% corrplot
+```
+
+Comments: The results of the graph and summary showed that there are 8 variables, including Edu2.FM, Labo.FM, Edu.Exp,Life.Exp, GNI, Mat.Mor, Ado.Birth and Parli.F.; About the relationships between them:In the figure below, red cicles indicate negative correlations and blue positive. The bigger and darker the circle, the higher the correlation. High positive correlation, i.e., Edu.exp and Life.exp.In turn, negative correlations i.e., Mat.Mor and Life.exp.   The distributions of the variables is that the shape of it showed some are left skew, some are right skew, and some are symmetric, and the mean of GIN is 17628, other means can also seen in the figures and summary.
+
+
+## perform principal component analysis of unstandardized human data, show the variability and draw biplot
+
+```{r}
+pca_human <- prcomp(human)
+```
+
+```{r}
+biplot(pca_human, choices = 1:2, cex = c(0.8, 1), col = c("grey40", "deeppink2"))
+```
+
+
+## standardized the data and repeat the above analysis
+
+Interpretation the results of unstandardized and standardized: As shown in the figure, the results of two analysis are different, the reason for this is that PCA is usually a numerical approximation decomposition rather than seeking eigenvalues, singular values to obtain analytical solutions, so when we use gradient descent and other algorithms for PCA, we have to standardize the data first. This is Conducive to the convergence of the gradient descent method.
+
+```{r}
+human_std <- scale(human)
+summary(human_std)
+pca_human_stan <- prcomp(human_std)
+biplot(pca_human_stan, choices = 1:2, cex = c(0.8, 1), col = c("grey40", "deeppink2"))
+```
+
+Interpretation of plots: the plot of unstandized PCA showed that all variables are pointing like PC1, so all the variables contribute to PC1. But the plot of standized PCA showed that Parli.F and Labo.FM are pointing like PC2, so these two variables contribute to PC2, while other varibles contribute to PC1. The index of human development consists of various criteria, including life expectancy at birth, education expectancy and ect.. The education expectancy do not have a good relation with PC2.
+
+## Give your personal interpretations of the first two principal component dimensions based on the biplot drawn after PCA on the standardized human data.
+
+The first principal component dimension is correlated with Edu.exp, Life.exp, GNI, Edu2.FM, Mat.mor and Ado.Birth, while the second component dimensions is correlated with Parli.F and Labo.FM. And the angle between arrows representing the correlation between the variables, like the angle between the percentage of Female in Parliament and Labour Force Participation Rate Female is small, so they have high positive correlation. But the angle between Education.exp and Parli.F is bigger than the angle between the percentage of Female in Parliament and Labour Force Participation Rate Female, so the Education.exp and Parli.F are not correlated like percentage of Female in Parliament and Labour Force Participation Rate Female
+
+## Load the tea dataset, look structure and dimension and visualize, do MCA, draw biplot 
+
+```{r}
+library(FactoMineR)
+data(tea) #load tea
+str(tea)
+dim(tea)
+keep_columns <- c("Tea", "How", "how", "sugar", "where", "lunch")
+tea_time <- select(tea, one_of(keep_columns))
+library(tidyr)
+gather(tea_time) %>% ggplot(aes(value)) + facet_wrap("key", scales = "free") + geom_bar() + theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8)) #visulize tea
+mca_tea <- MCA(tea_time, graph = FALSE) #run MCA
+summary(mca_tea) # show result of MCA
+plot(mca_tea, invisible=c("ind"), habillage = "quali") # visualize MCA
+```
+Interpret the result of MCA: The results showed that besides alone and other, the coordinate of other variables in Dim1 are all significantly different from zero, so reject the null hypothesis (the value below -1.96 or above 1.96). And that would also for variables in Dim2 and Dim3. About the categorical variables, the value of Tea, how and where close to one in Dim1, indicates the strong link with these variables and Dim1. And this also for Dim2 and Dim3.
+
+Interpret the biplot: The distance between variable categories showed that measure of their similarity. Thus, for example, the alone and unpackaged are similar, and no sugar and grey are similar, while alone is different from lemon.
