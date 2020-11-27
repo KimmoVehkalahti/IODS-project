@@ -39,7 +39,7 @@ write.csv(human,file="data/human.csv", row.names = F)
 
 # Load the 'human' data (Continue the data wrangling last week)
 
-human_Gender <- read.csv("http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/human2.txt", stringsAsFactors = F)
+human_Gender <- read.csv("http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/human1.txt", stringsAsFactors = F)
 
 # Exploring the structure and dimension of the data (My name: Liyuan E; Description: the dimension of the dataset showed that it has 195 observations and 19 variables; the structure of the dataset showed the 19 variables is as following: hdi_rank, country, hdi, life_exp, exp_edu, mean_edu, gni, gni_minus_hdi, gii, mat_mortality, adol_birth, parl_seats,f_2edu, m_2edu, f_lab, m_lab, edu2FMratio and lab2FMratio)
 
