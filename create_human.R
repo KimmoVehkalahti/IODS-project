@@ -66,14 +66,14 @@ human_Gender_ <- filter(human_Gender, complete.cases(human_Gender))
 
 # remove the observations regards regions instead of countries (have to change the name that has to be same above)
 
-tail(human, 10)
-last <- nrow(human) - 7
+tail(human_Gender, 10)
+last <- nrow(human_Gender) - 7
 human_Gender_ <- human[1:last, ]
 
 # define the row names of the data by the country names and remove the country name column
 
-rownames(human_Gender) <- human_Gender$country 
-human_Gender <- dplyr::select(human_Gender, - country)
+rownames(human_Gender_) <- human_Gender$country 
+human_Gender_ <- dplyr::select(human_Gender, - country)
 
 # save the data
-write.csv(human_Gender,file="data/human.csv", row.names = F)
+write.csv(human_Gender_,file="data/human.csv", row.names = F)
