@@ -1,5 +1,5 @@
 
-# Chapter 5
+# Chapter 5 Dimensional reduction techniques
 
 ## show a graphical overview of the data and summary of the variables 
 

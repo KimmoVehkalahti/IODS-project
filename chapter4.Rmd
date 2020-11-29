@@ -1,96 +1,44 @@
 
-## Chapter 4
+# Chapter 4 Clustering and classification
 
 
-# 1.Load the Boston data (Comments: The Boston data is about the housing value in suburbs of Boston. It has 506 rows and 14 columns. The columns include crim, zn, chas, nox, rm, age, dis, rad, tax, ptratio, black, lstat and medv.)
+## 1.Load the Boston data 
+
+(Comments: The Boston data is about the housing value in suburbs of Boston. It has 506 rows and 14 columns. The columns include crim, zn, chas, nox, rm, age, dis, rad, tax, ptratio, black, lstat and medv.)
+
+```{r}
 library(MASS)
 data("Boston")
 str(Boston)
 dim(Boston)
+```
 
-# 2.The graphical overview of the data and the summaries of the variables (Interpretation: From the summary of the data, it showed that the Min, max and mean od the variables as following: crim (Min: 0.006; Max：88.976；M:3.614), zn (Min: 0.00; Max: 100; M:11.36), indus(Min: 0.46; Max:27.74; M:11.14),chas(Min:0.00; Max: 1.00;M:0.07), nox:(Min:0.385; Max: 0.871; M: 0.555); rm(Min:3.56; Max:8.78;M:6.28); age(Min:2.9; Max: 100; M: 68.57); dis(Min: 1.13; Max: 12.13;M:3.80); rad(Min: 1.00;Max：24.00；M:9.55);tax(Min:187.0; Max:711.0;M:408.2); ptratio(Min:12.60;Max:22.00;M: 18.46);black(Min:0.32;Max:396.90; M:356.67); lstat (Min:1.73; Max:37.97; M: 12.65) and medv(Min:5.00; Max:50;M:22.53), which means that the crime rate have big differences from the min to max, and this is also the characteristics for other variables. About the relationship between variables, the correlations between variables are varied from 0.04 to 0.77)
+## 2.The graphical overview of the data and the summaries of the variables 
 
-#(1)summary
+(Interpretation: From the summary of the data, it showed that the Min, max and mean od the variables as following: crim (Min: 0.006; Max：88.976；M:3.614), zn (Min: 0.00; Max: 100; M:11.36), indus(Min: 0.46; Max:27.74; M:11.14),chas(Min:0.00; Max: 1.00;M:0.07), nox:(Min:0.385; Max: 0.871; M: 0.555); rm(Min:3.56; Max:8.78;M:6.28); age(Min:2.9; Max: 100; M: 68.57); dis(Min: 1.13; Max: 12.13;M:3.80); rad(Min: 1.00;Max：24.00；M:9.55);tax(Min:187.0; Max:711.0;M:408.2); ptratio(Min:12.60;Max:22.00;M: 18.46);black(Min:0.32;Max:396.90; M:356.67); lstat (Min:1.73; Max:37.97; M: 12.65) and medv(Min:5.00; Max:50;M:22.53), which means that the crime rate have big differences from the min to max, and this is also the characteristics for other variables. About the relationship between variables, the correlations between variables are varied from 0.04 to 0.77)
+
+(1)summary
+```{r}
 summary (Boston)
+```
 
-#crim                zn             indus      
- Min.   : 0.00632   Min.   :  0.00   Min.   : 0.46  
- 1st Qu.: 0.08205   1st Qu.:  0.00   1st Qu.: 5.19  
- Median : 0.25651   Median :  0.00   Median : 9.69  
- Mean   : 3.61352   Mean   : 11.36   Mean   :11.14  
- 3rd Qu.: 3.67708   3rd Qu.: 12.50   3rd Qu.:18.10  
- Max.   :88.97620   Max.   :100.00   Max.   :27.74  
-      chas              nox               rm       
- Min.   :0.00000   Min.   :0.3850   Min.   :3.561  
- 1st Qu.:0.00000   1st Qu.:0.4490   1st Qu.:5.886  
- Median :0.00000   Median :0.5380   Median :6.208  
- Mean   :0.06917   Mean   :0.5547   Mean   :6.285  
- 3rd Qu.:0.00000   3rd Qu.:0.6240   3rd Qu.:6.623  
- Max.   :1.00000   Max.   :0.8710   Max.   :8.780  
-      age              dis              rad        
- Min.   :  2.90   Min.   : 1.130   Min.   : 1.000  
- 1st Qu.: 45.02   1st Qu.: 2.100   1st Qu.: 4.000  
- Median : 77.50   Median : 3.207   Median : 5.000  
- Mean   : 68.57   Mean   : 3.795   Mean   : 9.549  
- 3rd Qu.: 94.08   3rd Qu.: 5.188   3rd Qu.:24.000  
- Max.   :100.00   Max.   :12.127   Max.   :24.000  
-      tax           ptratio          black       
- Min.   :187.0   Min.   :12.60   Min.   :  0.32  
- 1st Qu.:279.0   1st Qu.:17.40   1st Qu.:375.38  
- Median :330.0   Median :19.05   Median :391.44  
- Mean   :408.2   Mean   :18.46   Mean   :356.67  
- 3rd Qu.:666.0   3rd Qu.:20.20   3rd Qu.:396.23  
- Max.   :711.0   Max.   :22.00   Max.   :396.90  
-     lstat            medv      
- Min.   : 1.73   Min.   : 5.00  
- 1st Qu.: 6.95   1st Qu.:17.02  
- Median :11.36   Median :21.20  
- Mean   :12.65   Mean   :22.53  
- 3rd Qu.:16.95   3rd Qu.:25.00  
- Max.   :37.97   Max.   :50.00  
- 
-#(2)correlation and graph
+(2)correlation and graph
 
+```{r}
 library(magrittr)
 cor_matrix<-cor(Boston) %>% round(digits=2)
 cor_matrix
 library(corrplot)
 corrplot(cor_matrix, method="circle", type="upper", cl.pos="b", tl.pos="d", tl.cex = 0.6)
-pairs(Boston, col = "blue", pch = 18,
-main = "Matrix plot of the variables")
+pairs(Boston, col = "blue", pch = 18, main = "Matrix plot of the variables")
+```
 
-#        crim    zn indus  chas   nox    rm   age   dis
-crim     1.00 -0.20  0.41 -0.06  0.42 -0.22  0.35 -0.38
-zn      -0.20  1.00 -0.53 -0.04 -0.52  0.31 -0.57  0.66
-indus    0.41 -0.53  1.00  0.06  0.76 -0.39  0.64 -0.71
-chas    -0.06 -0.04  0.06  1.00  0.09  0.09  0.09 -0.10
-nox      0.42 -0.52  0.76  0.09  1.00 -0.30  0.73 -0.77
-rm      -0.22  0.31 -0.39  0.09 -0.30  1.00 -0.24  0.21
-age      0.35 -0.57  0.64  0.09  0.73 -0.24  1.00 -0.75
-dis     -0.38  0.66 -0.71 -0.10 -0.77  0.21 -0.75  1.00
-rad      0.63 -0.31  0.60 -0.01  0.61 -0.21  0.46 -0.49
-tax      0.58 -0.31  0.72 -0.04  0.67 -0.29  0.51 -0.53
-ptratio  0.29 -0.39  0.38 -0.12  0.19 -0.36  0.26 -0.23
-black   -0.39  0.18 -0.36  0.05 -0.38  0.13 -0.27  0.29
-lstat    0.46 -0.41  0.60 -0.05  0.59 -0.61  0.60 -0.50
-medv    -0.39  0.36 -0.48  0.18 -0.43  0.70 -0.38  0.25
-          rad   tax ptratio black lstat  medv
-crim     0.63  0.58    0.29 -0.39  0.46 -0.39
-zn      -0.31 -0.31   -0.39  0.18 -0.41  0.36
-indus    0.60  0.72    0.38 -0.36  0.60 -0.48
-chas    -0.01 -0.04   -0.12  0.05 -0.05  0.18
-nox      0.61  0.67    0.19 -0.38  0.59 -0.43
-rm      -0.21 -0.29   -0.36  0.13 -0.61  0.70
-age      0.46  0.51    0.26 -0.27  0.60 -0.38
-dis     -0.49 -0.53   -0.23  0.29 -0.50  0.25
-rad      1.00  0.91    0.46 -0.44  0.49 -0.38
-tax      0.91  1.00    0.46 -0.44  0.54 -0.47
-ptratio  0.46  0.46    1.00 -0.18  0.37 -0.51
-black   -0.44 -0.44   -0.18  1.00 -0.37  0.33
-lstat    0.49  0.54    0.37 -0.37  1.00 -0.74
-medv    -0.38 -0.47   -0.51  0.33 -0.74  1.00
 
-#3.standardize the dataset and print out summary of it +create a categorical variable of the crime (The Min., 1st Qu., Median, Mean, 3rd Qu. and Max. of the variables are changed, the maximum of the variables is 10.00)
+## 3.standardize the dataset and print out summary of it +create a categorical variable of the crime 
+
+(The Min., 1st Qu., Median, Mean, 3rd Qu. and Max. of the variables are changed, the maximum of the variables is 10.00)
+
+```{r}
 boston_scaled <- scale(Boston)
 summary(boston_scaled)
 class(boston_scaled)
@@ -105,11 +53,14 @@ n <- nrow(boston_scaled)
 ind <- sample(n,  size = n * 0.8)
 train <- boston_scaled[ind,]
 test <- boston_scaled
-correct_classes <- test$crime
-test <- dplyr::select(test, -crime)
+correct_classes <- test$crime # save crime
+test <- dplyr::select(test, -crime) # remove crime
+```
 
-# 4.fit the linear discriminant analysis on the train set
 
+## 4.fit the linear discriminant analysis on the train set
+
+```{r}
 lda.fit <- lda(crime ~ ., data = train)
 lda.fit
 lda.arrows <- function(x, myscale = 1, arrow_heads = 0.1, color = "orange", tex = 0.75, choices = c(1,2)){ heads <- coef(x)
@@ -119,66 +70,94 @@ text(myscale * heads[,choices], labels = row.names(heads), cex = tex, col=color,
 classes <- as.numeric(train$crime)
 plot(lda.fit, dimen = 2, col = classes, pch = classes)
 lda.arrows(lda.fit, myscale = 1)
+```
 
-#5.save the crime categories, remove the categorical crime variables, and predict the classes with LDA (Comments: In the cross tabulate, we can see that the correct and predicted number of crime categories with four categories, including low, med-low, med-high and high. The correct and predicted are equal on low with 70, med-low with 77, med-high with 80, and high with 126.)
+## 5. predict the classes with LDA 
 
-#(1)save and remove
-correct_classes <- test$crime
-library(dplyr)
-test <- dplyr::select(test, -crime)
+(Comments: In the cross tabulate, we can see that the correct and predicted number of crime categories with four categories, including low, med-low, med-high and high. The correct and predicted are equal on low with 70, med-low with 77, med-high with 80, and high with 126.)
 
-#(2)predict the the classes with the LDA model
+(1)predict the the classes with the LDA model
+
+```{r}
 lda.pred <- predict(lda.fit, newdata = test)
+```
 
-#(3)cross tabulate the results
+(2)cross tabulate the results
+
+```{r}
 table(correct = correct_classes, predicted = lda.pred$class)
+```
 
-#predicted
-correct    low med_low med_high high
-  low       70      52        5    0
-  med_low   18      77       31    0
-  med_high   1      39       80    6
-  high       0       0        1  126
-  
-# 6.Reload the Boston data set,standardized the dataset, calculate the distances and run k-means
-#Interpretation: the summary of the distance showed that the min is 2.016, the median is 279.505, the mean is 342.899 and the max is 1198.265; the optimal number cluster is 2 and so I run the the algorithm again with the centers is 2.
+## 6.Reload the Boston data set,standardized the dataset, calculate the distances and run k-means
 
-#(1)Reload and standardize the Boston dataset
+Interpretation: the summary of the distance showed that the min is 2.016, the median is 279.505, the mean is 342.899 and the max is 1198.265; the optimal number cluster is 2 and so I run the the algorithm again with the centers is 2.
+
+(1)Reload and standardize the Boston dataset
+
+```{r}
 library(MASS)
 data("Boston")
 summary("Boston")
 boston_scaled <- scale(Boston)
 summary(boston_scaled)
+```
 
-# (2)Calculate the distance between the variables
+(2)Calculate the distance between the variables
+
+```{r}
 dist_woman <- dist(boston_scaled, method = 'manhattan')
 summary(dist_woman)
+```
 
-# (3)Run k-means algorithm
+(3)Run k-means algorithm
+
+```{r}
 km <- kmeans(boston_scaled, centers = 3)
+```
 
-# (4)Investigate the optimal number clusters and run algorithm again
+(4)Investigate the optimal number clusters and run algorithm again
+
+```{r}
 set.seed(123)
 k_max <- 10
 twcss <- sapply(1:k_max, function(k){kmeans(Boston, k)$tot.withinss})
+```
 
-# (5)Investigate the best optimal cluster number and run it again and visualize the clusters
+(5)Investigate the best optimal cluster number and run it again and visualize the clusters
+
+```{r}
+library(ggplot2)
 qplot(x = 1:k_max, y = twcss, geom = 'line')
 km <-kmeans(boston_scaled, centers = 2)
 pairs(boston_scaled, col = km$cluster)
+```
 
-# Bonus: Perform the k-means with >2 clusters
+Bonus: Perform the k-means with >2 clusters
+
+```{r}
 km2 <-kmeans(boston_scaled, centers = 4)
 pairs(boston_scaled, col = km2$cluster)
+```
 
-# Super bonus
+Super bonus
+
+```{r}
 model_predictors <- dplyr::select(train, -crime)
-# check the dimensions
+```
+
+check the dimensions
+ 
+```{r}
 dim(model_predictors)
 dim(lda.fit$scaling)
-# matrix multiplication
+```
+
+matrix multiplication
+
+```{r}
 matrix_product <- as.matrix(model_predictors) %*% lda.fit$scaling
 matrix_product <- as.data.frame(matrix_product)
 library(plotly)
 plot_ly(x = matrix_product$LD1, y = matrix_product$LD2, z = matrix_product$LD3, type= 'scatter3d', mode='markers')
 plot_ly(x = matrix_product$LD1, y = matrix_product$LD2, z = matrix_product$LD3, type= 'scatter3d', mode='markers')
+```
