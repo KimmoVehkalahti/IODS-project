@@ -32,4 +32,9 @@ RATSL <-  RATSL %>% mutate(Time = as.integer(substr(WD,3,4))) # add Time to RATS
 glimpse(BPRSL) # see BPRSL
 glimpse(RATSL) # see RATSL
 
-Comments: The dataset showed that the variable names changed. Take BPRS as an example. The varibales from "treatment, subject, week0, week1, week2, week3, week4, week5, week6, week7, and week8" to "treatment, subject, weeks, bprs, and week". And to look at the structure of BPRS, it showed that "week0 to week8" in the wide form changed to weeks and bprs. So the long form of dataset seperates the unit of analysis (week-bprs) into two separate variables (weeks and bprs), but the wide form of dataset combines one of the keys (week) with the value variable (bprs). In summary, the long form of dataset would easy to summary and can be analyzed in a more advanced way.
+Comments: The dataset showed that the variable names changed. Take BPRS as an example. The varibales from 
+"treatment, subject, week0, week1, week2, week3, week4, week5, week6, week7, and week8" to "treatment, subject, weeks, bprs, and week". 
+And to look at the structure of BPRS, it showed that "week0 to week8" in the wide form changed to weeks and bprs. 
+So the long form of dataset seperates the unit of analysis(week-bprs) into two separate variables (weeks and bprs),
+but the wide form of dataset combines one of the keys (week) with the value variable (bprs). 
+In summary, the long form of dataset would easy to summary and can be analyzed in a more advanced way.
