@@ -1,0 +1,163 @@
+
+# Chapter 4 Clustering and classification
+
+
+## 1.Load the Boston data 
+
+(Comments: The Boston data is about the housing value in suburbs of Boston. It has 506 rows and 14 columns. The columns include crim, zn, chas, nox, rm, age, dis, rad, tax, ptratio, black, lstat and medv.)
+
+```{r}
+library(MASS)
+data("Boston")
+str(Boston)
+dim(Boston)
+```
+
+## 2.The graphical overview of the data and the summaries of the variables 
+
+(Interpretation: From the summary of the data, it showed that the Min, max and mean od the variables as following: crim (Min: 0.006; Max：88.976；M:3.614), zn (Min: 0.00; Max: 100; M:11.36), indus(Min: 0.46; Max:27.74; M:11.14),chas(Min:0.00; Max: 1.00;M:0.07), nox:(Min:0.385; Max: 0.871; M: 0.555); rm(Min:3.56; Max:8.78;M:6.28); age(Min:2.9; Max: 100; M: 68.57); dis(Min: 1.13; Max: 12.13;M:3.80); rad(Min: 1.00;Max：24.00；M:9.55);tax(Min:187.0; Max:711.0;M:408.2); ptratio(Min:12.60;Max:22.00;M: 18.46);black(Min:0.32;Max:396.90; M:356.67); lstat (Min:1.73; Max:37.97; M: 12.65) and medv(Min:5.00; Max:50;M:22.53), which means that the crime rate have big differences from the min to max, and this is also the characteristics for other variables. About the relationship between variables, the correlations between variables are varied from 0.04 to 0.77)
+
+(1)summary
+```{r}
+summary (Boston)
+```
+
+(2)correlation and graph
+
+```{r}
+library(magrittr)
+cor_matrix<-cor(Boston) %>% round(digits=2)
+cor_matrix
+library(corrplot)
+corrplot(cor_matrix, method="circle", type="upper", cl.pos="b", tl.pos="d", tl.cex = 0.6)
+pairs(Boston, col = "blue", pch = 18, main = "Matrix plot of the variables")
+```
+
+
+## 3.standardize the dataset and print out summary of it +create a categorical variable of the crime 
+
+(The Min., 1st Qu., Median, Mean, 3rd Qu. and Max. of the variables are changed, the maximum of the variables is 10.00)
+
+```{r}
+boston_scaled <- scale(Boston)
+summary(boston_scaled)
+class(boston_scaled)
+boston_scaled <- as.data.frame(boston_scaled)
+summary(boston_scaled$crim)
+bins <- quantile(boston_scaled$crim)
+bins
+crime <- cut(boston_scaled$crim, breaks = bins, include.lowest = TRUE, labels = c("low", "med_low", "med_high", "high"))
+boston_scaled <- dplyr::select(boston_scaled, -crim)
+boston_scaled <- data.frame(boston_scaled, crime)
+n <- nrow(boston_scaled)
+ind <- sample(n,  size = n * 0.8)
+train <- boston_scaled[ind,]
+test <- boston_scaled
+correct_classes <- test$crime # save crime
+test <- dplyr::select(test, -crime) # remove crime
+```
+
+
+## 4.fit the linear discriminant analysis on the train set
+
+```{r}
+lda.fit <- lda(crime ~ ., data = train)
+lda.fit
+lda.arrows <- function(x, myscale = 1, arrow_heads = 0.1, color = "orange", tex = 0.75, choices = c(1,2)){ heads <- coef(x)
+         arrows(x0 = 0, y0 = 0, x1 = myscale * heads[,choices[1]], y1 = myscale * heads[,choices[2]], col=color, length = arrow_heads)
+text(myscale * heads[,choices], labels = row.names(heads), cex = tex, col=color, pos=3)
+}
+classes <- as.numeric(train$crime)
+plot(lda.fit, dimen = 2, col = classes, pch = classes)
+lda.arrows(lda.fit, myscale = 1)
+```
+
+## 5. predict the classes with LDA 
+
+(Comments: In the cross tabulate, we can see that the correct and predicted number of crime categories with four categories, including low, med-low, med-high and high. The correct and predicted are equal on low with 70, med-low with 77, med-high with 80, and high with 126.)
+
+(1)predict the the classes with the LDA model
+
+```{r}
+lda.pred <- predict(lda.fit, newdata = test)
+```
+
+(2)cross tabulate the results
+
+```{r}
+table(correct = correct_classes, predicted = lda.pred$class)
+```
+
+## 6.Reload the Boston data set,standardized the dataset, calculate the distances and run k-means
+
+Interpretation: the summary of the distance showed that the min is 2.016, the median is 279.505, the mean is 342.899 and the max is 1198.265; the optimal number cluster is 2 and so I run the the algorithm again with the centers is 2.
+
+(1)Reload and standardize the Boston dataset
+
+```{r}
+library(MASS)
+data("Boston")
+summary("Boston")
+boston_scaled <- scale(Boston)
+summary(boston_scaled)
+```
+
+(2)Calculate the distance between the variables
+
+```{r}
+dist_woman <- dist(boston_scaled, method = 'manhattan')
+summary(dist_woman)
+```
+
+(3)Run k-means algorithm
+
+```{r}
+km <- kmeans(boston_scaled, centers = 3)
+```
+
+(4)Investigate the optimal number clusters and run algorithm again
+
+```{r}
+set.seed(123)
+k_max <- 10
+twcss <- sapply(1:k_max, function(k){kmeans(Boston, k)$tot.withinss})
+```
+
+(5)Investigate the best optimal cluster number and run it again and visualize the clusters
+
+```{r}
+library(ggplot2)
+qplot(x = 1:k_max, y = twcss, geom = 'line')
+km <-kmeans(boston_scaled, centers = 2)
+pairs(boston_scaled, col = km$cluster)
+```
+
+Bonus: Perform the k-means with >2 clusters
+
+```{r}
+km2 <-kmeans(boston_scaled, centers = 4)
+pairs(boston_scaled, col = km2$cluster)
+```
+
+Super bonus
+
+```{r}
+model_predictors <- dplyr::select(train, -crime)
+```
+
+check the dimensions
+ 
+```{r}
+dim(model_predictors)
+dim(lda.fit$scaling)
+```
+
+matrix multiplication
+
+```{r}
+matrix_product <- as.matrix(model_predictors) %*% lda.fit$scaling
+matrix_product <- as.data.frame(matrix_product)
+library(plotly)
+plot_ly(x = matrix_product$LD1, y = matrix_product$LD2, z = matrix_product$LD3, type= 'scatter3d', mode='markers')
+plot_ly(x = matrix_product$LD1, y = matrix_product$LD2, z = matrix_product$LD3, type= 'scatter3d', mode='markers')
+```

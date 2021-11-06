@@ -1,5 +1,6 @@
 ---
 title: "IODS course project"
+author: "Liyuan E"
 output:
   html_document:
     theme: cosmo
@@ -15,16 +16,36 @@ output:
 # Introduction to Open Data Science - Course Project
 
 ```{r child = "chapter1.Rmd"}
-# This will include Chapter 1 (that is updated in its own file) in the document.
 ```
   
 ***
+  
   
 ```{r child = "chapter2.Rmd"}
-# This will include Chapter 2 (that is updated in its own file) in the document.
 ```
 
 ***
 
-(more chapters to be added similarly as we proceed with the course!)
+```{r child = "chapter3.Rmd"}
+```
+
+
+***
+
+```{r child = "chapter4.Rmd"}
+```
+
+***
+
+```{r child = "chapter5.Rmd"}
+```
+
+***
+
+```{r child = "chapter6.Rmd"}
+```
+
+
+***
+
 

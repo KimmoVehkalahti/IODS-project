@@ -1,0 +1,215 @@
+
+# Chapter 6 Analysis of longitudinal data
+
+## Analysis of chapter 8 of MABS using RATS dataset
+
+### Load the RATS and make it to RATSL
+    
+    Interpretation: RATS data is a wide form data and it has to be changed to long form data. The commands below is to making the RATS (wide form) to RATSL (long form). Long-form data sets are often required for advanced statistical analysis and graphing. And now it is ready for the analysis.
+
+```{r}
+RATS <- read.table("https://raw.githubusercontent.com/KimmoVehkalahti/MABS/master/Examples/data/rats.txt", header = TRUE, sep = '\t')
+library(dplyr)
+library(tidyr)
+RATS$ID <- factor(RATS$ID)
+RATS$Group <- factor(RATS$Group)
+RATSL <-  RATS %>% gather(key = WD, value = Weight, -ID, -Group)
+RATSL <-  RATSL %>% mutate(Time = as.integer(substr(WD,3,4)))
+glimpse(RATSL)
+```
+
+### Draw plots of RATSL
+    
+    Interpretation: The graphs showed that the group 1 rats' weights significant different from group 2 and group 3. The weight of group 1 rats is the smallest among these three groups.Group 2 have the bigest rat, but other rats in group group 2 are smaller than the rats in group 3. For the amount of the rats, the amount of rats in group 1 is higher than that in group 2 and 3.
+
+```{r}
+library(ggplot2)
+ggplot(RATSL, aes(x = Time, y = Weight, linetype = ID)) +
+  geom_line() +
+  scale_linetype_manual(values = rep(1:10, times=4)) +
+  facet_grid(. ~ Group, labeller = label_both) +
+  theme(legend.position = "none") + 
+  scale_y_continuous(limits = c(min(RATSL$Weight), max(RATSL$Weight)))
+```
+
+### Standardise Weight and draw the plot again
+    
+    Interpretation: Now, the weights of rats in group 1, 2, and 3 were all standardized. 
+    And the plot showed that the highest weight of group 2 did not increased as that in the plot of unstandardized data, and the rats that have not that higher weight did not not show that change. This means that the higher weight rats would be influenced more than lower weight rats after the standardization.
+
+```{r}
+RATSL <- RATSL %>%
+  group_by(Time) %>%
+  mutate(stdWeight = (Weight - mean(Weight))/sd(Weight) ) %>%
+  ungroup()
+glimpse(RATSL)
+ggplot(RATSL, aes(x = Time, y = stdWeight, linetype = ID)) +
+  geom_line() +
+  scale_linetype_manual(values = rep(1:10, times=4)) +
+  facet_grid(. ~ Group, labeller = label_both) +
+  scale_y_continuous(name = "standardized Weight")
+```
+
+### Summary graphs
+    
+    Interpretation: First, the RATSS with the mean and standard error of the variable Weight, and then the summary of the RATSS showed that the row is 33 and the columns is 4, including Group, Time, mean, and se. 
+    The plot of mean profiles showed that three groups about the mean Weight values may differ from each other, since there is no overlap among the three rats group mean profiles. And we can name group one the low weight group, group 2 moderate weight group, and group 3 high weight group respectively.
+
+```{r}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+n <- RATSL$Time %>% unique() %>% length() # number of days
+RATSS <- RATSL %>%
+  group_by(Group, Time) %>%
+  summarise( mean = mean(Weight), se = sd(Weight) / sqrt(n)) %>%
+  ungroup() # summary data with mean and standard error of Weight by Group and day
+glimpse(RATSS) # glimpse the data
+ggplot(RATSS, aes(x = Time, y = mean, linetype = Group, shape = Group)) + geom_line() +
+  scale_linetype_manual(values = c(1,2,3)) + geom_point(size=3) +
+  scale_shape_manual(values = c(1,2,3)) +
+  geom_errorbar(aes(ymin=mean-se, ymax=mean+se, linetype="1"),    width=0.3) +  theme(legend.position = c(0.8,0.8)) +
+  theme_bw() + theme(panel.grid.major = element_blank(),
+                     panel.grid.minor = element_blank()) +
+  scale_y_continuous(name = "mean(Weight) +/- se(Weight)") # plot the mean profiles
+
+
+```
+
+### Find the outlaw outlier
+    
+    Interpretation: First, the BPRSL8S was created, and from the summary, we can see that there are 16 rows and 3 columns, including Group, ID, and mean.
+    The plot showed that: The rats in group 1 had the lowest mean weight among three groups, and the rats in group 2 is higher than group. The rats in group 3 have the highest mean weight. And all groups have outlier.
+
+
+```{r}
+RATSL8S <- RATSL %>%
+  filter(Time > 0) %>%
+  group_by(Group, ID) %>%
+  summarise( mean=mean(Weight) ) %>%
+  ungroup() # create a summary by Group and WD with mean
+glimpse(RATSL8S) # glimpse RATSL8S
+ggplot(RATSS, aes(x = Group, y = mean)) +
+  geom_boxplot() +
+  stat_summary(fun = "mean", geom = "point", shape=23, size=4, fill = "white") +
+  scale_y_continuous(name = "mean(Weight), days 1-64") # draw a boxplot of mean versus Group
+```
+
+### filter the outlier and draw the data again
+    
+    Interpretation: Now, the outlier were removed. It can also be seen in the plot. The other information was similar as the last plot. The group 3 had the highest rat weight, then the group 2, and the group 1 had the lowest rat weight.
+
+```{r}
+RATSL8S1 <- RATSL8S %>%  filter(ID != 2 & ID != 12 & ID != 13) # create a new data by filtering the outlier
+ggplot(RATSL8S1, aes(x = Group, y = mean)) +
+  geom_boxplot() +
+  stat_summary(fun = "mean", geom = "point", shape=23, size=4, fill = "white") +
+  scale_y_continuous(name = "mean(Weight), days 1-64") # draw the plot again
+
+```
+
+### Performing T-test and Anova
+    
+    Interpretation: The result showed that there is significant difference between group1, group2 and group3 in terms of weight of rats, since the p value is 2.721e-14, which is less than 0.05. 
+
+```{r}
+oneway.test(mean ~ Group, data = RATSL8S1, var.equal = TRUE) # run Anova
+fit <- lm(mean ~ Group, data = RATSL8S1) # run linear model
+anova(fit) # compute the analysis of variance table in order to fitted model with anova
+```
+
+
+## Analysis Chapter 9 of MABS using BPRS dataset
+
+### Load the BPRS and make it to BPRSL
+    
+    Interpretation: BPRS data is a wide form data and it has to be changed to long form data. The commands below is to making the BPRS (wide form) to BPRSL (long form). Long-form data sets are often required for advanced statistical analysis and graphing. And now it is ready for the analysis.
+
+```{r}
+BPRS <- read.table("https://raw.githubusercontent.com/KimmoVehkalahti/MABS/master/Examples/data/BPRS.txt", sep  =" ", header = T)
+BPRS$treatment <- factor(BPRS$treatment) #convert BPRS treatment
+BPRS$subject <- factor(BPRS$subject) # convert BPRS subject
+library(tidyr)
+library(dplyr)
+BPRSL <-  BPRS %>% gather(key = weeks, value = bprs, -treatment, -subject) # convert BPRS to long form
+BPRSL <-  BPRSL %>% mutate(week = as.integer(substr(weeks,5,5))) # add week to BRPS
+glimpse(BPRSL)
+```
+
+### Draw a bprs against week plot
+
+    Interpretation: First, the dimension showed that there are 360 rows and 5 columns. 
+    The plot showed the all 40 men's bprs against time, it passed the repeated data, and identify each observation belong to which group. In addtion, the two groups is randomly distributed.
+
+```{r}
+dim(BPRSL) # look at the dimension
+library(ggplot2)
+ggplot(BPRSL, aes(x = week, y = bprs, group = subject)) +
+  geom_text(aes(label = treatment)) +
+  scale_x_continuous(name = "week", breaks = seq(0, 8, 2)) +
+  scale_y_continuous(name = "bprs") +
+  theme(legend.position = "top") # draw the plot
+```
+
+### The linear model
+
+    Interpretation: The bprs is predictor variable and week is explanatory variable in this linear regression model. The treatment in group 1 is the baseline, and the treatment in group 2 can be 47.0261. There is no differece between two groups in term of treatment, since the p value of treatment2 is 0.661, which is more than 0.05. 
+
+```{r}
+BPRSL_reg <- lm(bprs ~ week + treatment, data = BPRSL) # create a regression model
+summary(BPRSL_reg) # print out the model summary
+```
+### Random Intercept model
+
+    Interpretation: In this model, the bprs is the predictor variable, and week and treatment are the explanatory variables. The result showed that AIC of the model is 2748.7, BIC is 2768.1, logLik is -1369.4, abd df.resid is 355. The min of scaled residuals is -3.0481, and the max of it is 3.4855. For the random effects, he intercept of the subject is 47.41, and the Std.Dev is 6.885, which indicates that subject may have make considerable differences in the model. The t value of week in fixed effects is 24.334 (>0), which means there is a greater evidence that there is significant difference. The correlation of fixed effects between week and treatment2 is 0.000.
+
+```{r}
+library(lme4) # load lme4
+BPRS_ref <- lmer(bprs ~ week + treatment + (1 | subject), data = BPRSL, REML = FALSE) # run random intercept model
+summary(BPRS_ref) # print out summary
+```
+### Random intercept and random slope model
+
+    Interpretation: The result showed that the fixed effects are quite similar to random intercept model. The random intercept and slope model offered a better fit for the data because of the small AIC value. The p value is 0.03, less than 0.05, which indicated that the difference is significant. And the chi-squared statistic is 7.27, and the degree of freedom is 2.
+
+```{r}
+BPRS_ref1 <- lmer(bprs ~ week + treatment + (week | subject), data = BPRSL, REML = FALSE) # create a random intercept and random slope model
+summary(BPRS_ref1) # print out the summary
+anova(BPRS_ref1, BPRS_ref) # run anova
+```
+
+### random intercept and random slope model with interaction
+
+    Interpretation: The result showed that the fixed effects and AIC value are quite similar to the last model. The p value is 0.07, more than 0.05, which indicated that the difference is not significant. And the chi-squared statistic is 3.17, and the degree of freedom is 1.
+    The two plots showed that the fitted bprs profiles from the interaction model and observed bprs profiles. The first one is the observed data, and the second one illustrates how well the interaction model fits the fitted data.
+
+```{r}
+BPRS_ref2 <- lmer(bprs ~ + week * treatment + (week | subject ), data = BPRSL, REML = FALSE) # create a random intercept and random slope model with the interaction
+summary(BPRS_ref2) # print a summary of the model
+anova(BPRS_ref2, BPRS_ref1) # run anova
+library(ggplot2)
+p1 <- ggplot(BPRSL, aes(x = week, y = bprs, color = interaction(subject, treatment))) 
+p2 <- p1 + geom_line()  + geom_point()
+p3 <- p2 + scale_x_continuous(name = "week")
+p4 <- p3 + scale_y_continuous(name = "bprs")
+p5 <- p4 + theme_bw() + theme(legend.position = "none")
+p6 <- p5 + theme(panel.grid.major = element_blank(),
+                     panel.grid.minor = element_blank())
+p7 <- p6 + ggtitle("Observed")
+graph1 <- p7    # draw a plot
+Fitted <- fitted(BPRS_ref1) # create a vector of the fitted values
+BPRSL <- BPRSL %>%
+mutate(Fitted) # create a vector of the fitted values
+p1 <- ggplot(BPRSL, aes(x = week, y = Fitted, color = interaction(subject, treatment))) 
+p2 <- p1 + geom_line()  + geom_point()
+p3 <- p2 + scale_x_continuous(name = "week")
+p4 <- p3 + scale_y_continuous(name = "bprs")
+p5 <- p4 + theme_bw() + theme(legend.position = "none")
+p6 <- p5 + theme(panel.grid.major = element_blank(),
+                     panel.grid.minor = element_blank())
+p7 <- p6 + ggtitle("Fitted")
+graph2 <- p7  
+
+graph1; graph2
+```
+
