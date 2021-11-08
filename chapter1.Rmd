@@ -11,3 +11,5 @@ date()
 ```
 The text continues here.
 
+# "Hi there! 'i think the course is well designed and instructions are easy to follow. I am doing PhD in molecular medicine, and interested in geting exposure to tools needed for data science research. This course is recommended by my professor Katja Kanninen. Here is the linke to repository" 
+# "https://github.com/shahbaz-ali1/shahbaz-ali1.git"

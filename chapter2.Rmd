@@ -11,3 +11,4 @@ date()
 ```
 
 Here we go again...
+-I have completed download of R studio, R, and Github and made the accounts on each file. Go through the Datacamp course. Created my repository at github and linked it with R studio. Will continue reading more text available.
