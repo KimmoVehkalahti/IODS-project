@@ -10,6 +10,9 @@ date()
 
 ```
 The text continues here.
+git remote add origin https://github.com/shahbaz-ali1/shahbaz-ali1.git
+git branch -M main
+git push -u origin main
 
 # "Hi there! 'i think the course is well designed and instructions are easy to follow. I am doing PhD in molecular medicine, and interested in geting exposure to tools needed for data science research. This course is recommended by my professor Katja Kanninen. Here is the linke to repository" 
 # "https://github.com/shahbaz-ali1/shahbaz-ali1.git"

@@ -26,6 +26,6 @@ output:
 ```
 
 ***
-
+-ali.shahbaz@uef.fi
 (more chapters to be added similarly as we proceed with the course!)
 
