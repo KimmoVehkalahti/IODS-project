@@ -1,13 +1,13 @@
-# Insert chapter 2 title here
+# continue to be amazed
 
-*Describe the work you have done this week and summarize your learning.*
+*I did finally realized that the editing and commiting was in the github not in RStudio, I was desperate even though I was trying to understand, I hope this will begin to be simple now.*
 
-- Describe your work and results clearly. 
-- Assume the reader has an introductory course level understanding of writing and reading R code as well as statistical methods.
-- Assume the reader has no previous knowledge of your data or the more advanced methods you are using.
+- I installed R, then RStudio and finally Git, I created an account and tried to update my profile. 
+- I learned how to execute some data camp stuff.
+- I could say that this project is designated to people who would like to share their project to public so that others can use them also or for team work so that they can share and edit together a specific project.
 
 ```{r}
 date()
 ```
 
-Here we go again...
+Let's learn more this week...
