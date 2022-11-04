@@ -8,6 +8,7 @@
 
 date()
 1+1
+print("sloved")
 ```
 The text continues here.
 
