@@ -7,7 +7,7 @@
 # This is a so-called "R chunk" where you can write R code.
 
 date()
-
+1+1
 ```
 The text continues here.
 
