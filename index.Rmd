@@ -1,6 +1,7 @@
 ---
 title: "IODS course project"
-output:
+author: "Subam Kathet"
+  output:
   html_document:
     theme: cosmo
     toc: true
