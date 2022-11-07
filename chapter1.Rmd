@@ -10,7 +10,7 @@ date()
 
 ```
 There seems to be many new things to learn, especially with  GitHub with me.
-Learning to work with GitHub, as mentioned, I am expected to improve during
+Learning to work with GitHub, as mentioned, I am expecting to improve during
 the course, as well as statistics on large data sets with R.
 
 The Exercise1.Rmd-file had nice summary on handling the data in R in chapters

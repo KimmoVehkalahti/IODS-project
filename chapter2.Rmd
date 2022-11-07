@@ -10,4 +10,9 @@
 date() 
 ```
 
-Here we go again...
+- This week I got set up with R, RStudion and GitHub
+- I have already been working with R and RStudio, so I had no issues there
+- I set up a new project for this course in RStudio
+- I had more learning to do with GitHub, I had difficulties to "push" my data there
+
+
