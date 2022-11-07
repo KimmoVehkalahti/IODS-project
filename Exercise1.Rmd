@@ -1,16 +1,17 @@
 
 ---
-title: "**Introduction to Open Data Science, Exercise set 1**"
-
-subtitle: "**R basics using the RHDS book**"
-
-output: 
+title: '**Introduction to Open Data Science, Exercise set 1**'
+subtitle: '**R basics using the RHDS book**'
+output:
   html_document:
     theme: flatly
     highlight: haddock
-    toc: true
+    toc: yes
     toc_depth: 2
-    number_section: false
+    number_section: no
+  pdf_document:
+    toc: yes
+    toc_depth: '2'
 ---
 
 This R Markdown sheet includes a quite large set of R code chunks taken from the RHDS book **R for Health Data Science** by Ewen Harrison and Riinu Pius (CRC Press, 2021), available online at <https://argoshare.is.ed.ac.uk/healthyr_book/>. The structure follows the structure of the book (chapters 2, 3, 4, 5, 6, and 8 and their sections and subsections).
@@ -64,8 +65,6 @@ Have fun! This will get you ready for the rest of the IODS course!
 After an successful installation (that might take some time), continue by activating the actual functions, beginning from library(...) and then finally reading the data in:
 
 ```{r}
-#update.packages("rlang")
-#install.packages("tidyverse")
 library(tidyverse) # install.packages("tidyverse")
 example_data <- read_csv("https://raw.githubusercontent.com/KimmoVehkalahti/RHDS/master/example_data.csv")
 View(example_data) # look at the data (and then close that view to return to the editor)
@@ -150,7 +149,7 @@ my_datetime <- "2020-12-01 12:00"
 my_datetime
 
 # error that is explained in the book... (you may put '#' in front of it)
-my_datetime - current_datetime
+# my_datetime - current_datetime
 
 current_datetime %>% class()
 my_datetime %>% class()
@@ -171,7 +170,7 @@ my_datesdiff %>% class()
 ymd_hm("2021-01-02 12:00") + my_datesdiff
 
 # another error challenge here... (again you may put '#' in front of that afterwards)
-560/my_datesdiff
+# 560/my_datesdiff
 560/as.numeric(my_datesdiff)
 ```
 
@@ -280,8 +279,8 @@ gbd_short %>%
 
 ```{r}
 # do you see what is wrong here? (you may fix it or hide it with '#' afterwards)
-gbd_short %>% 
- filter(year = 1995)
+# gbd_short %>% 
+# filter(year = 1995)
 
 gbd_short %>% 
   filter(year == 1995 | year == 2017)
@@ -414,8 +413,8 @@ mydata$`Nasty column name`
 
 # or
 
-mydata %>% 
- select(`Nasty column name`)
+# mydata %>% 
+#  select(`Nasty column name`)
 ```
 
 2.8 continued...
