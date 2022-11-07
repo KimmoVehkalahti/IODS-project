@@ -57,7 +57,9 @@ Data wrangling, of course according to my story above, followed by logistic regr
 Please find it Here:
   https://github.com/rg450318262/IODS-project
 
+# 4. Token
 
+Since I have generated the token before the new task is published (That is the only way I get my machine connected to GitHub), I will not generate it again in case any overlapping problems. 
 
 
 
