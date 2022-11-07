@@ -16,6 +16,6 @@ the course, as well as statistics on large data sets with R.
 The Exercise1.Rmd-file had nice summary on handling the data in R in chapters
 1 & 2. Some of them I had gotten more familiar with, but there where a lot of
 things to learn, especially chapter 2 had nice suggestions/tricks in the
-examples how to handle data frames.
+examples how to handle data frames. 
 
-https://github.com/venkatharina/IODS-project
+git@github.com:venkatharina/IODS-project.git
