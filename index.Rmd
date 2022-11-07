@@ -1,5 +1,6 @@
 ---
 title: "IODS course project"
+author: "Rong Guang"
 output:
   html_document:
     theme: cosmo
