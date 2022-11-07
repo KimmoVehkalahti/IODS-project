@@ -134,7 +134,7 @@ typesdata %>%
 
 ### 2.2.3 Factor variables (categorical)
 
-(just read - more about this topic will follow later...)
+(just read - more about this topic will follow later..)
 
 ### 2.2.4 Date/time variables
 
