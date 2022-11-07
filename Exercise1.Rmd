@@ -11,7 +11,7 @@ output:
     number_section: no
   pdf_document:
     toc: yes
-    toc_depth: '2'
+    toc_depth: '2' 
 ---
 
 This R Markdown sheet includes a quite large set of R code chunks taken from the RHDS book **R for Health Data Science** by Ewen Harrison and Riinu Pius (CRC Press, 2021), available online at <https://argoshare.is.ed.ac.uk/healthyr_book/>. The structure follows the structure of the book (chapters 2, 3, 4, 5, 6, and 8 and their sections and subsections).

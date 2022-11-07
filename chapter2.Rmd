@@ -7,7 +7,7 @@
 - Assume the reader has no previous knowledge of your data or the more advanced methods you are using.
 
 ```{r}
-date()
+date() 
 ```
 
 Here we go again...

@@ -9,7 +9,7 @@
 date()
 
 ```
-There seems to be many new things to learn, especially with GitHub with me.
+There seems to be many new things to learn, especially with  GitHub with me.
 Learning to work with GitHub, as mentioned, I am expected to improve during
 the course, as well as statistics on large data sets with R.
 
