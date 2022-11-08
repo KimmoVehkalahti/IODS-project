@@ -117,8 +117,8 @@ lrn14$Attitude
 lrn14$Attitude / 10
 
 # create column 'attitude' by scaling the column "Attitude"
-lrn14$attitude <- "change me!"
-
+lrn14$attitude <- lrn14$Attitude / 10
+lrn14$attitude 
 ```
 
 
@@ -170,6 +170,7 @@ strategic_questions <- c("ST01","ST09","ST17","ST25","ST04","ST12","ST20","ST28"
 
 # select the columns related to deep learning 
 deep_columns <- select(lrn14, one_of(deep_questions))
+
 # and create column 'deep' by averaging
 lrn14$deep <- rowMeans(deep_columns)
 
@@ -179,9 +180,9 @@ surface_columns <- select(lrn14, one_of(surface_questions))
 lrn14$surf <- rowMeans(surface_columns)
 
 # select the columns related to strategic learning 
-strategic_columns <- "change me!"
+strategic_columns <- select(lrn14, one_of(strategic_questions))
 # and create column 'stra' by averaging
-
+strategic_columns 
 
 ```
 
@@ -230,8 +231,8 @@ library(dplyr)
 keep_columns <- c("gender","Age","attitude", "deep", "stra", "surf", "Points")
 
 # select the 'keep_columns' to create a new dataset
-learning2014 <- "change me!"
-
+learning2014 <-  select(lrn14, one_of(keep_columns))
+learning2014
 # see the structure of the new dataset
 
 
@@ -282,7 +283,12 @@ colnames(learning2014)
 colnames(learning2014)[2] <- "age"
 
 # change the name of "Points" to "points"
+learning2014[,colnames(learning2014) == "Points"]
+colnames(learning2014)["Points"]
 
+
+
+colnames(learning2014)[which(colnames(learning2014) == "Points")] <-  "points"
 
 # print out the new column names of the data
 
