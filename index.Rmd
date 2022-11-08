@@ -1,4 +1,4 @@
----
+
 title: "IODS course project"
 author: "Subam Kathet"
   output:
@@ -9,7 +9,6 @@ author: "Subam Kathet"
     fig_caption: true
     fig_width: 6
     fig_height: 4
----
 
 ***
 
@@ -17,12 +16,15 @@ author: "Subam Kathet"
 
 ```{r child = "chapter1.Rmd"}
 # This will include Chapter 1 (that is updated in its own file) in the document.
+# Not sure if I am supposed to write some codes here or just leave it blank. Nevertheless this is starting to look like fun !! 
 ```
   
 ***
   
 ```{r child = "chapter2.Rmd"}
 # This will include Chapter 2 (that is updated in its own file) in the document.
+date()
+#Trying some late night changes after I was successful in working out the new token. 
 ```
 
 ***
