@@ -14,10 +14,10 @@ date()
 ```
 The text continues here.
 
-[https://iamsubam.github.io/IODS-project/](https://iamsubam.github.io/IODS-project/
-
 Link to my github page
 
-https://github.com/iamsubam/IODS-project
+https://iamsubam.github.io/IODS-project/
 
-My course diary)
+My course diary
+
+https://github.com/iamsubam/IODS-project

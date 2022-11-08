@@ -1,4 +1,4 @@
----
+
 title: "IODS course project"
 author: "Subam Kathet"
   output:
@@ -9,7 +9,7 @@ author: "Subam Kathet"
     fig_caption: true
     fig_width: 6
     fig_height: 4
----
+
 
 ***
 
