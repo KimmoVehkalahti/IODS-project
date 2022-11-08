@@ -18,8 +18,6 @@ https://github.com/iamsubam/IODS-project
 
 I have only had some time to browse through the R for Health Data Science. Coming from a background of experimental epidemiology, I was drawn immediately by linear and logistic regression because this is something I often rely on in my work. I looked into survival analysis briefly because of my interest and found it quite interesting. Although I need to practice a lot before I can get my hands around the analysis. I think the book gives a great over view of essential statistical analysis required on a fundamental level. Some knowledge of statistics can be of great advantage as R platform is already designed with a steep learning curve.
 
-*Write a short description about the course and add a link to your GitHub repository here. This is an R Markdown (.Rmd) file so you should use R Markdown syntax.*
-
 ```{r}
 # This is a so-called "R chunk" where you can write R code.
 
