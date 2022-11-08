@@ -342,7 +342,7 @@ library(dplyr)
 male_students <- filter(learning2014, gender == "M")
 
 # select rows where points is greater than zero
-learning2014 <- 
+learning2014 <- filter(learning2014, points > 0)
 
 ```
 
@@ -401,10 +401,11 @@ p2
 p3 <- p2 + geom_smooth(method = "lm")
 
 # add a main title
-p4 <- "change me!"
+p4 <- p3 + 
+  ggtitle("the correlation between attitude and points")
 
 # draw the plot!
-
+p4
 
 ```
 
@@ -442,7 +443,7 @@ Hints:
 - You can draw the plot `p` by simply typing it's name: just like printing R objects.
 
 ### R code
-```{r}
+```{r, fig.width=12, fig.height=8}
 # Work with the exercise in this chunk, step-by-step. Fix the R code!
 # learning2014 is available
 
@@ -455,10 +456,10 @@ library(GGally)
 library(ggplot2)
 
 # create a more advanced plot matrix with ggpairs()
-p <- ggpairs(learning2014, mapping = aes(), lower = list(combo = wrap("facethist", bins = 20)))
-
+p <- ggpairs(learning2014, mapping = aes(), lower = list(combo = wrap("facethist", bins = 10)))
+?ggpairs
 # draw the plot
-
+p
 
 
 ```
@@ -504,8 +505,16 @@ qplot(attitude, points, data = learning2014) + geom_smooth(method = "lm")
 my_model <- lm(points ~ 1, data = learning2014)
 
 # print out a summary of the model
+summary(my_model)
 
+# fit a linear model
+my_model1 <- lm(points ~ attitude, data = learning2014)
 
+# print out a summary of the model
+summary(my_model1)
+
+#if our model outperforms random slope
+anova(my_model, my_model1)
 ```
 
 
@@ -552,7 +561,7 @@ ggpairs(learning2014, lower = list(combo = wrap("facethist", bins = 20)))
 my_model2 <- lm(points ~ attitude + stra, data = learning2014)
 
 # print out a summary of the model
-
+summary(my_model2)
 
 ```
 
@@ -595,6 +604,7 @@ Hint:
 
 ### R code
 ```{r}
+?par
 # Work with the exercise in this chunk, step-by-step. Fix the R code!
 # learning2014 is available
 
@@ -602,8 +612,14 @@ Hint:
 my_model2 <- lm(points ~ attitude + stra, data = learning2014)
 
 # draw diagnostic plots using the plot() function. Choose the plots 1, 2 and 5
+plot(my_model2)
+par(mfrow = c(2,2))
+plot(my_model2)
+par(mfrow = c(2,2))
+plot(my_model2, which = 3)
 
-
+par(mfrow = c(2,2))
+plot(my_model2)
 ```
 
 
@@ -645,19 +661,19 @@ Hints:
 m <- lm(points ~ attitude, data = learning2014)
 
 # print out a summary of the model
-
+summary(m)
 
 # New observations
 new_attitudes <- c("Mia" = 3.8, "Mike"= 4.4, "Riikka" = 2.2, "Pekka" = 2.9)
-new_data <- data.frame(attitude = "change me!")
-
+new_data <- data.frame(attitude = new_attitudes)
+new_data
 # Print out the new data
 
 
 # Predict the new students exam points based on attitude
-predict(m, newdata = "change me!")
+predict(m, newdata = new_data)
 
-
+predict(m, new_data)
 ```
 
 **Awesome work!**
