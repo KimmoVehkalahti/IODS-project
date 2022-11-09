@@ -24,5 +24,3 @@ I have only had some time to browse through the R for Health Data Science. Comin
 date()
 # Trying to check if the chunk works or not. It is usually a struggle especially when R version is outdated and the packages doesn't work. Then re installing and updating the packages and coming back to work it out is a big struggle. 
 ```
-
-
