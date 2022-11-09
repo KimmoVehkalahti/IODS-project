@@ -56,22 +56,35 @@ deep_questions <- c("D03",  #item: I usually try to understand the meaning of
 learn$deep <- rowMeans(lrn14[, deep_questions])
 
 ##2.3 create column 'surf' by taking the mean of surface_questions-related items.
-surface_questions <- c("SU02",#I often wonder whether my studies are actually useful.
-                       "SU10",#item: Not much of what I have studied has been very interesting or relevant.
-                       "SU18",#item: I sometimes wonder why I decided to study here in the first place.
-                       "SU26",#item: My studies include courses that I am not interested in, but I have to take them anyway.
-                       "SU05",#item: There are many things that I have to concentrate on just memorising. 
-                       "SU13",#item: Many of the things I learn often remain disconnected and do not link to the bigger picture.
-                       "SU21",#item: I often don't really know what is important in the lectures, so I try to take notes as much as possible.
-                       "SU29",#item: I often have difficulty understanding things I need to remember.
-                       "SU08",#item: I usually study for the exam as much as I think is enough to pass the exam.
-                       "SU16",#item: Not much of what I have studied has been very interesting or relevant.
-                       "SU24",#item: In my studies, I concentrate mainly on what seems to be related to the completion of assignments and exams.
-                       "SU32" #item: I like the fact that the course tells me exactly what to do in essays or coursework.
+surface_questions <- c("SU02",#I often wonder whether my studies are actually 
+                       #useful.
+                       "SU10",#item: Not much of what I have studied has been 
+                       #very interesting or relevant.
+                       "SU18",#item: I sometimes wonder why I decided to study 
+                       #here in the first place.
+                       "SU26",#item: My studies include courses that I am not 
+                       #interested in, but I have to take them anyway.
+                       "SU05",#item: There are many things that I have to 
+                       #concentrate on just memorizing. 
+                       "SU13",#item: Many of the things I learn often remain 
+                       #disconnected and do not link to the bigger picture.
+                       "SU21",#item: I often don't really know what is important 
+                       #in the lectures, so I try to take notes as much as possible.
+                       "SU29",#item: I often have difficulty understanding 
+                       #things I need to remember.
+                       "SU08",#item: I usually study for the exam as much as I 
+                       #think is enough to pass the exam.
+                       "SU16",#item: Not much of what I have studied has been 
+                       #very interesting or relevant.
+                       "SU24",#item: In my studies, I concentrate mainly on what 
+                       #seems to be related to the completion of assignments and 
+                       #exams.
+                       "SU32" #item: I like the fact that the course tells me 
+                       #exactly what to do in essays or coursework.
                        ) 
 learn$surf <- rowMeans(lrn14[, surface_questions])
 
-##2.4 create column 'stra' by taking the mean of strategic_questions-related items.
+##2.4 create column 'stra'.
 strategic_questions <- c("ST01",#item: I organize my study conditions in such a 
                          #way that it is easy for me to work.
                          "ST09",#item: I think I am quite systematic when 
