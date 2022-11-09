@@ -1,3 +1,22 @@
+---
+title: "IODS"
+subtitle: "Assignment 2"
+
+author: "Rong Guang"
+date: "09/11/2022"
+
+output: 
+  html_document:
+    fig_caption: yes
+    theme: flatly
+    highlight: haddock
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    number_section: false
+---
+
+
 # Insert chapter 2 title here
 
 *Describe the work you have done this week and summarize your learning.*
@@ -8,6 +27,91 @@
 
 ```{r}
 date()
+```
+
+
+# 1 Preparing
+
+## 1.1 read the data set
+
+```{r}
+learn <- read_csv(file = "data/learning2014.csv")
+```
+
+## 1.2 Code categorical data
+
+```{r}
+learn <- learn %>% 
+  mutate(gender = gender %>%
+           factor() %>% 
+           fct_recode("Female" = "F",
+                      "Male" = "M"))
+```
+
+## 1.3 explore the data set
+
+```{r}
+#explore dimensions
+dim(learn)
+```
+
+
+```{r}
+#explore structure
+str(learn)
+```
+
+
+```{r}
+library(finalfit)
+library(DT)
+ff_glimpse(learn)$Continuous %>% datatable()
+```
+
+
+```{r}
+ff_glimpse(learn)$Categorical %>% datatable()
+```
+
+## 1.4 visualize the data set
+
+```{r, fig.width= 10, fig.height=6}
+library(GGally)
+library(ggplot2)
+# create an plot matrix with ggpairs()
+my_fn <- function(data, mapping, method="loess", ...){
+      p <- ggplot(data = data, mapping = mapping) + 
+      geom_point(size = 0.3, color = "coral") + 
+      geom_smooth(method=method, ...)
+      p
+    }
+ggpairs(learn, 
+        lower= list(combo = wrap("facethist", bins = 20),
+                    continuous = my_fn)
+        )
+
+```
+
+
+```{r}
+
+learn %>% filter(age<30) %>% ggplot(aes (x = age, y = points)) +
+  geom_point()+
+  geom_smooth(method = "loess")
+
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+
 ```
 
 Here we go again...
