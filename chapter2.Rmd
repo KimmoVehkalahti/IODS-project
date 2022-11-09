@@ -95,14 +95,56 @@ ggpairs(learn,
 
 ```{r}
 
-learn %>% filter(age<30) %>% ggplot(aes (x = age, y = points)) +
+p1 <- learn  %>% ggplot(aes (x = age, y = points)) +
   geom_point()+
   geom_smooth(method = "loess")
 
+learn %>% ggplot(aes(x = age))+
+  geom_boxplot()+
+  coord_flip()
+
+fit_age <- lm(points ~ age, data = learn)
+summary(fit_age)
+cooksd <- cooks.distance(fit_age)
+cooksd %>% broom::tidy()
+plot(cooksd, pch="*", cex=2, main="Influential Obs by Cooks distance") +
+abline(h = 4*mean(cooksd), col="red")+
+text(x=1:length(cooksd)+3.5, y=cooksd, labels=ifelse(cooksd>4*mean(cooksd, na.rm=T),names(cooksd),""), col="red")
+
+learn$fit_age_cooksd <- cooksd
+learn1 <- learn %>% filter(fit_age_cooksd<4*mean(fit_age_cooksd))
+
+p2 <- learn1  %>% ggplot(aes (x = age, y = points)) +
+  geom_point()+
+  geom_smooth(method = "loess")
+library(patchwork)
+p1
+learn <- learn %>% mutate(age.factor = age %>% 
+                            cut(breaks =c(0,19,22,25,27,34,100)))
+learn %>% count(age.factor)
+learn %>% 
+  filter(age.factor == "(19,22]") %>% 
+  ggplot(aes (x = age, y = points))+
+  geom_point()+
+  geom_smooth(method = "loess")
+
+fit_age1 <- learn %>% 
+  filter (age.factor == "(19,22]")%>% 
+  lm(points ~ age, data = .)
+summary(fit_age1)
+
+p1
 ```
 
 
 ```{r}
+USHSv2 <- USHSv2 %>% mutate(BMI.factor = BMI %>%  #turn BMI into factor and add labels(underweight:<18.5,                                                   #normal weight: ~25, overweight: ~30; obese: >30)
+                    cut(breaks=c(1,18.5,25,30,100), include.lowest = T) %>% 
+                    fct_recode("Underweight" = "[1,18.5]",
+                               "Normal weight" = "(18.5,25]",
+                               "Overweight" = "(25,30]",
+                               "Obese" = "(30,100]") %>% 
+                    ff_label("BMI ranges"))
 ```
 
 
