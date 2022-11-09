@@ -6,11 +6,11 @@ This course was recommended by a friend who is in the masters program in data sc
 
 # About the project
 
-Here is the link to my github webpage. 
+Here is the link to my github webpage.
 
 https://iamsubam.github.io/IODS-project/
 
-And here is the link to my course diary
+And here is the link to my course diary.
 
 https://github.com/iamsubam/IODS-project
 
