@@ -63,6 +63,7 @@ str(learn)
 
 
 ```{r}
+library(tidyverse)
 library(finalfit)
 library(DT)
 ff_glimpse(learn)$Continuous %>% datatable()
@@ -75,7 +76,7 @@ ff_glimpse(learn)$Categorical %>% datatable()
 
 ## 1.4 visualize the data set
 
-```{r, fig.width= 10, fig.height=6}
+```{r}
 library(GGally)
 library(ggplot2)
 # create an plot matrix with ggpairs()
@@ -94,8 +95,84 @@ ggpairs(learn,
 
 
 ```{r}
+learn <- learn %>% 
+  mutate(stra.factor = stra %>%
+           cut(breaks =c(0,3,6)) %>%
+                 fct_recode("High Stra" = "(0,3]",
+                            "Low Stra" = "(3,6]") %>% 
+           ff_label ("Stra dichotomized"))
+```
 
-p1 <- learn  %>% ggplot(aes (x = age, y = points)) +
+```{r}
+fit1 <- learn %>% 
+  filter(stra.factor == "Low Stra")%>% 
+  lm(points ~ attitude  + stra + gender, data = .)
+summary(fit1)
+
+
+fit2 <- learn %>% 
+  filter(stra.factor == "High Stra")%>% 
+  lm(points ~ attitude  + stra + gender, data = .)
+summary(fit2)
+aa
+```
+
+
+
+
+```{r}
+fit.3predictor <- lm(points ~ attitude + stra + stra.factor + gender, data = learn)
+summary(fit.3predictor)
+
+fit.2predictor <- lm(points ~ attitude + stra + stra.factor, data = learn)
+summary(fit.2predictor)
+
+fit.1predictor <- lm(points ~ attitude + stra, data = learn)
+summary(fit.1predictor)
+
+fit.0predictor <- lm(points ~ attitude + stra * stra.factor, data = learn)
+summary(fit.0predictor)
+
+fit.predictor <- lm(points ~ attitude + stra.factor, data = learn)
+summary(fit.predictor)
+
+fit.predictor <- lm(points ~ attitude + age + stra, data = learn)
+summary(fit.predictor)
+
+
+learn %>% 
+  filter(stra.factor == "Low Stra") %>% 
+  ggplot(aes (x = stra, y = points))+
+  geom_point()+
+  geom_smooth(method = "lm")
+
+p1 <- learn %>% 
+  filter(stra.factor == "High Stra") %>% 
+  ggplot(aes (x = stra, y = points))+
+  geom_point()+
+  geom_smooth(method = "lm")
+
+
+learn  %>% 
+  ggplot(aes (x = stra, y = points))+
+  geom_point()+
+  geom_smooth(method = "loess")
+```
+
+
+```{r}
+USHSv2 <- USHSv2 %>% mutate(BMI.factor = BMI %>%  #turn BMI into factor and add labels(underweight:<18.5,                                                   #normal weight: ~25, overweight: ~30; obese: >30)
+                    cut(breaks=c(1,18.5,25,30,100), include.lowest = T) %>% 
+                    fct_recode("Underweight" = "[1,18.5]",
+                               "Normal weight" = "(18.5,25]",
+                               "Overweight" = "(25,30]",
+                               "Obese" = "(30,100]") %>% 
+                    ff_label("BMI ranges"))
+```
+
+
+```{r}
+earn  %>% ggplot(aes (x = stra, y = points)) +
   geom_point()+
   geom_smooth(method = "loess")
 
@@ -134,21 +211,6 @@ fit_age1 <- learn %>%
 summary(fit_age1)
 
 p1
-```
-
-
-```{r}
-USHSv2 <- USHSv2 %>% mutate(BMI.factor = BMI %>%  #turn BMI into factor and add labels(underweight:<18.5,                                                   #normal weight: ~25, overweight: ~30; obese: >30)
-                    cut(breaks=c(1,18.5,25,30,100), include.lowest = T) %>% 
-                    fct_recode("Underweight" = "[1,18.5]",
-                               "Normal weight" = "(18.5,25]",
-                               "Overweight" = "(25,30]",
-                               "Obese" = "(30,100]") %>% 
-                    ff_label("BMI ranges"))
-```
-
-
-```{r}
 ```
 
 
