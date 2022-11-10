@@ -16,6 +16,9 @@ output:
     number_section: false
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
 
 # Insert chapter 2 title here
 
@@ -55,12 +58,19 @@ learn <- learn %>%
 dim(learn)
 ```
 
+The data set has 166 observations of 7 variables.
 
 ```{r}
 #explore structure
 str(learn)
 ```
+The data set has six numeric (integer type) variables and one categorical (binary) variable. 
 
+## 1.4 describe the variables
+
+   The data set includes variables about the participants' demographic characteristics such as age and sex. It also includes the participants exam points, and 
+
+### 1.4.1 describe the coninuous variable
 
 ```{r}
 library(tidyverse)
@@ -69,6 +79,9 @@ library(DT)
 ff_glimpse(learn)$Continuous %>% datatable()
 ```
 
+The age of the participants was between 17 and 55 years old (median: 22; Q1-Q3:21,27 years old). The 
+
+### 1.4.1 describe the categori variable
 
 ```{r}
 ff_glimpse(learn)$Categorical %>% datatable()
@@ -79,11 +92,12 @@ ff_glimpse(learn)$Categorical %>% datatable()
 ```{r}
 library(GGally)
 library(ggplot2)
+library(tidyverse)
 # create an plot matrix with ggpairs()
 my_fn <- function(data, mapping, method="loess", ...){
       p <- ggplot(data = data, mapping = mapping) + 
       geom_point(size = 0.3, color = "coral") + 
-      geom_smooth(method=method, ...)
+      geom_smooth(size = 0.3, method=method, ...)
       p
     }
 ggpairs(learn, 
@@ -93,28 +107,66 @@ ggpairs(learn,
 
 ```
 
+# 2. Fitting the model
 
-```{r}
-learn <- learn %>% 
-  mutate(stra.factor = stra %>%
-           cut(breaks =c(0,3,6)) %>%
-                 fct_recode("High Stra" = "(0,3]",
-                            "Low Stra" = "(3,6]") %>% 
-           ff_label ("Stra dichotomized"))
-```
+## 2.1 variable selection
+
+According to the visualization in section 1.4, 
+
+## 2.2 fitting 
 
 ```{r}
 fit1 <- learn %>% 
-  filter(stra.factor == "Low Stra")%>% 
-  lm(points ~ attitude  + stra + gender, data = .)
+  lm(points ~ attitude  + poly(age, 2, raw =T) + gender, data = .)
 summary(fit1)
+```
 
+## 2.3 removig insignifiant predictor
 
+```{r}
 fit2 <- learn %>% 
-  filter(stra.factor == "High Stra")%>% 
-  lm(points ~ attitude  + stra + gender, data = .)
+  lm(points ~ attitude  + poly(age, 2, raw =T), data = .)
 summary(fit2)
-aa
+```
+
+# 3. Model diagnostic
+
+## 3.1 diagnostic plots
+
+```{r}
+par(mfrow =c(2,2))+
+plot(fit2, which = c(1,2,4)) 
+
+cooksd <- cooks.distance(fit2)
+cooksd <- data.frame(index = 1:length(cooksd), cooksd = cooksd)
+
+plot(cooksd$index, 
+     cooksd$cooksd, 
+     pch="*", cex=1.5, 
+     main="Influential Obs by Cooks distance") +
+abline(h = 4*mean(cooksd$cooksd), 
+       col="red")+
+text(x=cooksd$index+4, 
+     y=cooksd$cooksd, 
+     labels= ifelse(cooksd$cooksd>4*mean(cooksd$cooksd, na.rm=T),
+                    cooksd$index,""),
+     col="red")
+
+```
+
+## 3.2 other model assumptions
+
+## 3.3 influential observations
+
+***********************
+
+```{r}
+
+learn <- learn %>% mutate(index = 1:nrow(learn))
+learn <- left_join(learn, cooksd, by = "index")
+learn %>% filter(index %in% c(1,4,3,10,19,24,35,56,154))
+learn %>% filter(age>40)
+
 ```
 
 
@@ -213,10 +265,27 @@ summary(fit_age1)
 p1
 ```
 
+```{r}
+learn <- learn %>% 
+  mutate(stra.factor = stra %>%
+           cut(breaks =c(0,3,6)) %>%
+                 fct_recode("High Stra" = "(0,3]",
+                            "Low Stra" = "(3,6]") %>% 
+           ff_label ("Stra dichotomized"))
+```
 
 ```{r}
+par(cex = 0.5,fig=c(0,0.5,0.5,1))+
+plot(fit2, which = 1) 
 
+par(cex = 0.5,fig=c(0.5,1,0.5,1), new=TRUE)+
+plot(fit2, which = 2) 
+
+par(cex = 0.5, fig=c(0,1,0,0.5), new=TRUE)+
+plot(fit2, which = 4)
 ```
+
+
 
 Here we go again...
 
