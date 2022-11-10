@@ -24,10 +24,9 @@ setwd(paste0(getwd(),"/Data"))
 ```
 
 ## PART 2
-
+Bring .txt file to R environment which has been downloaded to Data - folder.
 ```{r}
-# Bring .txt file to R environment which has been downloaded to Data folder
-learning_2014<-as.data.frame(read.table("learning2014.txt", header = TRUE, sep = "\t"))
+learning_2014<-as.data.frame(read.table("Data/learning2014.txt", header = TRUE, sep = "\t"))
 ```
 
 Table should have 183 rows and 60 cols containing integer values in all except last column which contains information about gender by character.
@@ -95,9 +94,11 @@ dim(learning_2014.2)
 By commend summary we can take a look 'inside' the data. By the command we get 'boxplot information' about our numerical data in dataframe. Scatterplot matrix is used to describe relationships between the variables. It's constructed from the dataframe with ggpairs -function (ggplot2 -package). Result plot shows, in addition of variables relationships, variables diverging and gives correlation coefficients with asterix showing level of significance.
 
 ```{r}
-## Summary
-print(summary(learning_2014.2[,2:ncol(learning_2014.2)]))
-## Scatterplot
+# Summary
+library(ggplot2)
+library(GGally)
+summary(learning_2014.2[,2:ncol(learning_2014.2)])
+# Scatterplot
 p <- ggpairs(learning_2014.2[-(1:2)], mapping = aes(), lower =list(combo = wrap("facethist", bins = 20))) 
 print(p)
 ```
