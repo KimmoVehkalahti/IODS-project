@@ -77,10 +77,10 @@ url_math
 math <- read.table(url_math, sep = ";" , header = TRUE)
 
 # web address for Portuguese class data
-url_por <- paste("replace me!", "student-por.csv", sep = " change me! ")
+url_por <- paste(url, "student-por.csv", sep = "/")
 
 # print out the address
-
+url_por
 
 # read the Portuguese class questionnaire data into memory
 por <- read.table(url_por, sep = ";", header = TRUE)
@@ -88,7 +88,7 @@ por <- read.table(url_por, sep = ";", header = TRUE)
 # look at the column names of both data sets
 colnames(math); colnames(por)
 
-
+dim(math); dim(por)
 ```
 
 
