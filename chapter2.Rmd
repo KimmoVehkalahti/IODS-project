@@ -116,20 +116,20 @@ ggpairs(learn,
 
 ```
 
-According to the visualization, it is found that the distribution of age is right-skewed; other numeric variables, though with slight skewness, can be roughly treated as being normally distributed. All of the values of numeric variables did not show any remarkable difference between males and females. Variables points, attitude and deep have 1 to 3 out-liers, respectively, and age has qutie a number of out-liers. By examing the raw data, no evidence of mistaken record was detected. These outliers were thus kept for analysis. Using variable "points" as reference, variable "attitude" showed a significant linear correlation with an efficient of 0.437. Although the correlation coefficient between age and points is only -0.093, the LOESS smoothing has shown there might be a quadratic relationship between them. 
+According to the visualization, it is found that the distribution of age is right-skewed; other numeric variables, though with slight skewness, can be roughly treated as normal distribution. All of the values of numeric variables did not show any remarkable difference between males and females. Variables "points", "attitude" and 'deep' have 1 to 3 out-liers, respectively, and age has quite a number of out-liers. By examining the raw data, no evidence of mistaken record was detected. These out-liers were thus kept for analysis. Using variable "points" as reference, variable "attitude" showed a significant linear correlation(*r*=0.437). Although the correlation coefficient between age and points is only -0.093, the LOESS smoothing has shown there might be a quadratic relationship between them. 
 
 # 2. Fitting the model
 
 ## 2.1 variable selection
 
-According to the visualization in section 1.4, attitude and age (as polynomial form due to non-linearity with the outcome) will enter to fit the model that predicts exam points. Alougth no noticeable gender effect was observed, it will also enter the model for it being an important factor for predicting exam points in a multitude publications. 
+According to the visualization in section 1.4, attitude and age (as polynomial form due to non-linearity with the outcome) will enter to fit the model that predicts exam points. Although no noticeable effect of gender was observed, it will also enter the model for it being an important factor for predicting exam points in a multitude of publications. 
 
 ## 2.2 fitting 
 
 ```{r}
 fit1 <- learn %>%  #using attitude, the polynomial age and gender to predict exam points
   lm(points ~ attitude  + poly(age, 2, raw =T) + gender, data = .) 
-summary(fit1) # summarise the results
+summary(fit1) # summarize the results
 ```
 
 The results showed that except for gender, other variables all had significant predicting effect (all *p*<0.01). Besides, F-statistics (*p* < 0.01) had rejected the null that the response variable can not be represented as a function of any of the predictor variables, indicating the model is valid. Adjusted R-squared showed that the model can explain 23.75% of the variance of exam points. However, I will further reduce the model complexity by removing insignificant variable base on the parsimony rule.  
@@ -144,11 +144,11 @@ fit2 <- learn %>%
 summary(fit2)
 ```
 
-The results showed that all variables had significant predicting effect (all *p*<0.01). Besides, F-statistics (*p* < 0.01) had rejected the null that the response variable can not be represented as a function of any of the predictor variables, indicating the model is valid. Adjusted R-squared showed that the model can explain 24% of the variance of exam points, which slightly outperformed the previous model. I took this model as final model for model diagnostics.
+The results showed that all variables had significant predicting effect (all *p*<0.01). Besides, F-statistics (*p* < 0.01) had rejected the null that the response variable can not be represented as a function of any of the predictor variables, indicating the model is valid. Adjusted R-squared showed that the model can explain 24% of the variance of exam points, which slightly outperformed the previous model. I took this model as the final model for model diagnostics.
 
 In the final model, variable "attitude" has a coefficient of 3.65, indicating for 1 unit of attitude increase, the exam points is expected to increase 3.65. The first order term of age has an coefficient estimate of 1.06, indicating that, overall, for every 1 unit increase of age, the exam points is expected to increase 1.06. For the second order term of age, an estimated coefficient of -0.017 indicated for different value ranges of age, the effect on exam points might be significantly different. This auto-interaction might lead to -0.017 decrease in exam points across these ranges. 
 
-The practical explanation for these coefficient might be *a.* attitude reflects the motivation of study and higher motivation will 
+The practical explanation for these coefficient might be *a.* attitude reflects the motivation of study and higher motivation will lead better exam performance; *b.* statistics require quite a bit of domain knowledge (economics, health, psychology..), logic reasoning and math foundations Older students might have advantage in these aspects. *c.* However, this advantage will see a ceiling effect at around 30 years old, and due to the aging and family burden, students over 30 years old might start to become less and less competitive in stat learning over time.  
 
 # 3. Model diagnostic
 
