@@ -93,7 +93,7 @@ Among the 166 participants, 110 (66%) were male and 56 (34%) were female. Accord
 
 ## 1.5 visualize the data set
 
-```{r}
+```{r, fig.width=10, fig.height=6}
 library(GGally)
 library(ggplot2)
 library(tidyverse)
@@ -131,7 +131,7 @@ summary(fit1) # summarize the results
 
 The results showed that except for gender, other variables all had significant predicting effect (all *p*<0.01). Besides, F-statistics (*p* < 0.01) had rejected the null that the response variable can not be represented as a function of any of the predictor variables, indicating the model is valid. Adjusted R-squared showed that the model can explain 23.75% of the variance of exam points. However, I will further reduce the model complexity by removing insignificant variable base on the parsimony rule.  
 
-## 2.3 removig insignifiant predictor
+## 2.3 removing insignifiant predictor
 
 The model was fit again by removing gender. 
 
