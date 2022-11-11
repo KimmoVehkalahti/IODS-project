@@ -149,13 +149,13 @@ In the final model, variable "attitude" had a coefficient of 3.65, indicating fo
 
 # 3. Model diagnostic
 
-In model diagnostic, some of the assumptions of linear regression were checked, other assumptions that could be evaluted based on results from the previous sections were also summarized here. Besides, observations with high influence will be examined in this section. 
+In model diagnostic, some of the assumptions (linearity and normality) of linear regression were checked. Besides, observations with high influence will be examined in this section. 
 
 ## 3.1 diagnostic plots
 
 ```{r}
-par(mfrow =c(2,2))+
-plot(fit2, which = c(1,2,4)) 
+par(mfrow =c(2,2))+ #define layout of displaying
+plot(fit2, which = c(1,2,4))  # show diagnostic plots #1,2,4
 
 cooksd <- cooks.distance(fit2)
 cooksd <- data.frame(index = 1:length(cooksd), cooksd = cooksd)
@@ -173,6 +173,7 @@ text(x=cooksd$index+4,
      col="red")
 
 ```
+
 
 ## 3.2 other model assumptions
 

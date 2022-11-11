@@ -121,9 +121,9 @@ dim(learn)
 
 ##2.8 Fine-tune variable names to get better consistency
 ###2.8.1 rename "Age" to "age"
-colnames(learning2014)[which(colnames(learn) == "Age")] <- "age"
+colnames(learn)[which(colnames(learn) == "Age")] <- "age"
 ###2.8.2 rename "Points" to "point"
-colnames(learning2014)[which(colnames(learn) == "Points")] <- "points"
+colnames(learn)[which(colnames(learn) == "Points")] <- "points"
 
 #3 Save analysis data set
 
