@@ -3079,7 +3079,7 @@ assumptions</a></li>
 <pre class="r"><code># This is a so-called &quot;R chunk&quot; where you can write R code.
 
 date()</code></pre>
-<pre><code>## [1] &quot;Fri Nov 11 16:38:24 2022&quot;</code></pre>
+<pre><code>## [1] &quot;Fri Nov 11 16:45:49 2022&quot;</code></pre>
 </div>
 <div id="thoughts-about-the-course" class="section level1">
 <h1>1. Thoughts about the course</h1>
@@ -3178,7 +3178,7 @@ writing and reading R code as well as statistical methods.</li>
 advanced methods you are using.</li>
 </ul>
 <pre class="r"><code>date()</code></pre>
-<pre><code>## [1] &quot;Fri Nov 11 16:38:24 2022&quot;</code></pre>
+<pre><code>## [1] &quot;Fri Nov 11 16:45:49 2022&quot;</code></pre>
 </div>
 <div id="preparing" class="section level1">
 <h1>1 Preparing</h1>
@@ -3233,8 +3233,8 @@ library(finalfit) # a package introduced in RHDS book.
                   #statistics for both types of variables. 
 library(DT) # show table in a html-based neat view. 
 ff_glimpse(learn)$Continuous %&gt;% datatable() # descriptive statistics for</code></pre>
-<div id="htmlwidget-f38e8977cbc80a210545" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-f38e8977cbc80a210545">{"x":{"filter":"none","vertical":false,"data":[["age","attitude","deep","stra","surf","points"],["age","attitude","deep","stra","surf","points"],["&lt;dbl&gt;","&lt;dbl&gt;","&lt;dbl&gt;","&lt;dbl&gt;","&lt;dbl&gt;","&lt;dbl&gt;"],[166,166,166,166,166,166],[0,0,0,0,0,0],["0.0","0.0","0.0","0.0","0.0","0.0"],["25.5","3.1","3.7","3.1","2.8","22.7"],["7.8","0.7","0.6","0.8","0.5","5.9"],["17.0","1.4","1.6","1.2","1.6","7.0"],["21.0","2.6","3.3","2.6","2.4","19.0"],["22.0","3.2","3.7","3.2","2.8","23.0"],["27.0","3.7","4.1","3.6","3.2","27.8"],["55.0","5.0","4.9","5.0","4.3","33.0"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>label<\/th>\n      <th>var_type<\/th>\n      <th>n<\/th>\n      <th>missing_n<\/th>\n      <th>missing_percent<\/th>\n      <th>mean<\/th>\n      <th>sd<\/th>\n      <th>min<\/th>\n      <th>quartile_25<\/th>\n      <th>median<\/th>\n      <th>quartile_75<\/th>\n      <th>max<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-8719a35f65e9bdc32aa0" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-8719a35f65e9bdc32aa0">{"x":{"filter":"none","vertical":false,"data":[["age","attitude","deep","stra","surf","points"],["age","attitude","deep","stra","surf","points"],["&lt;dbl&gt;","&lt;dbl&gt;","&lt;dbl&gt;","&lt;dbl&gt;","&lt;dbl&gt;","&lt;dbl&gt;"],[166,166,166,166,166,166],[0,0,0,0,0,0],["0.0","0.0","0.0","0.0","0.0","0.0"],["25.5","3.1","3.7","3.1","2.8","22.7"],["7.8","0.7","0.6","0.8","0.5","5.9"],["17.0","1.4","1.6","1.2","1.6","7.0"],["21.0","2.6","3.3","2.6","2.4","19.0"],["22.0","3.2","3.7","3.2","2.8","23.0"],["27.0","3.7","4.1","3.6","3.2","27.8"],["55.0","5.0","4.9","5.0","4.3","33.0"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>label<\/th>\n      <th>var_type<\/th>\n      <th>n<\/th>\n      <th>missing_n<\/th>\n      <th>missing_percent<\/th>\n      <th>mean<\/th>\n      <th>sd<\/th>\n      <th>min<\/th>\n      <th>quartile_25<\/th>\n      <th>median<\/th>\n      <th>quartile_75<\/th>\n      <th>max<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 <pre class="r"><code>                   #categorical data shown in html-based data table view.</code></pre>
 <p>According to their distribution shape visualized in section 1.5 (next
 section), non-normally distributed variables will be reported as median
@@ -3247,8 +3247,8 @@ learning scores were 3.7±0.6. Their surface learning scores were
 <div id="describe-the-categorical-variable" class="section level3">
 <h3>1.4.1 describe the categorical variable</h3>
 <pre class="r"><code>ff_glimpse(learn)$Categorical %&gt;% datatable() # descriptive statistics for categorical data shown in html-based data table view.</code></pre>
-<div id="htmlwidget-c8f449f89c0ca01ec458" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-c8f449f89c0ca01ec458">{"x":{"filter":"none","vertical":false,"data":[["gender"],["gender"],["&lt;fct&gt;"],[166],[0],["0.0"],[2],["\"Female\", \"Male\""],["110, 56"],["66, 34"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>label<\/th>\n      <th>var_type<\/th>\n      <th>n<\/th>\n      <th>missing_n<\/th>\n      <th>missing_percent<\/th>\n      <th>levels_n<\/th>\n      <th>levels<\/th>\n      <th>levels_count<\/th>\n      <th>levels_percent<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,6]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-1242e4feecd88550476e" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1242e4feecd88550476e">{"x":{"filter":"none","vertical":false,"data":[["gender"],["gender"],["&lt;fct&gt;"],[166],[0],["0.0"],[2],["\"Female\", \"Male\""],["110, 56"],["66, 34"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>label<\/th>\n      <th>var_type<\/th>\n      <th>n<\/th>\n      <th>missing_n<\/th>\n      <th>missing_percent<\/th>\n      <th>levels_n<\/th>\n      <th>levels<\/th>\n      <th>levels_count<\/th>\n      <th>levels_percent<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,6]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 <p>Among the 166 participants, 110 (66%) were male and 56 (34%) were
 female. According to a 2021 statistics, Finland has a male:female ratio
 of 2.8:2.74, indicating male in our sample is greatly
@@ -3380,13 +3380,13 @@ different. This auto-interaction might lead to -0.017 decrease in exam
 points across these ranges.</p>
 <p>The practical explanation for these coefficient might be <em>a.</em>
 attitude reflects the motivation of study and higher motivation will
-lead better exam performance; <em>b.</em> statistics require quite a bit
-of domain knowledge (economics, health, psychology..), logic reasoning
-and math foundations Older students might have advantage in these
-aspects. <em>c.</em> However, this advantage will see a ceiling effect
-at around 30 years old, and due to the aging and family burden, students
-over 30 years old might start to become less and less competitive in
-stat learning over time.</p>
+lead to better exam performance; <em>b.</em> statistics requires quite a
+bit of domain knowledge (economics, health, psychology..), logic
+reasoning and math foundations. Older students might have advantage in
+these aspects. <em>c.</em> However, this advantage will see a ceiling
+effect at around 30 years old, and due to the aging and family burden,
+students over 30 years old might start to become less and less
+competitive in stat learning over time.</p>
 </div>
 </div>
 <div id="model-diagnostic" class="section level1">
