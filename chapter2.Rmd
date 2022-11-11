@@ -68,38 +68,46 @@ The data set has six numeric (integer type) variables and one categorical (binar
 
 ## 1.4 describe the variables
 
-   The data set includes variables about the participants' demographic characteristics such as age and sex. It also includes the participants exam points, and 
+   The data set includes variables about the participants' demographic characteristics such as age and sex, as well as the final points they got for certain exam (could possibly be statistics). It also includes 4 psychological dimensions including study attitude (reflecting their motivation to the subject), deep learning score (reflecting how well their learning style fit into the deep learning type), surface learning score (reflecting how well their learning style fit into the surface learning type) and strategy learning score (reflecting how well their learning style fit into the strategic learning type).
 
 ### 1.4.1 describe the coninuous variable
 
 ```{r}
 library(tidyverse)
-library(finalfit)
-library(DT)
-ff_glimpse(learn)$Continuous %>% datatable()
+library(finalfit) # a package introduced in RHDS book. 
+                  #The "gg_glimpse" function could give nice descriptive 
+                  #statistics for both types of variables. 
+library(DT) # show table in a html-based neat view. 
+ff_glimpse(learn)$Continuous %>% datatable() # descriptive statistics for
+                   #categorical data shown in html-based data table view.
 ```
+According to their distribution shape visualized in section 1.5 (next section), non-normally distributed variables will be reported as median and Q1-Q3; roughly normal variables will be reported as mean±sd. 
 
-The age of the participants was between 17 and 55 years old (median: 22; Q1-Q3:21,27 years old). The 
+The age of the participants was between 17 and 55 years old (median: 22; Q1-Q3:21,27 years old). Their exam points were 22.7±5.9. Their deep learning scores were 3.7±0.6. Their surface learning scores were 2.8±0.5. And their strategic learning scores were 3.1±0.8.
 
-### 1.4.1 describe the categori variable
+### 1.4.1 describe the categorical variable
 
 ```{r}
-ff_glimpse(learn)$Categorical %>% datatable()
+ff_glimpse(learn)$Categorical %>% datatable() # descriptive statistics for categorical data shown in html-based data table view.
 ```
 
-## 1.4 visualize the data set
+Among the 166 participants, 110 (66%) were male and 56 (34%) were female. According to a 2021 statistics, Finland has a male:female ratio of 2.8:2.74, indicating male in our sample is greatly over-represented.
+
+## 1.5 visualize the data set
 
 ```{r}
 library(GGally)
 library(ggplot2)
 library(tidyverse)
-# create an plot matrix with ggpairs()
+#create a self-defined function so that correlation matrix produced by ggpairs could 
+#show LOWESS smoothing with scatter plot.
 my_fn <- function(data, mapping, method="loess", ...){
       p <- ggplot(data = data, mapping = mapping) + 
       geom_point(size = 0.3, color = "coral") + 
       geom_smooth(size = 0.3, method=method, ...)
       p
-    }
+}
+# create an plot matrix with ggpairs()
 ggpairs(learn, 
         lower= list(combo = wrap("facethist", bins = 20),
                     continuous = my_fn)
@@ -107,21 +115,27 @@ ggpairs(learn,
 
 ```
 
+According to the visualization, it is found that the distribution of age is right-skewed; other numeric variables, though with slight skewness, can be roughly treated as being normally distributed. All of the values of numeric variables did not show any remarkable difference between males and females. Variables points, attitude and deep have 1 to 3 out-liers, respectively, and age has qutie a number of out-liers. By examing the raw data, no evidence of mistaken record was detected. These outliers were thus kept for analysis. Using variable "points" as reference, variable "attitude" showed a significant linear correlation with an efficient of 0.437. Although the correlation coefficient between age and points is only -0.093, the LOESS smoothing has shown there might be a quadratic relationship between them. 
+
 # 2. Fitting the model
 
 ## 2.1 variable selection
 
-According to the visualization in section 1.4, 
+According to the visualization in section 1.4, attitude and age (as polynomial form due to non-linearity with the outcome) will enter to fit the model that predicts exam points. Alougth no noticeable gender effect was observed, it will also enter the model for it being an important factor for predicting exam points in a multitude publications. 
 
 ## 2.2 fitting 
 
 ```{r}
-fit1 <- learn %>% 
-  lm(points ~ attitude  + poly(age, 2, raw =T) + gender, data = .)
-summary(fit1)
+fit1 <- learn %>%  #using attitude, the polynomial age and gender to predict exam points
+  lm(points ~ attitude  + poly(age, 2, raw =T) + gender, data = .) 
+summary(fit1) # summarise the results
 ```
 
+The results showed that except for gender, other variables all had significant predicting effect (all *p*<0.01). Besides, F-statistics (*p* < 0.01) had rejected the null that the response variable can not be represented as a function of any of the predictor variables, indicating the model is valid. Adjusted R-squared showed that the model can explain 23.75% of the variance of exam points. However, I will further reduce the model complexity by removing insignificant variable base on the parsimony rule.  
+
 ## 2.3 removig insignifiant predictor
+
+The model was fit again by removing gender. 
 
 ```{r}
 fit2 <- learn %>% 
@@ -129,7 +143,13 @@ fit2 <- learn %>%
 summary(fit2)
 ```
 
+The results showed that all variables had significant predicting effect (all *p*<0.01). Besides, F-statistics (*p* < 0.01) had rejected the null that the response variable can not be represented as a function of any of the predictor variables, indicating the model is valid. Adjusted R-squared showed that the model can explain 24% of the variance of exam points, which slightly outperformed the previous model. I took this model as final model for model diagnostics.
+
+In the final model, variable "attitude" had a coefficient of 3.65, indicating for 1 unit of attitude increase, the exam points is expected to increase 3.65. The first order term of age has an coefficient estimate of 1.06, indicating that, overall, for every 1 unite increease of age, the exam pints is expected to increase 1.06. For the second order term of age, an estimated coefficient of -0.017 indicated for different value ranges of age, the effect on exam points might be significantly different. This auto-interaction might lead to -0.017's decrease in exam points across these ranges. 
+
 # 3. Model diagnostic
+
+In model diagnostic, some of the assumptions of linear regression were checked, other assumptions that could be evaluted based on results from the previous sections were also summarized here. Besides, observations with high influence will be examined in this section. 
 
 ## 3.1 diagnostic plots
 
