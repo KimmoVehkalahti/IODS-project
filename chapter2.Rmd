@@ -17,7 +17,7 @@ output:
 ---
 
 
-# Insert chapter 2 title here
+# Chapter 2: Regression and model validation
 
 *Describe the work you have done this week and summarize your learning.*
 
