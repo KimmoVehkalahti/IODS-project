@@ -184,7 +184,7 @@ surface_columns <- select(lrn14, one_of(surface_questions))
 lrn14$surf <- rowMeans(surface_columns)
 
 # select the columns related to strategic learning 
-strategic_columns <- select(lrn14, one_of(strategic_columns))
+strategic_columns <- select(lrn14, one_of(strategic_questions))
 # and create column 'stra' by averaging
 lrn14$stra <- rowMeans(strategic_columns)
 

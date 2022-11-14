@@ -12,7 +12,7 @@
 <meta name="author" content="Subam Kathet" />
 
 
-<title>IODS course project</title>
+<title>Introduction to Open Data Science, Exercise Set 2</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -373,7 +373,10 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">IODS course project</h1>
+<h1 class="title toc-ignore"><strong>Introduction to Open Data Science,
+Exercise Set 2</strong></h1>
+<h3 class="subtitle"><strong>Regression and model
+validation</strong></h3>
 <h4 class="author">Subam Kathet</h4>
 
 </div>
@@ -388,8 +391,18 @@ Course Project</a></li>
 project</a></li>
 <li><a href="#week-1-start-me-up-the-book-and-material" id="toc-week-1-start-me-up-the-book-and-material">Week 1: Start me up !!
 The book and material</a></li>
-<li><a href="#insert-chapter-2-title-here" id="toc-insert-chapter-2-title-here">Insert chapter 2 title
-here</a></li>
+<li><a href="#regression-and-model-validation" id="toc-regression-and-model-validation">Regression and model
+validation</a>
+<ul>
+<li><a href="#install-the-required-packages-first" id="toc-install-the-required-packages-first">2.0 INSTALL THE REQUIRED
+PACKAGES FIRST!</a></li>
+<li><a href="#reading-data-from-the-web" id="toc-reading-data-from-the-web">2.1 Reading data from the
+web</a></li>
+<li><a href="#scaling-variables" id="toc-scaling-variables">2.2 Scaling
+variables</a></li>
+<li><a href="#combining-variables" id="toc-combining-variables">2.3
+Combining variables</a></li>
+</ul></li>
 </ul>
 </div>
 
@@ -429,27 +442,228 @@ learning curve.</p>
 <pre class="r"><code># This is a so-called &quot;R chunk&quot; where you can write R code.
 
 date()</code></pre>
-<pre><code>## [1] &quot;Mon Nov 14 20:50:25 2022&quot;</code></pre>
+<pre><code>## [1] &quot;Mon Nov 14 23:04:40 2022&quot;</code></pre>
 <pre class="r"><code># Trying to check if the chunk works or not. It is usually a struggle especially when R version is outdated and the packages doesn&#39;t work. Then re installing and updating the packages and coming back to work it out is a big struggle. </code></pre>
 <hr />
 </div>
-<div id="insert-chapter-2-title-here" class="section level1">
-<h1>Insert chapter 2 title here</h1>
-<p><em>Describe the work you have done this week and summarize your
-learning.</em></p>
+<div id="regression-and-model-validation" class="section level1">
+<h1>Regression and model validation</h1>
+<p>This set consists of a few numbered exercises. Go to each exercise in
+turn and do as follows:</p>
+<ol style="list-style-type: decimal">
+<li>Read the brief description of the exercise.</li>
+<li>Run the (possible) pre-exercise-code chunk.</li>
+<li>Follow the instructions to fix the R code!</li>
+</ol>
+<div id="install-the-required-packages-first" class="section level2">
+<h2>2.0 INSTALL THE REQUIRED PACKAGES FIRST!</h2>
+<p>One or more extra packages (in addition to <code>tidyverse</code>)
+will be needed below.</p>
+<pre class="r"><code># Select (with mouse or arrow keys) the install.packages(&quot;...&quot;) and
+# run it (by Ctrl+Enter / Cmd+Enter):
+
+# install.packages(&quot;GGally&quot;)</code></pre>
+</div>
+<div id="reading-data-from-the-web" class="section level2">
+<h2>2.1 Reading data from the web</h2>
+<p>The first step of data analysis with R is reading data into R. This
+is done with a function. Which function and function arguments to use to
+do this, depends on the original format of the data.</p>
+<p>Conveniently in R, the same functions for reading data can usually be
+used whether the data is saved locally on your computer or somewhere
+else behind a web URL.</p>
+<p>After the correct function has been identified and data read into R,
+the data will usually be in R <code>data.frame</code> format. Te
+dimensions of a data frame are (<span class="math inline">\(n\)</span>,<span class="math inline">\(d\)</span>), where <span class="math inline">\(n\)</span> is the number of rows (the
+observations) and <span class="math inline">\(d\)</span> the number of
+columns (the variables).</p>
+<p><strong>The purpose of this course is to expose you to some basic and
+more advanced tasks of programming and data analysis with
+R.</strong></p>
+<div id="instructions" class="section level3">
+<h3>Instructions</h3>
 <ul>
-<li>Describe your work and results clearly.</li>
-<li>Assume the reader has an introductory course level understanding of
-writing and reading R code as well as statistical methods.</li>
-<li>Assume the reader has no previous knowledge of your data or the more
-advanced methods you are using.</li>
+<li>Read the <code>lrn14</code> data frame to memory with
+<code>read.table()</code>. There is information related to the data <a href="http://www.helsinki.fi/~kvehkala/JYTmooc/JYTOPKYS3-meta.txt">here</a></li>
+<li>Use <code>dim()</code> on the data frame to look at the dimensions
+of the data. How many rows and colums does the data have?</li>
+<li>Look at the structure of the data with <code>str()</code>.</li>
 </ul>
-<pre class="r"><code>date()</code></pre>
-<pre><code>## [1] &quot;Mon Nov 14 20:50:26 2022&quot;</code></pre>
-<p>Here we go again…</p>
+<p>Hint: - For both functions you can pass a data frame as the first
+(unnamed) argument.</p>
+</div>
+<div id="r-code" class="section level3">
+<h3>R code</h3>
+<pre class="r"><code># This is a code chunk in RStudio editor.
+# Work with the exercise in this chunk, step-by-step. Fix the R code!
+
+# read the data into memory
+lrn14 &lt;- read.table(&quot;http://www.helsinki.fi/~kvehkala/JYTmooc/JYTOPKYS3-data.txt&quot;, sep=&quot;\t&quot;, header=TRUE)
+
+# Look at the dimensions of the data
+
+
+# Look at the structure of the data
+#use .txt file to import data set for better description.
+# Preliminary results available at http://www.slideshare.net/kimmovehkalahti/the-relationship-between-learning-approaches-and-students-achievements-in-an-introductory-statistics-course-in-finland
+#Total respondents n=183, total question n=60, so 184 rows including heading and 60 columns
+#The code as respective column heading represents a question related to the survey and number. Each SN is a respondents and the answers to each question are given in a Lickert scale (0-5).</code></pre>
+</div>
+</div>
+<div id="scaling-variables" class="section level2">
+<h2>2.2 Scaling variables</h2>
+<p>The next step is <a href="https://en.wikipedia.org/wiki/Data_wrangling">wrangling the
+data</a> into a format that is easy to analyze. We will wrangle our data
+for the next few exercises.</p>
+<p>A neat thing about R is that may operations are <em>vectorized</em>.
+It means that a single operation can affect all elements of a vector.
+This is often convenient.</p>
+<p>The column <code>Attitude</code> in <code>lrn14</code> is a sum of 10
+questions related to students attitude towards statistics, each measured
+on the <a href="https://en.wikipedia.org/wiki/Likert_scale">Likert
+scale</a> (1-5). Here we’ll scale the combination variable back to the
+1-5 scale.</p>
+<div id="instructions-1" class="section level3">
+<h3>Instructions</h3>
+<ul>
+<li>Execute the example codes to see how vectorized division works</li>
+<li>Use vector division to create a new column <code>attitude</code> in
+the <code>lrn14</code> data frame, where each observation of
+<code>Attitude</code> is scaled back to the original scale of the
+questions, by dividing it with the number of questions.</li>
+</ul>
+<p>Hint: - Assign ‘Attitude divided by 10’ to the new column
+’attitude.</p>
+</div>
+<div id="r-code-1" class="section level3">
+<h3>R code</h3>
+<pre class="r"><code># This is a code chunk in RStudio editor.
+# Work with the exercise in this chunk, step-by-step. Fix the R code!
+
+#lrn14 is available
+
+# divide each number in a vector
+c(1,2,3,4,5) / 2</code></pre>
+<pre><code>## [1] 0.5 1.0 1.5 2.0 2.5</code></pre>
+<pre class="r"><code># print the &quot;Attitude&quot; column vector of the lrn14 data
+lrn14$Attitude</code></pre>
+<pre><code>##   [1] 37 31 25 35 37 38 35 29 38 21 39 38 24 30 26 25 41 26 26 17 27 39 34 27 23
+##  [26] 37 44 41 24 37 25 30 34 32 20 24 42 16 31 38 38 33 17 25 32 35 32 42 31 39
+##  [51] 19 21 25 32 32 26 23 38 28 33 48 40 40 47 23 31 27 41 34 34 25 21 14 19 37
+##  [76] 41 32 28 41 25 28 38 31 35 36 26 44 45 32 20 39 25 33 35 33 30 29 33 33 35
+## [101] 36 42 37 28 42 22 32 50 47 36 36 29 35 40 35 32 26 20 27 32 33 39 33 30 37
+## [126] 14 30 25 29 39 36 29 21 31 24 40 31 23 28 37 26 24 30 29 32 28 29 24 31 19
+## [151] 20 38 34 37 29 23 41 27 35 34 32 33 33 35 32 31 24 28 17 19 32 35 24 38 21
+## [176] 29 19 20 42 41 37 36 18</code></pre>
+<pre class="r"><code># divide each number in the column vector
+lrn14$Attitude / 10</code></pre>
+<pre><code>##   [1] 3.7 3.1 2.5 3.5 3.7 3.8 3.5 2.9 3.8 2.1 3.9 3.8 2.4 3.0 2.6 2.5 4.1 2.6
+##  [19] 2.6 1.7 2.7 3.9 3.4 2.7 2.3 3.7 4.4 4.1 2.4 3.7 2.5 3.0 3.4 3.2 2.0 2.4
+##  [37] 4.2 1.6 3.1 3.8 3.8 3.3 1.7 2.5 3.2 3.5 3.2 4.2 3.1 3.9 1.9 2.1 2.5 3.2
+##  [55] 3.2 2.6 2.3 3.8 2.8 3.3 4.8 4.0 4.0 4.7 2.3 3.1 2.7 4.1 3.4 3.4 2.5 2.1
+##  [73] 1.4 1.9 3.7 4.1 3.2 2.8 4.1 2.5 2.8 3.8 3.1 3.5 3.6 2.6 4.4 4.5 3.2 2.0
+##  [91] 3.9 2.5 3.3 3.5 3.3 3.0 2.9 3.3 3.3 3.5 3.6 4.2 3.7 2.8 4.2 2.2 3.2 5.0
+## [109] 4.7 3.6 3.6 2.9 3.5 4.0 3.5 3.2 2.6 2.0 2.7 3.2 3.3 3.9 3.3 3.0 3.7 1.4
+## [127] 3.0 2.5 2.9 3.9 3.6 2.9 2.1 3.1 2.4 4.0 3.1 2.3 2.8 3.7 2.6 2.4 3.0 2.9
+## [145] 3.2 2.8 2.9 2.4 3.1 1.9 2.0 3.8 3.4 3.7 2.9 2.3 4.1 2.7 3.5 3.4 3.2 3.3
+## [163] 3.3 3.5 3.2 3.1 2.4 2.8 1.7 1.9 3.2 3.5 2.4 3.8 2.1 2.9 1.9 2.0 4.2 4.1
+## [181] 3.7 3.6 1.8</code></pre>
+<pre class="r"><code># create column &#39;attitude&#39; by scaling the column &quot;Attitude&quot;
+lrn14$attitude &lt;- &quot;Attitude&quot;</code></pre>
+</div>
+</div>
+<div id="combining-variables" class="section level2">
+<h2>2.3 Combining variables</h2>
+<p>Our data includes many questions that can be thought to measure the
+same <em>dimension</em>. You can read more about the data and the
+variables <a href="http://www.helsinki.fi/~kvehkala/JYTmooc/JYTOPKYS3-meta.txt">here</a>.
+Here we’ll combine multiple questions into combination variables. Useful
+functions for summation with data frames in R are</p>
+<table>
+<thead>
+<tr class="header">
+<th>function</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>colSums(df)</code></td>
+<td>returns a sum of each column in <code>df</code></td>
+</tr>
+<tr class="even">
+<td><code>rowSums(df)</code></td>
+<td>returns a sum of each row in <code>df</code></td>
+</tr>
+<tr class="odd">
+<td><code>colMeans(df)</code></td>
+<td>returns the mean of each column in <code>df</code></td>
+</tr>
+<tr class="even">
+<td><code>rowMeans(df)</code></td>
+<td>return the mean of each row in <code>df</code></td>
+</tr>
+</tbody>
+</table>
+<p>We’ll combine the use of <code>rowMeans()</code>with the
+<code>select()</code> function from the <strong>dplyr</strong> library
+to average the answers of selected questions. See how it is done from
+the example codes.</p>
+<div id="instructions-2" class="section level3">
+<h3>Instructions</h3>
+<ul>
+<li>Access the <strong>dplyr</strong> library</li>
+<li>Execute the example codes to create the combination variables ‘deep’
+and ‘surf’ as columns in <code>lrn14</code></li>
+<li>Select the columns related to strategic learning from
+<code>lrn14</code></li>
+<li>Create the combination variable ‘stra’ as a column in
+<code>lrn14</code></li>
+</ul>
+<p>Hints: - Columns related to strategic learning are in the object
+<code>strategic_questions</code>. Use it for selecting the correct
+columns. - Use the function <code>rowMeans()</code> identically to the
+examples</p>
+</div>
+<div id="r-code-2" class="section level3">
+<h3>R code</h3>
+<pre class="r"><code># Work with the exercise in this chunk, step-by-step. Fix the R code!
+# lrn14 is available
+
+# Access the dplyr library
+library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code># questions related to deep, surface and strategic learning
+deep_questions &lt;- c(&quot;D03&quot;, &quot;D11&quot;, &quot;D19&quot;, &quot;D27&quot;, &quot;D07&quot;, &quot;D14&quot;, &quot;D22&quot;, &quot;D30&quot;,&quot;D06&quot;,  &quot;D15&quot;, &quot;D23&quot;, &quot;D31&quot;)
+surface_questions &lt;- c(&quot;SU02&quot;,&quot;SU10&quot;,&quot;SU18&quot;,&quot;SU26&quot;, &quot;SU05&quot;,&quot;SU13&quot;,&quot;SU21&quot;,&quot;SU29&quot;,&quot;SU08&quot;,&quot;SU16&quot;,&quot;SU24&quot;,&quot;SU32&quot;)
+strategic_questions &lt;- c(&quot;ST01&quot;,&quot;ST09&quot;,&quot;ST17&quot;,&quot;ST25&quot;,&quot;ST04&quot;,&quot;ST12&quot;,&quot;ST20&quot;,&quot;ST28&quot;)
+
+# select the columns related to deep learning 
+deep_columns &lt;- select(lrn14, one_of(deep_questions))
+# and create column &#39;deep&#39; by averaging
+lrn14$deep &lt;- rowMeans(deep_columns)
+
+# select the columns related to surface learning 
+surface_columns &lt;- select(lrn14, one_of(surface_questions))
+# and create column &#39;surf&#39; by averaging
+lrn14$surf &lt;- rowMeans(surface_columns)
+
+# select the columns related to strategic learning 
+strategic_columns &lt;- select(lrn14, one_of(strategic_questions))
+# and create column &#39;stra&#39; by averaging
+lrn14$stra &lt;- rowMeans(strategic_columns)</code></pre>
 <hr />
 <p>(more chapters to be added similarly as we proceed with the
 course!)</p>
+</div>
+</div>
 </div>
 
 
