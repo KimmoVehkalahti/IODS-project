@@ -4224,7 +4224,7 @@ writing and reading R code as well as statistical methods.</li>
 advanced methods you are using.</li>
 </ul>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">date</span>()</span></code></pre></div>
-<pre><code>## [1] &quot;Fri Nov 11 16:38:15 2022&quot;</code></pre>
+<pre><code>## [1] &quot;Mon Nov 14 18:43:42 2022&quot;</code></pre>
 </div>
 <div id="preparing" class="section level1">
 <h1>1 Preparing</h1>
@@ -4284,10 +4284,10 @@ characteristics such as age and sex, as well as the final points they
 got for certain exam (could possibly be statistics). It also includes 4
 psychological dimensions including study attitude (reflecting their
 motivation to the subject), deep learning score (reflecting how well
-their learning style fit into the deep learning type), surface learning
-score (reflecting how well their learning style fit into the surface
+their learning style fits into the deep learning type), surface learning
+score (reflecting how well their learning style fits into the surface
 learning type) and strategy learning score (reflecting how well their
-learning style fit into the strategic learning type).</p>
+learning style fits into the strategic learning type).</p>
 <div id="describe-the-coninuous-variable" class="section level3">
 <h3>1.4.1 describe the coninuous variable</h3>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
@@ -4296,12 +4296,13 @@ learning style fit into the strategic learning type).</p>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>                  <span class="co">#statistics for both types of variables. </span></span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DT) <span class="co"># show table in a html-based neat view. </span></span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ff_glimpse</span>(learn)<span class="sc">$</span>Continuous <span class="sc">%&gt;%</span> <span class="fu">datatable</span>() <span class="co"># descriptive statistics for</span></span></code></pre></div>
-<div id="htmlwidget-95323b14b2281bee12cc" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-95323b14b2281bee12cc">{"x":{"filter":"none","vertical":false,"data":[["age","attitude","deep","stra","surf","points"],["age","attitude","deep","stra","surf","points"],["&lt;dbl&gt;","&lt;dbl&gt;","&lt;dbl&gt;","&lt;dbl&gt;","&lt;dbl&gt;","&lt;dbl&gt;"],[166,166,166,166,166,166],[0,0,0,0,0,0],["0.0","0.0","0.0","0.0","0.0","0.0"],["25.5","3.1","3.7","3.1","2.8","22.7"],["7.8","0.7","0.6","0.8","0.5","5.9"],["17.0","1.4","1.6","1.2","1.6","7.0"],["21.0","2.6","3.3","2.6","2.4","19.0"],["22.0","3.2","3.7","3.2","2.8","23.0"],["27.0","3.7","4.1","3.6","3.2","27.8"],["55.0","5.0","4.9","5.0","4.3","33.0"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>label<\/th>\n      <th>var_type<\/th>\n      <th>n<\/th>\n      <th>missing_n<\/th>\n      <th>missing_percent<\/th>\n      <th>mean<\/th>\n      <th>sd<\/th>\n      <th>min<\/th>\n      <th>quartile_25<\/th>\n      <th>median<\/th>\n      <th>quartile_75<\/th>\n      <th>max<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-e54df0125cb00cbfda88" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-e54df0125cb00cbfda88">{"x":{"filter":"none","vertical":false,"data":[["age","attitude","deep","stra","surf","points"],["age","attitude","deep","stra","surf","points"],["&lt;dbl&gt;","&lt;dbl&gt;","&lt;dbl&gt;","&lt;dbl&gt;","&lt;dbl&gt;","&lt;dbl&gt;"],[166,166,166,166,166,166],[0,0,0,0,0,0],["0.0","0.0","0.0","0.0","0.0","0.0"],["25.5","3.1","3.7","3.1","2.8","22.7"],["7.8","0.7","0.6","0.8","0.5","5.9"],["17.0","1.4","1.6","1.2","1.6","7.0"],["21.0","2.6","3.3","2.6","2.4","19.0"],["22.0","3.2","3.7","3.2","2.8","23.0"],["27.0","3.7","4.1","3.6","3.2","27.8"],["55.0","5.0","4.9","5.0","4.3","33.0"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>label<\/th>\n      <th>var_type<\/th>\n      <th>n<\/th>\n      <th>missing_n<\/th>\n      <th>missing_percent<\/th>\n      <th>mean<\/th>\n      <th>sd<\/th>\n      <th>min<\/th>\n      <th>quartile_25<\/th>\n      <th>median<\/th>\n      <th>quartile_75<\/th>\n      <th>max<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>                   <span class="co">#categorical data shown in html-based data table view.</span></span></code></pre></div>
-<p>According to their distribution shape visualized in section 1.5 (next
-section), non-normally distributed variables will be reported as median
-and Q1-Q3; roughly normal variables will be reported as mean±sd.</p>
+<p>According to their distribution shapes visualized in section 1.5
+(next section), non-normally distributed variables will be reported as
+median and Q1-Q3; roughly normal variables will be reported as
+mean±sd.</p>
 <p>The age of the participants was between 17 and 55 years old (median:
 22; Q1-Q3:21,27 years old). Their exam points were 22.7±5.9. Their deep
 learning scores were 3.7±0.6. Their surface learning scores were
@@ -4310,11 +4311,11 @@ learning scores were 3.7±0.6. Their surface learning scores were
 <div id="describe-the-categorical-variable" class="section level3">
 <h3>1.4.1 describe the categorical variable</h3>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ff_glimpse</span>(learn)<span class="sc">$</span>Categorical <span class="sc">%&gt;%</span> <span class="fu">datatable</span>() <span class="co"># descriptive statistics for categorical data shown in html-based data table view.</span></span></code></pre></div>
-<div id="htmlwidget-ab6a97c8a4bbe0e15d81" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-ab6a97c8a4bbe0e15d81">{"x":{"filter":"none","vertical":false,"data":[["gender"],["gender"],["&lt;fct&gt;"],[166],[0],["0.0"],[2],["\"Female\", \"Male\""],["110, 56"],["66, 34"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>label<\/th>\n      <th>var_type<\/th>\n      <th>n<\/th>\n      <th>missing_n<\/th>\n      <th>missing_percent<\/th>\n      <th>levels_n<\/th>\n      <th>levels<\/th>\n      <th>levels_count<\/th>\n      <th>levels_percent<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,6]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
-<p>Among the 166 participants, 110 (66%) were male and 56 (34%) were
-female. According to a 2021 statistics, Finland has a male:female ratio
-of 2.8:2.74, indicating male in our sample is greatly
+<div id="htmlwidget-9b583666954e75cf540f" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-9b583666954e75cf540f">{"x":{"filter":"none","vertical":false,"data":[["gender"],["gender"],["&lt;fct&gt;"],[166],[0],["0.0"],[2],["\"Female\", \"Male\""],["110, 56"],["66, 34"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>label<\/th>\n      <th>var_type<\/th>\n      <th>n<\/th>\n      <th>missing_n<\/th>\n      <th>missing_percent<\/th>\n      <th>levels_n<\/th>\n      <th>levels<\/th>\n      <th>levels_count<\/th>\n      <th>levels_percent<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,6]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<p>Among the 166 participants, 110 (66%) were female and 56 (34%) were
+male. According to a 2021 statistics, Finnish universities had a
+male:female ratio of 1:1.2, indicating female in our sample is
 over-represented.</p>
 </div>
 </div>
@@ -4359,7 +4360,7 @@ over-represented.</p>
 age is right-skewed; other numeric variables, though with slight
 skewness, can be roughly treated as normal distribution. All of the
 values of numeric variables did not show any remarkable difference
-between males and females. Variables “points”, “attitude” and ‘deep’
+between males and females. Variables “points”, “attitude” and “deep”
 have 1 to 3 out-liers, respectively, and age has quite a number of
 out-liers. By examining the raw data, no evidence of mistaken record was
 detected. These out-liers were thus kept for analysis. Using variable
@@ -4373,12 +4374,12 @@ there might be a quadratic relationship between them.</p>
 <h1>2. Fitting the model</h1>
 <div id="variable-selection" class="section level2">
 <h2>2.1 variable selection</h2>
-<p>According to the visualization in section 1.4, attitude and age (as
-polynomial form due to non-linearity with the outcome) will enter to fit
-the model that predicts exam points. Although no noticeable effect of
-gender was observed, it will also enter the model for it being an
-important factor for predicting exam points in a multitude of
-publications.</p>
+<p>According to the visualization in section 1.4, age (as polynomial
+form due to its non-linearity with the outcome) and attitude were used
+to fit the model that predicts exam points. Although no noticeable
+effect of gender was observed, it also entered the model for it being
+adopted as an important factor for predicting exam points in a multitude
+of publications.</p>
 </div>
 <div id="fitting" class="section level2">
 <h2>2.2 fitting</h2>
@@ -4410,11 +4411,11 @@ publications.</p>
 <p>The results showed that except for gender, other variables all had
 significant predicting effect (all <em>p</em>&lt;0.01). Besides,
 F-statistics (<em>p</em> &lt; 0.01) had rejected the null that the
-response variable can not be represented as a function of any of the
+response variable cannot be represented as a function of any of the
 predictor variables, indicating the model is valid. Adjusted R-squared
-showed that the model can explain 23.75% of the variance of exam points.
-However, I will further reduce the model complexity by removing
-insignificant variable base on the parsimony rule.</p>
+showed that the model explained 23.75% of the variance of exam points.
+However, in the next step I further reduced the model complexity by
+removing insignificant variable base on the rule of parsimony.</p>
 </div>
 <div id="removing-insignifiant-predictor" class="section level2">
 <h2>2.3 removing insignifiant predictor</h2>
@@ -4446,28 +4447,30 @@ insignificant variable base on the parsimony rule.</p>
 effect (all <em>p</em>&lt;0.01). Besides, F-statistics (<em>p</em> &lt;
 0.01) had rejected the null that the response variable can not be
 represented as a function of any of the predictor variables, indicating
-the model is valid. Adjusted R-squared showed that the model can explain
+the model is valid. Adjusted R-squared showed that the model explained
 24% of the variance of exam points, which slightly outperformed the
 previous model. I took this model as the final model for model
 diagnostics.</p>
 <p>In the final model, variable “attitude” has a coefficient of 3.65,
 indicating for 1 unit of attitude increase, the exam points is expected
-to increase 3.65. The first order term of age has an coefficient
-estimate of 1.06, indicating that, overall, for every 1 unit increase of
-age, the exam points is expected to increase 1.06. For the second order
-term of age, an estimated coefficient of -0.017 indicated for different
-value ranges of age, the effect on exam points might be significantly
-different. This auto-interaction might lead to -0.017 decrease in exam
-points across these ranges.</p>
+to increase 3.65, after controlling for other factors. The first order
+term of age has an coefficient estimate of 1.06, indicating that,
+overall, for every 1 unit increase of age, the exam points is expected
+to increase 1.06, after controlling for other factors. For the second
+order term of age, an estimated coefficient of -0.017 indicated for
+different value ranges of age, the effect on exam points might be
+significantly different. This auto-interaction might lead to -0.017
+decrease in exam points across these ranges, after controlling for the
+other factors.</p>
 <p>The practical explanation for these coefficient might be <em>a.</em>
 attitude reflects the motivation of study and higher motivation will
-lead better exam performance; <em>b.</em> statistics require quite a bit
-of domain knowledge (economics, health, psychology..), logic reasoning
-and math foundations Older students might have advantage in these
-aspects. <em>c.</em> However, this advantage will see a ceiling effect
-at around 30 years old, and due to the aging and family burden, students
-over 30 years old might start to become less and less competitive in
-stat learning over time.</p>
+lead to better exam performance; <em>b.</em> statistics requires quite a
+bit of domain knowledge (economics, health, psychology..), logic
+reasoning and math foundations. Older students might have advantage in
+these aspects. <em>c.</em> However, this advantage will see a ceiling
+effect at around 30 years old (according to the graph above), and due to
+the aging and family burden, students over 30 years old might start to
+become less and less competitive in stat learning over time.</p>
 </div>
 </div>
 <div id="model-diagnostic" class="section level1">
@@ -4504,12 +4507,12 @@ met, I see the assumption of normality as being approximately met.</p>
 different observations. I do not have information of how this study was
 designed, hence not being able to make any conclusion. However, I could
 imagine how hard it took to meet it here, since including students
-taking courses from different lecturers or lecturer groups would lead to
-violation of it. On the other hand, if the results were from students of
-one same lecturer (or lecturer group), it would take several semesters
-to collect such a large sample or students from several different
-classes/majors in one semester, either way the assumption was
-violated.</p>
+taking courses from different lecturers or different lecturer groups
+would lead to violation of it. On the other hand, if the results were
+from students of one same lecturer (or lecturer group), it might take
+several semesters to collect such a large sample or might take students
+from several different classes/majors in one semester, either way the
+assumption was violated.</p>
 </div>
 <div id="influential-observations" class="section level2">
 <h2>3.3 influential observations</h2>
@@ -4518,17 +4521,17 @@ distance, where x is the index number of our sample and y is the cook’s
 distance score for each observation. This is to evaluate, if there’s
 any, the data points being tremendously influential to the coefficient
 estimate. Cook’s distance is a commonly used estimate of the influence
-of a data point when performing a least-squares regression analysis。 It
+of a data point when performing a least-squares regression analysis. It
 measures the effect of deleting the observation for each given
 observation. There is no consensus on the cutoff for being influential
-using this indicator. The rules of thumbs include using a absolute value
-of 1, or using 4/n (n is sample size), or using 4×(the mean of the cooks
-distance for the whole sample). The plot showed the case number of 3
-data points which have the largest cook’s distances, which are #1, #4
-and #56. I will not further look into them since it is not required in
-this assignment. I did it somewhere else for fun. If you are interested,
-please go to a r markdown file named “Supplement_Codes” under the folder
-“IODS-project”.</p>
+using this indicator. The rules of thumbs include using an absolute
+value of 1, or using 4/n (n is sample size), or using 4×(the mean of the
+cooks distance for the whole sample). The plot showed the case numbers
+of 3 data points with the largest cook’s distances, which are #1, #4 and
+#56. I did not further reported them since it is not required in this
+assignment. I did it somewhere else for fun. If you are interested,
+please go to a r markdown file named “Supplement_Codes.html” or
+“Supplement_Codes.Rmd” under my “IODS-project” folder.</p>
 <hr />
 <p>Here we go again…</p>
 <p>a test to see if it works</p>
