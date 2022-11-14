@@ -5,12 +5,7 @@ wrap: 72
 ---
 
 # IODS 2022 Exercise set 2
-
-*Describe the work you have done this week and summarize your learning.*
-
--   Describe your work and results clearly.
--   Assume the reader has an introductory course level understanding of writing and reading R code as well as statistical methods.
--   Assume the reader has no previous knowledge of your data or the more advanced methods you are using.
+This week topic was Regression and model validation. Here we present basic R commands to build up summary tables and linear models which can be used for finding cause-and-effect relationships between different variables.
 
 # Data wrangling
 
