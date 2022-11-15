@@ -168,7 +168,7 @@ par(cex = 0.5,fig=c(0.5,1,0.5,1), new=TRUE)#set the coordinate of picture 2
 plot(fit2, which = 2) #plot diagnostic picture 2
 
 par(cex = 0.5, fig=c(0,1,0,0.5), new=TRUE)#set the coordinate of picture 3
-plot(fit2, which = 4)#plot diagnostic picture 3
+plot(fit2, which = 5)#plot diagnostic picture 3
 ```
 
 Residuals vs fitted plot (upper left) showed the data points are randomly scattered around the dotted line of y = 0, and the fitted line (red) is roughly horizontal without distinct patterns or trends, indicating a linear relationship. The linearity assumption of linear regression is met.
@@ -183,7 +183,12 @@ The QQ plot (upper right) showed most of the points plotted on the graph lies on
 
 ## 3.3 influential observations
 
-Influential observations were shown in the bottom plot of cook's distance, where x is the index number of our sample and y is the cook's distance score for each observation. This is to evaluate, if there's any, the data points being tremendously influential to the coefficient estimate. Cook's distance is a commonly used estimate of the influence of a data point when performing a least-squares regression analysis. It measures the effect of deleting the observation for each given observation. There is no consensus on the cutoff for being influential using this indicator. The rules of thumbs include using an absolute value of 1, or using 4/n (n is sample size), or using 4×(the mean of the cooks distance for the whole sample). The plot showed the case numbers of 3 data points with the largest cook's distances, which are #1, #4 and #56. I did not further report them since it is not required in this assignment. I did it somewhere else for fun. If you are interested, please go to a r markdown file named "Supplement_Codes.html" or "Supplement_Codes.Rmd" under my "IODS-project" folder.    
+Influential observations were shown in the bottom plot, where the red dashed line indicate cook's distance. Cook's distance is a commonly used estimate of the influence of a data point when performing a least-squares regression analysis. It measures the effect of deleting the observation for each given observation. In the plot, points, if there is any, outside the red dashed line are believed to have high influence. The graph for current model showed no points outside the line. The plot also showed the case numbers of 3 data points with the largest cook's distances, which are #1, #4 and #56. However, there are also other rules of thumbs for the cutoff, which are stricter. They include using an absolute value of 1, or using 4/n (n is sample size), or using 4×(the mean of the cooks distance for the whole sample). I did not further report them since it is not required in this assignment. I did it somewhere else for fun. If you are interested, please go to a r markdown file named "Supplement_Codes.html" or "Supplement_Codes.Rmd" under my "IODS-project" folder.    
+
+
+of cook's distance,
+
+where x is the index number of our sample and y is the cook's distance score for each observation. This is to evaluate, if there's any, the data points being tremendously influential to the coefficient estimate. Cook's distance is a commonly used estimate of the influence of a data point when performing a least-squares regression analysis. It measures the effect of deleting the observation for each given observation. There is no consensus on the cutoff for being influential using this indicator. The rules of thumbs include using an absolute value of 1, or using 4/n (n is sample size), or using 4×(the mean of the cooks distance for the whole sample). The plot showed the case numbers of 3 data points with the largest cook's distances, which are #1, #4 and #56. I did not further report them since it is not required in this assignment. I did it somewhere else for fun. If you are interested, please go to a r markdown file named "Supplement_Codes.html" or "Supplement_Codes.Rmd" under my "IODS-project" folder.    
   
   
 ***********************
