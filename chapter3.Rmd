@@ -3,28 +3,587 @@ title: "chapter3"
 author: "Rong Guang"
 date: '2022-11-14'
 output: html_document
+bibliography: citations.bib
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+# 1 Preparing
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+## 1.1 read the data set
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+```{r}
+library(tidyverse)
+alc <- read_csv(file = "data/alc.csv")
+```
+## 1.2 check the data set
 
-```{r cars}
-summary(cars)
+```{r}
+glimpse(alc)
+```
+# 2 Hypothesis
+
+## 2.1 introduction
+
+Despite the health risk and public harm associated with heavy drinking, alcohol is the most commonly used substance in developed countries [@Flor2020]. A large scale longitudinal study has identified Finland as the only Nordic country whose alcohol-attributable harms has increased [@Room2013]. Given that alcohol consumption typically starts in late adolescence or early adulthood [@Lees2020], measures to detect alcohol misuse among young people, especially college students, should be a top public health priority. Identifying a comprehensive set of early life factors associated with college students' alcohol use disorders could be an important starting point.
+
+## 2.2 literature review
+
+College students typically spend a tremendous amount of time with their family members, emphasizing the influence of family quality on any type of habit acquisitions.  Evidence has shown family relationship quality is strongly correlated with early alcohol use [@Kelly2011; @Brody1993], and the effect is interactive with gender [@Kelly2011]. Since studying also comprises an important part of college life, it is important to evaluate how college life and alcohol use interact with each other. An 21 year follow-up of 3,478 Australian since they were child has found level of academic performance predicts their drinking problems, independently of a selected group of individual and family con-founders [@Hayatbakhsh2011]. College students start to build up their social networks. An increased exposure to social communications is reasonably expected among them, which might incur alcohol involvement. A survey has found typical social drinking contexts were associated with men's average daily number of drinks and frequency of drunkenness, indicating social communications, interacted with gender, might have influence on college students' alcohol usage[@Senchak1998].
+
+## 2.3 Hypothesis
+
+According to the literature review, 4 potential early-life factors is identified to predict excessive alcohol usage among college students. They are *a.* family relationship quality (interactive with gender); *b.* school performance; *c.* social communication (interactive with gender). I herein proposed a 3-factor alcohol overuse model for college students and test it using a secondary data set collected for other purposes.
+
+In the data set, variables including gender, quality of family relationships ("famrel"), number of school absences ("absences"), weekly study time ("studytime") and frequency of going out with friends ("goout") could be candidate indicators for the current model. The variable "gender" and "famrel"'s relevance to the predictors are self-explanatory. School performance includes college students' on-campus and off-campuse performance, which could be reflected by variables "absences" and "studytime", respectively. Variable "goout" captures the involvement of social activity, which is a good indicator to social communication. Note that base the well-reported evidence introduced above, gender will not enter the model independently. Instead, it will comprise interaction terms with family relationship quality and social communication, respectively, and then enter the model. 
+
+# 3 Data exploration
+
+## 3.1 exploring the association between faimly relationship quality and alcohol overuse
+
+famrel - quality of family relationships (numeric: from 1 - very bad to 5 - excellent) 
+
+### 3.1.1 numerically explore the association
+
+```{r}
+alc %>% count(high_use, famrel)
 ```
 
-## Including Plots
+It is found the absolute sample of participants with very bad (level 1)  and/or bad (level 2) family quality is very small in number (n = 8). Caution should be taken about the potential large error. 
 
-You can also embed plots, for example:
+### 3.1.2 graphically explore the association
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+sex.labs <- c("Female", "Male")
+names(sex.labs) <- c("F", "M")
+p1 <- alc %>%
+  ggplot(aes(x = factor(famrel), fill = high_use)) +
+  geom_bar(position = "fill", color ="black") +
+  facet_wrap(~sex, 
+             labeller = labeller(sex = sex.labs)) +
+  labs(x = "Family relationship quality (larger is better)", 
+       y = "Proportion of overuser",
+       title = "Proportion of alcohol overuse by family relationship quality and sex")+
+  theme(legend.position = "bottom")+
+  guides(fill=guide_legend(title = "Alcohol overuse"))+
+  scale_fill_discrete(labels = c("FALSE" = "Non-overuser", "TRUE" = "Overuser"))+
+  scale_fill_brewer(palette = "Greys")
+  
+p1
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+The value of the variable "famrel" includes numbers from 1 - very bad to 5 - excellent. In the current study, I presume that the intervals between each consecutive pair of value is consistent, and hence see it as a numeric variable.
+
+According to the bar plot of proportion, the hypothesis of using the current variable in model fitting is validated. It is found that with the increasing of family relationship quality, the proportion of alcohol overuse decreases, except for female from a very bad (level 1) relationship family, which had a proportion of over-users at zero. However, this low proportion suffers from a risk of error due to the small sample in the level (n = 8). The result should be interpreted with caution.
+
+To facilitate understanding, the variable's name will be changed to family.quality according to the hypothesis.
+
+### 3.1.3 re-code the variable of family relationship quality
+
+```{r}
+alc <- alc %>% 
+  mutate(family.quality = famrel)
+```
+
+
+## 3.2 exploring the association between school performance (absences) and alcohol overuse
+
+absences - number of school absences (numeric: from 0 to 93) 
+studytime - weekly study time (numeric: 1 - <2 hours, 2 - 2 to 5 hours, 3 - 5 to 10 hours, or 4 - >10 hours) 
+
+### 3.2.1 exploring the association between on-campus performance and alcohol overuse
+### 3.2.1.1 numerically explore the association
+
+```{r}
+alc %>% group_by(high_use, sex) %>% 
+  summarise(mean = mean(absences), 
+            sd = sd(absences), 
+            sampleSize = n())
+```
+
+From the table, it is found that the frequency of class absences differed greatly between alcohol over-users and non-over-users, indicating its validity in entering the model. 
+
+
+### 3.2.1.2 graphically explore the association
+
+```{r}
+p2 <- alc %>%
+  ggplot(aes(x = high_use, y = absences, color = high_use)) +
+  geom_boxplot() +
+  facet_wrap(~sex, labeller = labeller(sex = sex.labs)) +
+  scale_fill_brewer(palette = "Blues")+
+  labs(x = "Alcohol overuser", 
+       y = "Freuqncy of class absences",
+       title = "Frequency of class absences by alcohol overuse and gender")+
+  theme(legend.position = "none")+
+  scale_x_discrete(labels = c("FALSE" = "Non-overuser", "TRUE" = "Overuser"))
+p2
+```
+
+The box plot showed similar information to the previous table. No noticeable difference in proportions of absences can be observed between genders, and hence their interaction would not be considered in fitting the model. 
+
+###3.2.1.3 rename the variable
+
+To facilitate understanding, the name of variable "absences" will be changed to on.campus.performance according to the hypothesis of current study.
+
+```{r}
+alc <- alc %>% 
+  mutate(on.campus.performance = absences)
+```
+
+
+### 3.2.2 exploring the association between off-campus performance (study time) and alcohol overuse
+### 3.2.2.1 numerically explore the association
+
+```{r}
+alc %>% count(high_use, studytime)
+```
+
+From the table, it is found the sample of participants with long and very long (level 4 and 5) study time in alcohol over-user group is very small in number (n = 12). Caution should be taken about the potential large error. 
+
+### 3.2.2.2 graphically explore the association
+
+```{r}
+p3 <- alc %>%
+  ggplot(aes(x = factor(studytime), fill = high_use)) +
+  geom_bar(position = "fill", color = "black") +
+  facet_wrap(~sex, 
+             labeller = labeller(sex = sex.labs)) +
+  labs(x = "Study time ranges (larger is longer)", 
+       y = "Proportion of overuser",
+       title = "Proportion of alcohol overuse by study time ranges and sex")+
+  theme(legend.position = "bottom")+
+  guides(fill=guide_legend(title = "Alcohol overuse"))+
+  scale_fill_discrete(labels = c("FALSE" = "Non-overuser", "TRUE" = "Overuser"))+
+  scale_fill_brewer(palette = "Greys")
+p3
+```
+
+The levels of study time ranges include 1 - <2 hours, 2 - 2 to 5 hours, 3 - 5 to 10 hours, or 4 - >10 hours. Their intervals are inconsistent, and hence it is not appropriate to enter a model as numeric variables, and it will be transformed into a categorical variable.
+
+According to the bar plot of proportion, it is found that with the increasing of study time, the proportion of alcohol overuse decreases, indicating its validity in entering the model. However, male with long study time (level 3) is an exception, which had the lowest proportion of over-users across the levels. Notably, this low proportion suffers from a risk of error due to the small sample in the level. To address the risk of error, the levels of study time ranges will be re-coded as Long study(original level 3 + original level 4), Moderate study(original level 2) and Light study (original level 1). Besides, no noticeable difference in proportions of study length can be observed between genders, and hence their interaction would not be considered in fitting the model. 
+
+To facilitate understanding, the name of variable "studytime" will be changed to off.campus.performance according to the hypothesis.
+
+### 3.2.3 re-code the variable of study length
+
+```{r}
+alc <- alc %>% 
+  mutate(off.campus.performance = 
+           case_when(studytime == 3 |studytime == 4~"Long study",
+                     studytime == 2~"Moderate study",
+                     studytime == 1~"Light study") %>% 
+           factor(levels = c("Light study", "Moderate study", "Long study")))
+
+```
+
+
+## 3.3 exploring the association between social communication frequency and alcohol overuse
+
+goout - going out with friends (numeric: from 1 - very low to 5 - very high)
+
+### 3.3.1 numerically explore the association
+
+```{r}
+alc %>% count(high_use, goout)
+```
+
+From the table, it is found the sample of participants having very low frequency of social communication (level 1) is small in number (n = 21). Caution should be taken about the potential large error. 
+
+### 3.3.2 graphically explore the association
+
+```{r}
+p4 <- alc %>%
+  ggplot(aes(x = factor(goout), fill = high_use)) +
+  geom_bar(position = "fill", color = "black") +
+  facet_wrap(~sex, 
+             labeller = labeller(sex = sex.labs)) +
+  labs(x = "Social Communication Freuency (larger is more frequent)", 
+       y = "Proportion of alcohol overusers",
+       title = "Proportion of social communication frequency ranges  by alcohol overuse and sex")+
+  theme(legend.position = "bottom")+
+  guides(fill=guide_legend(title = "Alcohol overuse"))+
+  scale_fill_discrete(labels = c("FALSE" = "Non-overuser", "TRUE" = "Overuser"))+
+  scale_fill_brewer(palette = "Greys")
+  
+p4
+```
+
+According to the bar plot, the proportion of alcohol over-users changed tremendously across different levels of social communication, indicating good validity of our model hypothesis about this variable. There is a clear borderline between social communication levels 1-3 and levels 4-5, though the difference is varied across genders. The levels are hence re-coded into two--Infrequent (original level 1-3) and Frequent (original level 4+5). Its interaction with sex will also be considered in fitting the model. This corresponds to the finding of previous evidence[@Senchak1998].
+
+### 3.2.3 re-code the variable of social communication
+
+```{r}
+alc <- alc %>% 
+  mutate(social = goout>3) 
+
+alc <- alc %>% 
+  mutate(social = social %>%  
+           factor() %>% 
+           fct_recode("Frequent" = "TRUE",
+                      "Infrequent" = "FALSE"))
+```
+
+# 4 Model fitting
+
+## 4.1 fitting base on the original hypothesis
+
+```{r}
+fit1 <- glm(high_use~ family.quality:sex + social:sex + off.campus.performance + on.campus.performance, data = alc, family = "binomial")
+summary(fit1)
+```
+
+All of the hypothesized predictors have at least one level being significant in the model. Comparing to light study participants, moderate study participants is not significant in predicting alcohol overuse. Hence,this variable will be dichotomized into Light study and moderate to long study for better model performance and parsimony of levels. The reason why it is not dichotomized into long study and moderate to short study is because the sample of long study category is extremely small, risking introducing error in our model.
+
+## 4.2 re-code variable with insignificant levels
+
+```{r}
+alc <- alc %>% 
+  mutate(off.campus.performance = 
+           case_when(off.campus.performance == "Light study"~ "Light study",
+                     TRUE~ "Moderate to long study") %>% 
+           factor(levels = c("Light study", "Moderate to long study")))
+```
+
+## 4.3 fitting the model again
+
+```{r}
+fit2 <- glm(high_use~ family.quality:sex + social:sex + off.campus.performance + on.campus.performance, data = alc, family = "binomial")
+summary(fit2)
+```
+
+Now all of the hypothesized predictors are significant in predicting alcohol overuse, except for off-campus performance, which has a a _p_ value of 0.05489, being very close to 0.05. An increase in sample size would very possibly make it significant. I hence keep this predictor in the model. Consequently, fit2 will be our final model.
+
+## 4.4 interpreting the model results
+
+### 4.4.1 transforming the coeficients to ORs
+
+```{r}
+OR <- coef(fit2) %>% exp()
+CI <- confint(fit2) %>% exp()
+ORCI <- cbind(OR,CI) 
+print(ORCI, digits = 2)
+```
+
+Our hypothesis that *a.* family relationship quality (interactive with gender); *b.* school performance; *c.* social communication (interactive with gender) could be predictors for alcohol overuse among college students is justified. According to the final model, comparing to participants who study less than 5 hours per week, those who study more than 5 hours have on average 0.55 times less odds to be an alcohol over-user. Participants who have one more time of absence from class will on average have 1.07 times more odds being an alcohol over-user. These findings about the predictive effect of academic performance on alcohol use is consistent with previous evidence[@Hayatbakhsh2011].For female college students, every one unit of family relationship quality increase would lead to 0.66 times less odds being alcohol over-user. For male students, every one unit of family relationship quality increase would lead to 0.71 times less odds being alcohol over-user. These indicate the predictive effects of family relationship on alcohol use are present and different across genders. This finding is consistent with previous evidence [@Kelly2011]. For female college students, comparing to students who do not have social involvement frequently, those who usually have social engagement have 2.77 times more odds of being alcohol over-users. For male students, this effect is also present but the effect size goes as high as 12.36 times more odds of being alcohol over-users. These indicate the predictive effects of social engagement on alcohol use are present and tremendously different across genders. This finding is consistent with previous evidence[@Senchak1998].
+
+### 4.4.2 exploring predictions
+
+#### 4.4.2.1 cross tabulation of predcition versus the actual values
+```{r}
+prob <- predict(fit2, type = "response")
+
+alc <- alc %>% 
+  mutate(probability = prob)
+
+alc <- alc %>% 
+  mutate(prediction = probability>0.5)
+table(high_use = alc$high_use, prediction = alc$prediction)
+```
+
+Among 259 participants who are not alcohol over-users, our model correctly predicts 236 (91%) of them. Among 111 participants who are alcohol over-users, our model correctly predicts 54 of them (49%) of them. In all, among the 370 predicts, 80(21.6%) were inaccurate. 
+
+### 4.4.2.2 scatter plot of the precition versus the actual values
+
+```{r}
+library(dplyr); library(ggplot2)
+
+p5 <- alc %>% 
+  ggplot(aes(x = probability, y = high_use, color = prediction)) +
+  geom_point()
+p5  
+```
+
+### 4.4.2.3 comparing the model to the performance of random guess
+
+```{r}
+random.guess <- runif(n= nrow(alc), min = 0, max = 1)
+alc <- alc %>% 
+  mutate(random.guess = random.guess)
+alc <- alc %>% 
+  mutate(prediction.guess = random.guess>0.5)
+table(high_use = alc$high_use, prediction = alc$prediction.guess)
+```
+
+Among 259 participants who are not alcohol over-users, random guess correctly guesses 126 (49%) of them. Among 111 participants who are alcohol over-users, random guess correctly guesses 55 of them (49%) of them. In all, among the 370 predicts, 181(49%) were inaccurate. Our model shows a tremendously better overall performance than random guess. However, its effect on correctly predicting the alcohol over-users is roughly equal to random guess, indicating the model is better applied in predicting who is a non-alcohol-over-user.
+
+## 4.5 cross validation
+
+```{r}
+# define a loss function (average prediction error)
+loss_func <- function(class, prob) {
+  n_wrong <- abs(class - prob) > 0.5
+  mean(n_wrong)
+}
+
+# compute the average number of wrong predictions in the (training) data
+training.error.full <- loss_func(alc$high_use, alc$probability)
+training.error.full
+# 10-fold cross-validation
+library(boot)
+cv <- cv.glm(data = alc, cost = loss_func, glmfit = fit2, K = 10)
+cross.val.error.full <- cv$delta[1]
+cross.val.error.full
+```
+
+
+
+
+
+
+## 4.1 removing insignificant variables
+
+```{r}
+fit2 <- glm(high_use~ family.quality + social:sex + off.campus.performance + absences, data = alc, family = "binomial")
+summary(fit2)
+```
+
+## 4.2 track the performance of model with different number of predictors
+
+```{r}
+fit_3pred <- glm(high_use ~ social:sex + off.campus.performance + 
+    absences, family = "binomial", data = alc)
+
+```
+
+
+
+```{r}
+alc <- mutate(alc, probability = predict(a, type = "response"))
+alc <- mutate(alc, prediction = probability > 0.5)
+# define a loss function (average prediction error)
+loss_func <- function(class, prob) {
+  n_wrong <- abs(class - prob) > 0.5
+  mean(n_wrong)
+}
+
+# compute the average number of wrong predictions in the (training) data
+loss_func(alc$high_use, alc$probability)
+
+# K-fold cross-validation
+library(boot)
+cv <- cv.glm(data = alc, cost = loss_func, glmfit = a, K = nrow(alc))
+
+# average number of wrong predictions in the cross validation
+cv$delta[1]
+cv
+cv1 <- cv.glm(data = alc, cost = loss_func, glmfit = a, K = 10)
+cv1$delta[1]
+```
+
+```{r}
+glimpse(alc)
+
+a <- glm(high_use~ famrel:sex + goout+studytime+absences, data = alc, family = "binomial")
+summary(a)
+```
+
+```{r}
+alc <- mutate(alc, probability = predict(a, type = "response"))
+alc <- mutate(alc, prediction = probability > 0.5)
+# define a loss function (average prediction error)
+loss_func <- function(class, prob) {
+  n_wrong <- abs(class - prob) > 0.5
+  mean(n_wrong)
+}
+
+# compute the average number of wrong predictions in the (training) data
+loss_func(alc$high_use, alc$probability)
+
+# K-fold cross-validation
+library(boot)
+cv <- cv.glm(data = alc, cost = loss_func, glmfit = a, K = nrow(alc))
+
+# average number of wrong predictions in the cross validation
+cv$delta[1]
+cv
+cv1 <- cv.glm(data = alc, cost = loss_func, glmfit = a, K = 10)
+cv1$delta[1]
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+data <- read.table("elections.txt", sep = ",")
+vote_number_young <-  0
+vote_number_old <- 0
+number_candidate_young <- 0
+number_candidate_old <- 0
+for(i in 1:nrow(data)){
+  name <- data[i,1]
+  party <- data[i,2]
+  vote <- data[i,3]
+  birth_year <- data[i,4]
+  if (birth_year<1980){
+    vote_number_old = vote_number_old + vote
+    number_candidate_old = number_candidate_old +1
+  }else{ 
+    vote_number_young = vote_number_young + vote
+    number_candidate_young = number_candidate_young +1
+  }}
+
+print(paste0("The candidates born before 1980 get ", vote_number_old/number_candidate_old, " tickets on average"))
+
+# Did candidates born before 1980 receive more votes than those born in 1980 or later?
+```
+
+```{r}
+print(paste0("The candidates born after 1980 get ", vote_number_young/number_candidate_young, " tickets on average"))
+```
+
+
+```{r}
+vote_number_old/number_candidate_old > vote_number_young/number_candidate_young
+```
+
+
+
+```{r}
+alc <- alc %>% 
+  mutate(family.quality = case_when
+         (famrel == 4 |famrel == 5~"Good quality",
+           famrel == 3~"Moderate quality",
+           famrel == 2|famrel == 1~"Moderate to low quality") %>% 
+           fct_rev())
+
+alc <- alc %>% 
+  mutate(family.quality = case_when
+         (famrel == 5~"Excellent quality",
+           famrel == 4~"Good quality",
+           famrel == 3~"Moderate quality",
+           famrel == 2~"Moderate to low quality",
+           famrel == 1~"Low quality") %>% 
+           factor(levels = c("Low quality", 
+                             "Moderate to low quality",
+                             "Moderate quality",
+                             "Good quality",
+                             "Excellent quality")))
+```
+
+
+
+
+
+
+
+sex, age, Medu, studytime, reason (possible), activities, famrel, goout, health, absences
+
+
+
+
+--after school activitiies``
+studytime - weekly study time (numeric: 1 - <2 hours, 2 - 2 to 5 hours, 3 - 5 to 10 hours, or 4 - >10 hours) 
+ 
+goout - going out with friends (numeric: from 1 - very low to 5 - very high) 
+
+activities - extra-curricular activities (binary: yes or no) 
+
+
+
+(no)paid - extra paid classes within the course subject (Math or Portuguese) (binary: yes or no) 
+(no)famsup - family educational support (binary: yes or no) 
+
+---family influence
+
+famrel - quality of family relationships (numeric: from 1 - very bad to 5 - excellent) 
+
+Medu - mother's education (numeric: 0 - none, 1 - primary education (4th grade), 2 â€“ 5th to 9th grade, 3 â€“ secondary education or 4 â€“ higher education) 
+
+
+--health 
+health - current health status (numeric: from 1 - very bad to 5 - very good) 
+
+
+--school performance
+absences - number of school absences (numeric: from 0 to 93) 
+
+--reason
+reason - reason to choose this school (nominal: close to 'home', school 'reputation', 'course' preference or 'other') 
+
+reference
+
+---family relationship
+title: Family Relationship Quality and Early Alcohol Use: Evidence for Gender-Specific Risk Processes
+https://www.jsad.com/doi/full/10.15288/jsad.2011.72.399
+
+---school performance
+Level of academic performance in high school children predicts their drinking problems as young adults, independently of a selected group of individual and family confounders.
+title: School performance and alcohol use problems in early adulthood: a longitudinal study
+https://www.sciencedirect.com/science/article/pii/S0741832910001771
+
+---friend
+typical social drinking contexts were associated with men's average daily number of drinks and frequency of drunkenness 
+title:Alcohol use among college students as a function of their typical social drinking context.
+https://psycnet.apa.org/record/1998-00121-006
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
