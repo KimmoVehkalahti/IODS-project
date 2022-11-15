@@ -4224,7 +4224,7 @@ writing and reading R code as well as statistical methods.</li>
 advanced methods you are using.</li>
 </ul>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">date</span>()</span></code></pre></div>
-<pre><code>## [1] &quot;Mon Nov 14 18:43:42 2022&quot;</code></pre>
+<pre><code>## [1] &quot;Tue Nov 15 09:23:40 2022&quot;</code></pre>
 </div>
 <div id="preparing" class="section level1">
 <h1>1 Preparing</h1>
@@ -4296,11 +4296,11 @@ learning style fits into the strategic learning type).</p>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>                  <span class="co">#statistics for both types of variables. </span></span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DT) <span class="co"># show table in a html-based neat view. </span></span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ff_glimpse</span>(learn)<span class="sc">$</span>Continuous <span class="sc">%&gt;%</span> <span class="fu">datatable</span>() <span class="co"># descriptive statistics for</span></span></code></pre></div>
-<div id="htmlwidget-e54df0125cb00cbfda88" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-e54df0125cb00cbfda88">{"x":{"filter":"none","vertical":false,"data":[["age","attitude","deep","stra","surf","points"],["age","attitude","deep","stra","surf","points"],["&lt;dbl&gt;","&lt;dbl&gt;","&lt;dbl&gt;","&lt;dbl&gt;","&lt;dbl&gt;","&lt;dbl&gt;"],[166,166,166,166,166,166],[0,0,0,0,0,0],["0.0","0.0","0.0","0.0","0.0","0.0"],["25.5","3.1","3.7","3.1","2.8","22.7"],["7.8","0.7","0.6","0.8","0.5","5.9"],["17.0","1.4","1.6","1.2","1.6","7.0"],["21.0","2.6","3.3","2.6","2.4","19.0"],["22.0","3.2","3.7","3.2","2.8","23.0"],["27.0","3.7","4.1","3.6","3.2","27.8"],["55.0","5.0","4.9","5.0","4.3","33.0"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>label<\/th>\n      <th>var_type<\/th>\n      <th>n<\/th>\n      <th>missing_n<\/th>\n      <th>missing_percent<\/th>\n      <th>mean<\/th>\n      <th>sd<\/th>\n      <th>min<\/th>\n      <th>quartile_25<\/th>\n      <th>median<\/th>\n      <th>quartile_75<\/th>\n      <th>max<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-d7a10fd1de81cf46a1c5" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-d7a10fd1de81cf46a1c5">{"x":{"filter":"none","vertical":false,"data":[["age","attitude","deep","stra","surf","points"],["age","attitude","deep","stra","surf","points"],["&lt;dbl&gt;","&lt;dbl&gt;","&lt;dbl&gt;","&lt;dbl&gt;","&lt;dbl&gt;","&lt;dbl&gt;"],[166,166,166,166,166,166],[0,0,0,0,0,0],["0.0","0.0","0.0","0.0","0.0","0.0"],["25.5","3.1","3.7","3.1","2.8","22.7"],["7.8","0.7","0.6","0.8","0.5","5.9"],["17.0","1.4","1.6","1.2","1.6","7.0"],["21.0","2.6","3.3","2.6","2.4","19.0"],["22.0","3.2","3.7","3.2","2.8","23.0"],["27.0","3.7","4.1","3.6","3.2","27.8"],["55.0","5.0","4.9","5.0","4.3","33.0"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>label<\/th>\n      <th>var_type<\/th>\n      <th>n<\/th>\n      <th>missing_n<\/th>\n      <th>missing_percent<\/th>\n      <th>mean<\/th>\n      <th>sd<\/th>\n      <th>min<\/th>\n      <th>quartile_25<\/th>\n      <th>median<\/th>\n      <th>quartile_75<\/th>\n      <th>max<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>                   <span class="co">#categorical data shown in html-based data table view.</span></span></code></pre></div>
 <p>According to their distribution shapes visualized in section 1.5
-(next section), non-normally distributed variables will be reported as
+(next section), non-normally distributed variables were reported as
 median and Q1-Q3; roughly normal variables will be reported as
 mean±sd.</p>
 <p>The age of the participants was between 17 and 55 years old (median:
@@ -4309,10 +4309,10 @@ learning scores were 3.7±0.6. Their surface learning scores were
 2.8±0.5. And their strategic learning scores were 3.1±0.8.</p>
 </div>
 <div id="describe-the-categorical-variable" class="section level3">
-<h3>1.4.1 describe the categorical variable</h3>
+<h3>1.4.2 describe the categorical variable</h3>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ff_glimpse</span>(learn)<span class="sc">$</span>Categorical <span class="sc">%&gt;%</span> <span class="fu">datatable</span>() <span class="co"># descriptive statistics for categorical data shown in html-based data table view.</span></span></code></pre></div>
-<div id="htmlwidget-9b583666954e75cf540f" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-9b583666954e75cf540f">{"x":{"filter":"none","vertical":false,"data":[["gender"],["gender"],["&lt;fct&gt;"],[166],[0],["0.0"],[2],["\"Female\", \"Male\""],["110, 56"],["66, 34"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>label<\/th>\n      <th>var_type<\/th>\n      <th>n<\/th>\n      <th>missing_n<\/th>\n      <th>missing_percent<\/th>\n      <th>levels_n<\/th>\n      <th>levels<\/th>\n      <th>levels_count<\/th>\n      <th>levels_percent<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,6]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-17cc1f5532dd142dcca7" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-17cc1f5532dd142dcca7">{"x":{"filter":"none","vertical":false,"data":[["gender"],["gender"],["&lt;fct&gt;"],[166],[0],["0.0"],[2],["\"Female\", \"Male\""],["110, 56"],["66, 34"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>label<\/th>\n      <th>var_type<\/th>\n      <th>n<\/th>\n      <th>missing_n<\/th>\n      <th>missing_percent<\/th>\n      <th>levels_n<\/th>\n      <th>levels<\/th>\n      <th>levels_count<\/th>\n      <th>levels_percent<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,6]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 <p>Among the 166 participants, 110 (66%) were female and 56 (34%) were
 male. According to a 2021 statistics, Finnish universities had a
 male:female ratio of 1:1.2, indicating female in our sample is
@@ -4329,17 +4329,19 @@ over-represented.</p>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co">#create a self-defined function so that correlation matrix produced by ggpairs could </span></span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co">#show LOWESS smoothing with scatter plot.</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>my_fn <span class="ot">&lt;-</span> <span class="cf">function</span>(data, mapping, <span class="at">method=</span><span class="st">&quot;loess&quot;</span>, ...){</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>      p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> data, <span class="at">mapping =</span> mapping) <span class="sc">+</span> </span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.3</span>, <span class="at">color =</span> <span class="st">&quot;coral&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_smooth</span>(<span class="at">size =</span> <span class="fl">0.3</span>, <span class="at">method=</span>method, ...)</span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>      p</span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="co"># create an plot matrix with ggpairs()</span></span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="fu">ggpairs</span>(learn, </span>
-<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">lower=</span> <span class="fu">list</span>(<span class="at">combo =</span> <span class="fu">wrap</span>(<span class="st">&quot;facethist&quot;</span>, <span class="at">bins =</span> <span class="dv">20</span>),</span>
-<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>                    <span class="at">continuous =</span> my_fn)</span>
-<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>        )</span></code></pre></div>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>my_fn <span class="ot">&lt;-</span> <span class="cf">function</span>(data, mapping, <span class="at">method=</span><span class="st">&quot;loess&quot;</span>, ...){ <span class="co">#require the input of two</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>       <span class="co">#arguments: data and mapping; arguments method is set to be &quot;Loess&quot;</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>      p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> data, <span class="at">mapping =</span> mapping) <span class="sc">+</span>  <span class="co">#call ggplot function</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.3</span>, <span class="at">color =</span> <span class="st">&quot;coral&quot;</span>) <span class="sc">+</span>   <span class="co">#call point graph, reduce the </span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>        <span class="co">#size, turn color to coral, for better visualization</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_smooth</span>(<span class="at">size =</span> <span class="fl">0.3</span>, <span class="at">method=</span>method, ...) <span class="co"># fit Loess regression </span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>      p  <span class="co">#print the result</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="co"># create an plot matrix with ggpairs()</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a><span class="fu">ggpairs</span>(learn, </span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">lower=</span> <span class="fu">list</span>(<span class="at">combo =</span> <span class="fu">wrap</span>(<span class="st">&quot;facethist&quot;</span>, <span class="at">bins =</span> <span class="dv">20</span>), </span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>                    <span class="at">continuous =</span> my_fn) <span class="co">#call self-defined function &quot;my_fn&quot;</span></span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>        )</span></code></pre></div>
 <pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
 <pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;
 ## `geom_smooth()` using formula &#39;y ~ x&#39;
@@ -4384,8 +4386,9 @@ of publications.</p>
 <div id="fitting" class="section level2">
 <h2>2.2 fitting</h2>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>fit1 <span class="ot">&lt;-</span> learn <span class="sc">%&gt;%</span>  <span class="co">#using attitude, the polynomial age and gender to predict exam points</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lm</span>(points <span class="sc">~</span> attitude  <span class="sc">+</span> <span class="fu">poly</span>(age, <span class="dv">2</span>, <span class="at">raw =</span>T) <span class="sc">+</span> gender, <span class="at">data =</span> .) </span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit1) <span class="co"># summarize the results</span></span></code></pre></div>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lm</span>(points <span class="sc">~</span> attitude  <span class="sc">+</span> <span class="fu">poly</span>(age, <span class="dv">2</span>, <span class="at">raw =</span>T) <span class="sc">+</span> gender, <span class="at">data =</span> .) <span class="co">#ploy() is to</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">#include 2nd order function form, where &quot;2&quot; means the order </span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit1) <span class="co"># summarize the results</span></span></code></pre></div>
 <pre><code>## 
 ## Call:
 ## lm(formula = points ~ attitude + poly(age, 2, raw = T) + gender, 
@@ -4421,8 +4424,9 @@ removing insignificant variable base on the rule of parsimony.</p>
 <h2>2.3 removing insignifiant predictor</h2>
 <p>The model was fit again by removing gender.</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>fit2 <span class="ot">&lt;-</span> learn <span class="sc">%&gt;%</span> </span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lm</span>(points <span class="sc">~</span> attitude  <span class="sc">+</span> <span class="fu">poly</span>(age, <span class="dv">2</span>, <span class="at">raw =</span>T), <span class="at">data =</span> .)</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit2)</span></code></pre></div>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lm</span>(points <span class="sc">~</span> attitude  <span class="sc">+</span> <span class="fu">poly</span>(age, <span class="dv">2</span>, <span class="at">raw =</span>T), <span class="at">data =</span> .)<span class="co">#ploy() is to</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">#include 2nd order function form, where &quot;2&quot; means the order </span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit2)</span></code></pre></div>
 <pre><code>## 
 ## Call:
 ## lm(formula = points ~ attitude + poly(age, 2, raw = T), data = .)
@@ -4528,7 +4532,7 @@ using this indicator. The rules of thumbs include using an absolute
 value of 1, or using 4/n (n is sample size), or using 4×(the mean of the
 cooks distance for the whole sample). The plot showed the case numbers
 of 3 data points with the largest cook’s distances, which are #1, #4 and
-#56. I did not further reported them since it is not required in this
+#56. I did not further report them since it is not required in this
 assignment. I did it somewhere else for fun. If you are interested,
 please go to a r markdown file named “Supplement_Codes.html” or
 “Supplement_Codes.Rmd” under my “IODS-project” folder.</p>
