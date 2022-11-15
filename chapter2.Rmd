@@ -178,6 +178,8 @@ The QQ plot (upper right) showed most of the points plotted on the graph lies on
 ## 3.2 other linear model assumptions
 
    The assumption of independence requires no relation between the different observations. I do not have information of how this study was designed, hence not being able to make any conclusion. However, I could imagine how hard it took to meet it here, since including students taking courses from different lecturers or different lecturer groups would lead to violation of it. On the other hand, if the results were from students of one same lecturer (or lecturer group), it might take several semesters to collect such a large sample or might take students from several different classes/majors in one semester, either way the assumption was violated. 
+   
+   Homoscedasticity is another assumption to check. However, considering it is better evaluated by fitted values against root of standardized residuals (the #3 in plot() function), which is not required to produce in the current assignment, I did not further dig into it. By looking into its rough substitute plot "residual vs fitted" (upper left, above), no obvious heteroscedasticity was detected.  
 
 ## 3.3 influential observations
 
