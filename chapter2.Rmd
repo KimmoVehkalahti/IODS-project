@@ -101,6 +101,8 @@ library(tidyverse)
 #show LOWESS smoothing with scatter plot.
 my_fn <- function(data, mapping, method="loess", ...){ #require the input of two
        #arguments: data and mapping; arguments method is set to be "Loess"
+       #for more information about using Loess to check function form, please
+       #click go to (https://thestatsgeek.com/2014/09/13/checking-functional-form-in-logistic-regression-using-loess/)
       p <- ggplot(data = data, mapping = mapping) +  #call ggplot function
       geom_point(size = 0.3, color = "coral") +   #call point graph, reduce the 
         #size, turn color to coral, for better visualization
