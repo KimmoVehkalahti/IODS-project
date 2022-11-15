@@ -4,11 +4,14 @@ author: "Subam Kathet"
 output:
   html_document:
     theme: cosmo
-    toc: true
+    toc: yes
     toc_depth: 2
-    fig_caption: true
+    fig_caption: yes
     fig_width: 6
     fig_height: 4
+  pdf_document:
+    toc: yes
+    toc_depth: '2'
 ---
 
 ***

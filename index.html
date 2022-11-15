@@ -387,10 +387,10 @@ Course Project</a></li>
 <li><a href="#about-the-project" id="toc-about-the-project">About the
 project</a></li>
 <li><a href="#week-1-start-me-up-the-book-and-material" id="toc-week-1-start-me-up-the-book-and-material">Week 1: Start me up !!
-The book and material</a>
-<ul>
+The book and material</a></li>
 <li><a href="#week-2-regression-and-model-validation" id="toc-week-2-regression-and-model-validation">Week 2: Regression and
-model validation</a></li>
+model validation</a>
+<ul>
 <li><a href="#install-the-required-packages-first" id="toc-install-the-required-packages-first">2.0 INSTALL THE REQUIRED
 PACKAGES FIRST!</a></li>
 <li><a href="#reading-data-from-the-web" id="toc-reading-data-from-the-web">2.1 Reading data from the
@@ -399,6 +399,10 @@ web</a></li>
 variables</a></li>
 <li><a href="#combining-variables" id="toc-combining-variables">2.3
 Combining variables</a></li>
+<li><a href="#selecting-columns" id="toc-selecting-columns">2.4
+Selecting columns</a></li>
+<li><a href="#modifying-column-names" id="toc-modifying-column-names">2.5 Modifying column names</a></li>
+<li><a href="#excluding-observations" id="toc-excluding-observations">2.6 Excluding observations</a></li>
 </ul></li>
 </ul>
 </div>
@@ -439,11 +443,12 @@ learning curve.</p>
 <pre class="r"><code># This is a so-called &quot;R chunk&quot; where you can write R code.
 
 date()</code></pre>
-<pre><code>## [1] &quot;Tue Nov 15 21:25:51 2022&quot;</code></pre>
+<pre><code>## [1] &quot;Tue Nov 15 23:17:19 2022&quot;</code></pre>
 <pre class="r"><code># Trying to check if the chunk works or not. It is usually a struggle especially when R version is outdated and the packages doesn&#39;t work. Then re installing and updating the packages and coming back to work it out is a big struggle. </code></pre>
 <hr />
-<div id="week-2-regression-and-model-validation" class="section level2">
-<h2>Week 2: Regression and model validation</h2>
+</div>
+<div id="week-2-regression-and-model-validation" class="section level1">
+<h1>Week 2: Regression and model validation</h1>
 <p>This set consists of a few numbered exercises. Go to each exercise in
 turn and do as follows:</p>
 <ol style="list-style-type: decimal">
@@ -451,7 +456,6 @@ turn and do as follows:</p>
 <li>Run the (possible) pre-exercise-code chunk.</li>
 <li>Follow the instructions to fix the R code!</li>
 </ol>
-</div>
 <div id="install-the-required-packages-first" class="section level2">
 <h2>2.0 INSTALL THE REQUIRED PACKAGES FIRST!</h2>
 <p>One or more extra packages (in addition to <code>tidyverse</code>)
@@ -459,7 +463,34 @@ will be needed below.</p>
 <pre class="r"><code># Select (with mouse or arrow keys) the install.packages(&quot;...&quot;) and
 # run it (by Ctrl+Enter / Cmd+Enter):
 
-# install.packages(&quot;GGally&quot;)</code></pre>
+library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages
+## ───────────────────────────────────────
+## tidyverse 1.3.2 ──</code></pre>
+<pre><code>## ✔ ggplot2 3.3.6     ✔ purrr   0.3.4
+## ✔ tibble  3.1.8     ✔ stringr 1.4.1
+## ✔ tidyr   1.2.0     ✔ forcats 0.5.2
+## ✔ readr   2.1.2     
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(GGally)</code></pre>
+<pre><code>## Registered S3 method overwritten by &#39;GGally&#39;:
+##   method from   
+##   +.gg   ggplot2</code></pre>
+<pre class="r"><code>library(ggplot2)
+library(gapminder) 
+library(finalfit)
+library(broom)</code></pre>
 </div>
 <div id="reading-data-from-the-web" class="section level2">
 <h2>2.1 Reading data from the web</h2>
@@ -495,16 +526,22 @@ of the data. How many rows and colums does the data have?</li>
 # Work with the exercise in this chunk, step-by-step. Fix the R code!
 
 # read the data into memory
-lrn14 &lt;- read.table(&quot;http://www.helsinki.fi/~kvehkala/JYTmooc/JYTOPKYS3-data.txt&quot;, sep=&quot;\t&quot;, header=TRUE)
-
-# Look at the dimensions of the data
-
+lrn14 &lt;- read.table(&quot;http://www.helsinki.fi/~kvehkala/JYTmooc/JYTOPKYS3-meta.txt&quot;, sep=&quot;\t&quot;, header=TRUE)</code></pre>
+<pre><code>## Warning in scan(file = file, what = what, sep = sep, quote = quote, dec = dec, :
+## EOF within quoted string</code></pre>
+<pre class="r"><code># Look at the dimensions of the data
 
 # Look at the structure of the data
 #use .txt file to import data set for better description.
 # Preliminary results available at http://www.slideshare.net/kimmovehkalahti/the-relationship-between-learning-approaches-and-students-achievements-in-an-introductory-statistics-course-in-finland
 #Total respondents n=183, total question n=60, so 184 rows including heading and 60 columns
-#The code as respective column heading represents a question related to the survey and number. Each SN is a respondents and the answers to each question are given in a Lickert scale (0-5).</code></pre>
+#The code as respective column heading represents a question related to the survey and number. Each SN is a respondents and the answers to each question are given in a Lickert scale (0-5).
+
+dim(lrn14)</code></pre>
+<pre><code>## [1] 28  1</code></pre>
+<pre class="r"><code>str(lrn14)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    28 obs. of  1 variable:
+##  $ Variable.descriptions.and.other.meta.data.of.JYTOPKYS3..syksy.2016.: chr  &quot;Kimmo Vehkalahti: ASSIST 2014 - Phase 3 (end of Part 2), N=183&quot; &quot;Course: Johdatus yhteiskuntatilastotieteeseen, syksy 2014&quot; &quot;(Introduction to Social Statistics, fall 2014 - in Finnish),&quot; &quot;international survey of Approaches to Learning, made possible&quot; ...</code></pre>
 </div>
 </div>
 <div id="scaling-variables" class="section level2">
@@ -534,39 +571,7 @@ questions, by dividing it with the number of questions.</li>
 </div>
 <div id="r-code-1" class="section level3">
 <h3>R code</h3>
-<pre class="r"><code># This is a code chunk in RStudio editor.
-# Work with the exercise in this chunk, step-by-step. Fix the R code!
-
-#lrn14 is available
-
-# divide each number in a vector
-c(1,2,3,4,5) / 2</code></pre>
-<pre><code>## [1] 0.5 1.0 1.5 2.0 2.5</code></pre>
-<pre class="r"><code># print the &quot;Attitude&quot; column vector of the lrn14 data
-lrn14$Attitude</code></pre>
-<pre><code>##   [1] 37 31 25 35 37 38 35 29 38 21 39 38 24 30 26 25 41 26 26 17 27 39 34 27 23
-##  [26] 37 44 41 24 37 25 30 34 32 20 24 42 16 31 38 38 33 17 25 32 35 32 42 31 39
-##  [51] 19 21 25 32 32 26 23 38 28 33 48 40 40 47 23 31 27 41 34 34 25 21 14 19 37
-##  [76] 41 32 28 41 25 28 38 31 35 36 26 44 45 32 20 39 25 33 35 33 30 29 33 33 35
-## [101] 36 42 37 28 42 22 32 50 47 36 36 29 35 40 35 32 26 20 27 32 33 39 33 30 37
-## [126] 14 30 25 29 39 36 29 21 31 24 40 31 23 28 37 26 24 30 29 32 28 29 24 31 19
-## [151] 20 38 34 37 29 23 41 27 35 34 32 33 33 35 32 31 24 28 17 19 32 35 24 38 21
-## [176] 29 19 20 42 41 37 36 18</code></pre>
-<pre class="r"><code># divide each number in the column vector
-lrn14$Attitude / 10</code></pre>
-<pre><code>##   [1] 3.7 3.1 2.5 3.5 3.7 3.8 3.5 2.9 3.8 2.1 3.9 3.8 2.4 3.0 2.6 2.5 4.1 2.6
-##  [19] 2.6 1.7 2.7 3.9 3.4 2.7 2.3 3.7 4.4 4.1 2.4 3.7 2.5 3.0 3.4 3.2 2.0 2.4
-##  [37] 4.2 1.6 3.1 3.8 3.8 3.3 1.7 2.5 3.2 3.5 3.2 4.2 3.1 3.9 1.9 2.1 2.5 3.2
-##  [55] 3.2 2.6 2.3 3.8 2.8 3.3 4.8 4.0 4.0 4.7 2.3 3.1 2.7 4.1 3.4 3.4 2.5 2.1
-##  [73] 1.4 1.9 3.7 4.1 3.2 2.8 4.1 2.5 2.8 3.8 3.1 3.5 3.6 2.6 4.4 4.5 3.2 2.0
-##  [91] 3.9 2.5 3.3 3.5 3.3 3.0 2.9 3.3 3.3 3.5 3.6 4.2 3.7 2.8 4.2 2.2 3.2 5.0
-## [109] 4.7 3.6 3.6 2.9 3.5 4.0 3.5 3.2 2.6 2.0 2.7 3.2 3.3 3.9 3.3 3.0 3.7 1.4
-## [127] 3.0 2.5 2.9 3.9 3.6 2.9 2.1 3.1 2.4 4.0 3.1 2.3 2.8 3.7 2.6 2.4 3.0 2.9
-## [145] 3.2 2.8 2.9 2.4 3.1 1.9 2.0 3.8 3.4 3.7 2.9 2.3 4.1 2.7 3.5 3.4 3.2 3.3
-## [163] 3.3 3.5 3.2 3.1 2.4 2.8 1.7 1.9 3.2 3.5 2.4 3.8 2.1 2.9 1.9 2.0 4.2 4.1
-## [181] 3.7 3.6 1.8</code></pre>
-<pre class="r"><code># create column &#39;attitude&#39; by scaling the column &quot;Attitude&quot;
-lrn14$attitude &lt;- &quot;Attitude&quot;</code></pre>
+<pre class="r"><code>lrn14$attitude &lt;- lrn14$Attitude / 10</code></pre>
 </div>
 </div>
 <div id="combining-variables" class="section level2">
@@ -628,19 +633,13 @@ examples</p>
 # lrn14 is available
 
 # Access the dplyr library
-library(dplyr)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;dplyr&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:stats&#39;:
-## 
-##     filter, lag</code></pre>
-<pre><code>## The following objects are masked from &#39;package:base&#39;:
-## 
-##     intersect, setdiff, setequal, union</code></pre>
-<pre class="r"><code># questions related to deep, surface and strategic learning
+library(dplyr)
+
+# questions related to deep, surface and strategic learning
 deep_questions &lt;- c(&quot;D03&quot;, &quot;D11&quot;, &quot;D19&quot;, &quot;D27&quot;, &quot;D07&quot;, &quot;D14&quot;, &quot;D22&quot;, &quot;D30&quot;,&quot;D06&quot;,  &quot;D15&quot;, &quot;D23&quot;, &quot;D31&quot;)
 surface_questions &lt;- c(&quot;SU02&quot;,&quot;SU10&quot;,&quot;SU18&quot;,&quot;SU26&quot;, &quot;SU05&quot;,&quot;SU13&quot;,&quot;SU21&quot;,&quot;SU29&quot;,&quot;SU08&quot;,&quot;SU16&quot;,&quot;SU24&quot;,&quot;SU32&quot;)
 strategic_questions &lt;- c(&quot;ST01&quot;,&quot;ST09&quot;,&quot;ST17&quot;,&quot;ST25&quot;,&quot;ST04&quot;,&quot;ST12&quot;,&quot;ST20&quot;,&quot;ST28&quot;)
+
 
 # select the columns related to deep learning 
 deep_columns &lt;- select(lrn14, one_of(deep_questions))
@@ -656,6 +655,297 @@ lrn14$surf &lt;- rowMeans(surface_columns)
 strategic_columns &lt;- select(lrn14, one_of(strategic_questions))
 # and create column &#39;stra&#39; by averaging
 lrn14$stra &lt;- rowMeans(strategic_columns)</code></pre>
+</div>
+</div>
+<div id="selecting-columns" class="section level2">
+<h2>2.4 Selecting columns</h2>
+<p>Often it is convenient to work with only a certain column or a subset
+of columns of a bigger data frame. There are many ways to select columns
+of data frame in R and you saw one of them in the previous exercise:
+<code>select()</code> from <strong>dplyr</strong>*.</p>
+<p><strong>dplyr</strong> is a popular library for <em>data
+wrangling</em>. There are also convenient <a href="https://www.rstudio.com/resources/cheatsheets/">data wrangling
+cheatsheets by RStudio</a> to help you get started (dplyr, tidyr
+etc.)</p>
+<div id="instructions-3" class="section level3">
+<h3>Instructions</h3>
+<ul>
+<li>Access the <strong>dplyr</strong> library</li>
+<li>Create object <code>keep_columns</code></li>
+<li>Use <code>select()</code> (possibly together with
+<code>one_of()</code>) to create a new data frame
+<code>learning2014</code> with the columns named in
+<code>keep_columns</code>.</li>
+<li>Look at the structure of the new dataset</li>
+</ul>
+<p>Hint: - See the previous exercise or the data wrangling cheatsheet
+for help on how to select columns</p>
+</div>
+<div id="r-code-3" class="section level3">
+<h3>R code</h3>
+<pre class="r"><code># Work with the exercise in this chunk, step-by-step. Fix the R code!
+
+# lrn14 is available
+
+# access the dplyr library
+library(dplyr)
+
+# choose a handful of columns to keep
+keep_columns &lt;- c(&quot;gender&quot;,&quot;Age&quot;,&quot;attitude&quot;, &quot;deep&quot;, &quot;stra&quot;, &quot;surf&quot;, &quot;Points&quot;)
+
+# select the &#39;keep_columns&#39; to create a new dataset
+learning2014 &lt;- select(lrn14,all_of(keep_columns))
+
+# see the structure of the new dataset
+
+print(learning2014)</code></pre>
+<pre><code>##     gender Age attitude     deep  stra     surf Points
+## 1        F  53      3.7 3.583333 3.375 2.583333     25
+## 2        M  55      3.1 2.916667 2.750 3.166667     12
+## 3        F  49      2.5 3.500000 3.625 2.250000     24
+## 4        M  53      3.5 3.500000 3.125 2.250000     10
+## 5        M  49      3.7 3.666667 3.625 2.833333     22
+## 6        F  38      3.8 4.750000 3.625 2.416667     21
+## 7        M  50      3.5 3.833333 2.250 1.916667     21
+## 8        F  37      2.9 3.250000 4.000 2.833333     31
+## 9        M  37      3.8 4.333333 4.250 2.166667     24
+## 10       F  42      2.1 4.000000 3.500 3.000000     26
+## 11       M  37      3.9 3.583333 3.625 2.666667     31
+## 12       F  34      3.8 3.833333 4.750 2.416667     31
+## 13       F  34      2.4 4.250000 3.625 2.250000     23
+## 14       F  34      3.0 3.333333 3.500 2.750000     25
+## 15       M  35      2.6 4.166667 1.750 2.333333     21
+## 16       F  46      2.5 3.083333 3.125 2.666667      0
+## 17       F  33      4.1 3.666667 3.875 2.333333     31
+## 18       F  32      2.6 4.083333 1.375 2.916667     20
+## 19       F  44      2.6 3.500000 3.250 2.500000     22
+## 20       M  29      1.7 4.083333 3.000 3.750000      9
+## 21       F  30      2.7 4.000000 3.750 2.750000     24
+## 22       M  27      3.9 3.916667 2.625 2.333333     28
+## 23       M  29      3.4 4.000000 2.375 2.416667     30
+## 24       F  31      2.7 4.000000 3.625 3.000000     24
+## 25       F  37      2.3 3.666667 2.750 2.416667      9
+## 26       F  26      3.7 3.666667 1.750 2.833333     26
+## 27       F  26      4.4 4.416667 3.250 3.166667     32
+## 28       M  30      4.1 3.916667 4.000 3.000000     32
+## 29       F  37      2.4 3.833333 2.125 2.166667      0
+## 30       F  33      3.7 3.750000 3.625 2.000000     33
+## 31       F  33      2.5 3.250000 2.875 3.500000     29
+## 32       M  28      3.0 3.583333 3.000 3.750000     30
+## 33       M  26      3.4 4.916667 1.625 2.500000     19
+## 34       F  27      3.2 3.583333 3.250 2.083333     23
+## 35       F  25      2.0 2.916667 3.500 2.416667     19
+## 36       F  31      2.4 3.666667 3.000 2.583333     12
+## 37       M  20      4.2 4.500000 3.250 1.583333     10
+## 38       F  39      1.6 4.083333 1.875 2.833333     11
+## 39       M  38      3.1 3.833333 4.375 1.833333     20
+## 40       M  24      3.8 3.250000 3.625 2.416667     26
+## 41       M  26      3.8 2.333333 2.500 3.250000     31
+## 42       M  25      3.3 3.333333 1.250 3.416667     20
+## 43       F  30      1.7 4.083333 4.000 3.416667     23
+## 44       F  25      2.5 2.916667 3.000 3.166667     12
+## 45       M  30      3.2 3.333333 2.500 3.500000     24
+## 46       F  48      3.5 3.833333 4.875 2.666667     17
+## 47       F  24      3.2 3.666667 5.000 2.416667     29
+## 48       F  40      4.2 4.666667 4.375 3.583333     23
+## 49       M  25      3.1 3.750000 3.250 2.083333     28
+## 50       F  23      3.9 3.416667 4.000 3.750000     31
+## 51       F  25      1.9 4.166667 3.125 2.916667     23
+## 52       F  23      2.1 2.916667 2.500 2.916667     25
+## 53       M  27      2.5 4.166667 3.125 2.416667     18
+## 54       M  25      3.2 3.583333 3.250 3.000000     19
+## 55       M  23      3.2 2.833333 2.125 3.416667     22
+## 56       F  23      2.6 4.000000 2.750 2.916667     25
+## 57       F  23      2.3 2.916667 2.375 3.250000     21
+## 58       F  45      3.8 3.000000 3.125 3.250000      9
+## 59       F  22      2.8 4.083333 4.000 2.333333     28
+## 60       F  23      3.3 2.916667 4.000 3.250000     25
+## 61       M  21      4.8 3.500000 2.250 2.500000     29
+## 62       M  21      4.0 4.333333 3.250 1.750000     33
+## 63       F  21      4.0 4.250000 3.625 2.250000     33
+## 64       F  21      4.7 3.416667 3.625 2.083333     25
+## 65       F  26      2.3 3.083333 2.500 2.833333     18
+## 66       F  25      3.1 4.583333 1.875 2.833333     22
+## 67       F  26      2.7 3.416667 2.000 2.416667     17
+## 68       M  21      4.1 3.416667 1.875 2.250000     25
+## 69       F  22      3.4 3.500000 2.625 2.333333      0
+## 70       F  23      3.4 3.416667 4.000 2.833333     28
+## 71       F  22      2.5 3.583333 2.875 2.250000     22
+## 72       F  22      2.1 1.583333 3.875 1.833333     26
+## 73       F  22      1.4 3.333333 2.500 2.916667     11
+## 74       F  23      1.9 4.333333 2.750 2.916667     29
+## 75       M  22      3.7 4.416667 4.500 2.083333     22
+## 76       M  25      4.1 4.583333 3.500 2.666667      0
+## 77       M  23      3.2 4.833333 3.375 2.333333     21
+## 78       M  24      2.8 3.083333 2.625 2.416667     28
+## 79       F  22      4.1 3.000000 4.125 2.750000     33
+## 80       F  23      2.5 4.083333 2.625 3.250000     16
+## 81       M  22      2.8 4.083333 2.250 1.750000     31
+## 82       M  20      3.8 3.750000 2.750 2.583333     22
+## 83       M  22      3.1 3.083333 3.000 3.333333     31
+## 84       M  21      3.5 4.750000 1.625 2.833333     23
+## 85       F  22      3.6 4.250000 1.875 2.500000     26
+## 86       F  23      2.6 4.166667 3.375 2.416667     12
+## 87       M  21      4.4 4.416667 3.750 2.416667     26
+## 88       M  22      4.5 3.833333 2.125 2.583333     31
+## 89       M  29      3.2 3.333333 2.375 3.000000     19
+## 90       F  26      2.0 3.416667 1.750 2.333333      0
+## 91       F  29      3.9 3.166667 2.750 2.000000     30
+## 92       F  21      2.5 3.166667 3.125 3.416667     12
+## 93       M  28      3.3 3.833333 3.500 2.833333     17
+## 94       M  23      3.5 4.166667 1.625 3.416667      0
+## 95       F  21      3.3 4.250000 2.625 2.250000     18
+## 96       F  30      3.0 3.833333 3.375 2.750000     19
+## 97       F  21      2.9 3.666667 2.250 3.916667     21
+## 98       M  23      3.3 3.833333 3.000 2.333333     24
+## 99       F  21      3.3 3.833333 4.000 2.750000     28
+## 100      F  21      3.5 3.833333 3.500 2.750000     17
+## 101      F  20      3.6 3.666667 2.625 2.916667     18
+## 102      M  21      4.2 4.166667 2.875 2.666667      0
+## 103      M  22      3.7 4.333333 2.500 2.083333     17
+## 104      F  35      2.8 4.416667 3.250 3.583333      0
+## 105      M  21      4.2 3.750000 3.750 3.666667     23
+## 106      M  22      2.2 2.666667 2.000 3.416667      0
+## 107      M  21      3.2 4.166667 3.625 2.833333     26
+## 108      F  20      5.0 4.000000 4.125 3.416667     28
+## 109      M  22      4.7 4.000000 4.375 1.583333     31
+## 110      F  20      3.6 4.583333 2.625 2.916667     27
+## 111      F  20      3.6 3.666667 4.000 3.000000     25
+## 112      M  24      2.9 3.666667 2.750 2.916667     23
+## 113      F  20      3.5 3.833333 2.750 2.666667     21
+## 114      F  19      4.0 2.583333 1.375 3.000000     27
+## 115      F  21      3.5 3.500000 2.250 2.750000     28
+## 116      F  21      3.2 3.083333 3.625 3.083333     23
+## 117      F  22      2.6 4.250000 3.750 2.500000     21
+## 118      F  25      2.0 3.166667 4.000 2.333333     25
+## 119      F  21      2.7 3.083333 3.125 3.000000     11
+## 120      F  22      3.2 4.166667 3.250 3.000000     19
+## 121      F  25      3.3 2.250000 2.125 4.000000     24
+## 122      F  20      3.9 3.333333 2.875 3.250000     28
+## 123      M  24      3.3 3.083333 1.500 3.500000     21
+## 124      F  20      3.0 2.750000 2.500 3.500000     24
+## 125      M  21      3.7 3.250000 3.250 3.833333     24
+## 126      F  26      1.4 3.750000 3.250 3.083333      0
+## 127      M  28      3.0 4.750000 2.500 2.500000      0
+## 128      F  20      2.5 4.000000 3.625 2.916667     20
+## 129      F  20      2.9 3.583333 3.875 2.166667     19
+## 130      M  31      3.9 4.083333 3.875 1.666667     30
+## 131      F  20      3.6 4.250000 2.375 2.083333     22
+## 132      F  22      2.9 3.416667 3.000 2.833333     16
+## 133      F  22      2.1 3.083333 3.375 3.416667     16
+## 134      M  21      3.1 3.500000 2.750 3.333333     19
+## 135      F  20      2.4 3.916667 3.125 3.500000      0
+## 136      M  22      4.0 3.666667 4.500 2.583333     30
+## 137      F  21      3.1 4.250000 2.625 2.833333     23
+## 138      F  21      2.3 4.250000 2.750 3.333333     19
+## 139      F  21      2.8 3.833333 3.250 3.000000     18
+## 140      F  21      3.7 4.416667 4.125 2.583333     28
+## 141      F  20      2.6 3.500000 3.375 2.416667     21
+## 142      F  21      2.4 3.583333 2.750 3.583333     19
+## 143      F  25      3.0 3.666667 4.125 2.083333     27
+## 144      F  27      2.9 4.250000 3.000 2.750000      0
+## 145      F  20      3.2 3.750000 4.125 3.916667      0
+## 146      M  21      2.8 2.083333 3.250 4.333333     24
+## 147      F  24      2.9 4.250000 2.875 2.666667     21
+## 148      F  20      2.4 3.583333 2.875 3.000000     20
+## 149      M  21      3.1 4.000000 2.375 2.666667     28
+## 150      F  20      1.9 3.333333 3.875 2.166667     12
+## 151      F  20      2.0 3.500000 2.125 2.666667     21
+## 152      F  18      3.8 3.166667 4.000 2.250000     28
+## 153      F  21      3.4 3.583333 3.250 2.666667     31
+## 154      F  19      3.7 3.416667 2.625 3.333333     18
+## 155      F  21      2.9 4.250000 2.750 3.500000     25
+## 156      F  20      2.3 3.250000 4.000 2.750000     19
+## 157      M  21      4.1 4.416667 3.000 2.000000     21
+## 158      F  20      2.7 3.250000 3.375 2.833333     16
+## 159      F  21      3.5 3.916667 3.875 3.500000      7
+## 160      F  20      3.4 3.583333 3.250 2.500000     21
+## 161      F  18      3.2 4.500000 3.375 3.166667     17
+## 162      M  22      3.3 3.583333 4.125 3.083333     22
+## 163      F  22      3.3 3.666667 3.500 2.916667     18
+## 164      M  24      3.5 2.583333 2.000 3.166667     25
+## 165      F  19      3.2 4.166667 3.625 2.500000     24
+## 166      F  20      3.1 3.250000 3.375 3.833333     23
+## 167      F  21      2.4 3.583333 2.250 2.833333      0
+## 168      F  20      2.8 4.333333 2.125 2.250000     23
+## 169      F  17      1.7 3.916667 4.625 3.416667     26
+## 170      M  19      1.9 2.666667 2.500 3.750000     12
+## 171      F  23      3.2 3.583333 2.000 1.750000      0
+## 172      F  20      3.5 3.083333 2.875 3.000000     32
+## 173      F  20      2.4 3.750000 2.750 2.583333     22
+## 174      F  25      3.8 4.083333 3.375 2.750000      0
+## 175      F  20      2.1 4.166667 4.000 3.333333     20
+## 176      F  20      2.9 4.166667 2.375 2.833333     21
+## 177      F  19      1.9 3.250000 3.875 3.000000     23
+## 178      F  19      2.0 4.083333 3.375 2.833333     20
+## 179      F  22      4.2 2.916667 1.750 3.166667     28
+## 180      M  35      4.1 3.833333 3.000 2.750000     31
+## 181      F  18      3.7 3.166667 2.625 3.416667     18
+## 182      F  19      3.6 3.416667 2.625 3.000000     30
+## 183      M  21      1.8 4.083333 3.375 2.666667     19</code></pre>
+</div>
+</div>
+<div id="modifying-column-names" class="section level2">
+<h2>2.5 Modifying column names</h2>
+<p>Sometimes you want to rename your column. You could do this by
+creating copies of the columns with new names, but you can also directly
+get and set the column names of a data frame, using the function
+<code>colnames()</code>.</p>
+<p>The <strong>dplyr</strong> library has a <code>rename()</code>
+function, which can also be used. Remember <a href="https://www.rstudio.com/resources/cheatsheets/">the
+cheatsheets</a>.</p>
+<div id="instructions-4" class="section level3">
+<h3>Instructions</h3>
+<ul>
+<li>Print out the column names of <code>learning2014</code></li>
+<li>Change the name of the second column to ‘age’</li>
+<li>Change the name of ‘Points’ to ‘points’</li>
+<li>Print out the column names again to see the changes</li>
+</ul>
+<p>Hint: - You can use <code>colnames()</code> similarily to the
+example. Which index matches the column ‘Points’?</p>
+</div>
+<div id="r-code-4" class="section level3">
+<h3>R code</h3>
+<pre class="r"><code>print(names(learning2014))</code></pre>
+<pre><code>## [1] &quot;gender&quot;   &quot;Age&quot;      &quot;attitude&quot; &quot;deep&quot;     &quot;stra&quot;     &quot;surf&quot;     &quot;Points&quot;</code></pre>
+<pre class="r"><code>colnames(learning2014)[2] &lt;- &quot;age&quot;
+learning2014 &lt;- rename(learning2014, points = Points)</code></pre>
+<pre class="r"><code>print(dim(learning2014)) #check the dimension now (must have 166 rown and 7)</code></pre>
+<pre><code>## [1] 183   7</code></pre>
+</div>
+</div>
+<div id="excluding-observations" class="section level2">
+<h2>2.6 Excluding observations</h2>
+<p>Often your data includes outliers or other observations which you
+wish to remove before further analysis. Or perhaps you simply wish to
+work with some subset of your data.</p>
+<p>In the <strong>learning2014</strong> data the variable ‘points’
+denotes the students exam points in a statistics course exam. If the
+student did not attend an exam, the value of ‘points’ will be zero. We
+will remove these observations from the data.</p>
+<div id="r-code-5" class="section level3">
+<h3>R code</h3>
+</div>
+<div id="instructions-5" class="section level3">
+<h3>Instructions</h3>
+<ul>
+<li>Access the <strong>dplyr</strong> library</li>
+<li>As an example, create object <code>male_students</code> by selecting
+the male students from <code>learning2014</code></li>
+<li>Override <code>learning2014</code> and select rows where the
+‘points’ variable is greater than zero.</li>
+<li>If you do not remember how logical comparison works in R, see the
+‘Logical comparison’ exercise from the course ‘R Short and Sweet’.</li>
+</ul>
+<p>Hint: - The “greater than” logical operator is <code>&gt;</code></p>
+<pre class="r"><code>dim(lrn14)</code></pre>
+<pre><code>## [1] 183  64</code></pre>
+<pre class="r"><code>dim(learning2014)</code></pre>
+<pre><code>## [1] 166   7</code></pre>
+<pre class="r"><code>#Export csv file
+setwd(&quot;~/Documents/GitHub/IODS-project&quot;)
+write_csv(learning2014, &#39;learning2014.csv&#39;)</code></pre>
 <hr />
 <p>(more chapters to be added similarly as we proceed with the
 course!)</p>

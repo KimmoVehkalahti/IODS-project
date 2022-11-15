@@ -1,4 +1,17 @@
-# Week 2: Regression and model validation
+---
+title: "**Introduction to Open Data Science, Exercise Set 2**"
+
+subtitle: "**Regression and model validation**"
+
+output: 
+  html_document:
+    theme: flatly
+    highlight: haddock
+    toc: true
+    toc_depth: 2
+    number_section: false
+---
+
 
 This set consists of a few numbered exercises.
 Go to each exercise in turn and do as follows:
@@ -22,6 +35,7 @@ library(ggplot2)
 library(gapminder) 
 library(finalfit)
 library(broom)
+
 
 ```
 
@@ -276,5 +290,6 @@ setwd("~/Documents/GitHub/IODS-project")
 write_csv(learning2014, 'learning2014.csv')
 
 ```
+
 
 
