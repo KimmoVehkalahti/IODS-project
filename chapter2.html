@@ -4224,7 +4224,7 @@ writing and reading R code as well as statistical methods.</li>
 advanced methods you are using.</li>
 </ul>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">date</span>()</span></code></pre></div>
-<pre><code>## [1] &quot;Tue Nov 15 09:27:47 2022&quot;</code></pre>
+<pre><code>## [1] &quot;Tue Nov 15 09:56:56 2022&quot;</code></pre>
 </div>
 <div id="preparing" class="section level1">
 <h1>1 Preparing</h1>
@@ -4279,15 +4279,21 @@ categorical (binary) variable.</p>
 </div>
 <div id="describe-the-variables" class="section level2">
 <h2>1.4 describe the variables</h2>
-<p>The data set includes variables about the participants’ demographic
-characteristics such as age and sex, as well as the final points they
-got for certain exam (could possibly be statistics). It also includes 4
-psychological dimensions including study attitude (reflecting their
-motivation to the subject), deep learning score (reflecting how well
-their learning style fits into the deep learning type), surface learning
-score (reflecting how well their learning style fits into the surface
-learning type) and strategy learning score (reflecting how well their
-learning style fits into the strategic learning type).</p>
+<p>Under the funding of <em>International Survey of Approaches to
+Learning</em>, 183 Finnish students who took the course “Introduction to
+Social Statistics” during 2014 fall participated in a survey about their
+learning, resulting in a data set with 32 variables and 166 observations
+(due to missing data points, the sample size is smaller than 183). The
+current data set for analysis is a convenient subset of it. It includes
+variables about the participants’ demographic characteristics such as
+age and sex, as well as the final points they got for certain exam
+(could possibly be statistics). It also includes 4 psychological
+dimensions including study attitude (reflecting their motivation to the
+subject), deep learning score (reflecting how well their learning style
+fits into the deep learning type), surface learning score (reflecting
+how well their learning style fits into the surface learning type) and
+strategy learning score (reflecting how well their learning style fits
+into the strategic learning type).</p>
 <div id="describe-the-coninuous-variable" class="section level3">
 <h3>1.4.1 describe the coninuous variable</h3>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
@@ -4296,8 +4302,8 @@ learning style fits into the strategic learning type).</p>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>                  <span class="co">#statistics for both types of variables. </span></span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DT) <span class="co"># show table in a html-based neat view. </span></span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ff_glimpse</span>(learn)<span class="sc">$</span>Continuous <span class="sc">%&gt;%</span> <span class="fu">datatable</span>() <span class="co"># descriptive statistics for</span></span></code></pre></div>
-<div id="htmlwidget-30de1a138f55069c7ad7" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-30de1a138f55069c7ad7">{"x":{"filter":"none","vertical":false,"data":[["age","attitude","deep","stra","surf","points"],["age","attitude","deep","stra","surf","points"],["&lt;dbl&gt;","&lt;dbl&gt;","&lt;dbl&gt;","&lt;dbl&gt;","&lt;dbl&gt;","&lt;dbl&gt;"],[166,166,166,166,166,166],[0,0,0,0,0,0],["0.0","0.0","0.0","0.0","0.0","0.0"],["25.5","3.1","3.7","3.1","2.8","22.7"],["7.8","0.7","0.6","0.8","0.5","5.9"],["17.0","1.4","1.6","1.2","1.6","7.0"],["21.0","2.6","3.3","2.6","2.4","19.0"],["22.0","3.2","3.7","3.2","2.8","23.0"],["27.0","3.7","4.1","3.6","3.2","27.8"],["55.0","5.0","4.9","5.0","4.3","33.0"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>label<\/th>\n      <th>var_type<\/th>\n      <th>n<\/th>\n      <th>missing_n<\/th>\n      <th>missing_percent<\/th>\n      <th>mean<\/th>\n      <th>sd<\/th>\n      <th>min<\/th>\n      <th>quartile_25<\/th>\n      <th>median<\/th>\n      <th>quartile_75<\/th>\n      <th>max<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-a41ed77c91ed928c8a27" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-a41ed77c91ed928c8a27">{"x":{"filter":"none","vertical":false,"data":[["age","attitude","deep","stra","surf","points"],["age","attitude","deep","stra","surf","points"],["&lt;dbl&gt;","&lt;dbl&gt;","&lt;dbl&gt;","&lt;dbl&gt;","&lt;dbl&gt;","&lt;dbl&gt;"],[166,166,166,166,166,166],[0,0,0,0,0,0],["0.0","0.0","0.0","0.0","0.0","0.0"],["25.5","3.1","3.7","3.1","2.8","22.7"],["7.8","0.7","0.6","0.8","0.5","5.9"],["17.0","1.4","1.6","1.2","1.6","7.0"],["21.0","2.6","3.3","2.6","2.4","19.0"],["22.0","3.2","3.7","3.2","2.8","23.0"],["27.0","3.7","4.1","3.6","3.2","27.8"],["55.0","5.0","4.9","5.0","4.3","33.0"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>label<\/th>\n      <th>var_type<\/th>\n      <th>n<\/th>\n      <th>missing_n<\/th>\n      <th>missing_percent<\/th>\n      <th>mean<\/th>\n      <th>sd<\/th>\n      <th>min<\/th>\n      <th>quartile_25<\/th>\n      <th>median<\/th>\n      <th>quartile_75<\/th>\n      <th>max<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>                   <span class="co">#categorical data shown in html-based data table view.</span></span></code></pre></div>
 <p>According to their distribution shapes visualized in section 1.5
 (next section), non-normally distributed variables were reported as
@@ -4311,8 +4317,8 @@ learning scores were 3.7±0.6. Their surface learning scores were
 <div id="describe-the-categorical-variable" class="section level3">
 <h3>1.4.2 describe the categorical variable</h3>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ff_glimpse</span>(learn)<span class="sc">$</span>Categorical <span class="sc">%&gt;%</span> <span class="fu">datatable</span>() <span class="co"># descriptive statistics for categorical data shown in html-based data table view.</span></span></code></pre></div>
-<div id="htmlwidget-ad905fcfd20209797b1e" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-ad905fcfd20209797b1e">{"x":{"filter":"none","vertical":false,"data":[["gender"],["gender"],["&lt;fct&gt;"],[166],[0],["0.0"],[2],["\"Female\", \"Male\""],["110, 56"],["66, 34"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>label<\/th>\n      <th>var_type<\/th>\n      <th>n<\/th>\n      <th>missing_n<\/th>\n      <th>missing_percent<\/th>\n      <th>levels_n<\/th>\n      <th>levels<\/th>\n      <th>levels_count<\/th>\n      <th>levels_percent<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,6]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-ef6f1c5735d28d901c30" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-ef6f1c5735d28d901c30">{"x":{"filter":"none","vertical":false,"data":[["gender"],["gender"],["&lt;fct&gt;"],[166],[0],["0.0"],[2],["\"Female\", \"Male\""],["110, 56"],["66, 34"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>label<\/th>\n      <th>var_type<\/th>\n      <th>n<\/th>\n      <th>missing_n<\/th>\n      <th>missing_percent<\/th>\n      <th>levels_n<\/th>\n      <th>levels<\/th>\n      <th>levels_count<\/th>\n      <th>levels_percent<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,6]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 <p>Among the 166 participants, 110 (66%) were female and 56 (34%) were
 male. According to a 2021 statistics, Finnish universities had a
 male:female ratio of 1:1.2, indicating female in our sample is
@@ -4332,7 +4338,7 @@ over-represented.</p>
 <span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>my_fn <span class="ot">&lt;-</span> <span class="cf">function</span>(data, mapping, <span class="at">method=</span><span class="st">&quot;loess&quot;</span>, ...){ <span class="co">#require the input of two</span></span>
 <span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>       <span class="co">#arguments: data and mapping; arguments method is set to be &quot;Loess&quot;</span></span>
 <span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>       <span class="co">#for more information about using Loess to check function form, please</span></span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>       <span class="co">#click go to (https://thestatsgeek.com/2014/09/13/checking-functional-form-in-logistic-regression-using-loess/)</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>       <span class="co">#go to (https://thestatsgeek.com/2014/09/13/checking-functional-form-in-logistic-regression-using-loess/)</span></span>
 <span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>      p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> data, <span class="at">mapping =</span> mapping) <span class="sc">+</span>  <span class="co">#call ggplot function</span></span>
 <span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.3</span>, <span class="at">color =</span> <span class="st">&quot;coral&quot;</span>) <span class="sc">+</span>   <span class="co">#call point graph, reduce the </span></span>
 <span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>        <span class="co">#size, turn color to coral, for better visualization</span></span>
