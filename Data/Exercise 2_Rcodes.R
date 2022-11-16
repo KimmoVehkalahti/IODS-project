@@ -1,6 +1,6 @@
 #Name: Subam Kathet 
 #Date: 14 November 2022
-#Description: R codes for exercise set 2 for IODS course
+#Description: R codes and some notes for exercise set 2 for IODS course
 
 library(dplyr)
 library(tidyverse)
@@ -100,6 +100,126 @@ dim(learning2014)
 #Export csv file
 setwd("~/Documents/GitHub/IODS-project")
 write_csv(learning2014, 'learning2014.csv')
+
+## 2.7 Visualizations with ggplot2
+
+#[**ggplot2**](http://ggplot2.org/) is a popular library for creating stunning graphics with R. It has some advantages over the basic plotting system in R, mainly consistent use of function arguments and flexible plot alteration. ggplot2 is an implementation of Leland Wilkinson's *Grammar of Graphics* — a general scheme for data visualization.
+
+#In ggplot2, plots may be created via the convenience function `qplot()` where arguments and defaults are meant to be similar to base R's `plot()` function. More complex plotting capacity is available via `ggplot()`, which exposes the user to more explicit elements of the grammar. (from [wikipedia](https://en.wikipedia.org/wiki/Ggplot2))
+
+#RStudio has a [cheatsheet](https://www.rstudio.com/resources/cheatsheets/) for data visualization with ggplot2.
+
+# initialize plot with data and aesthetic mapping
+p1 <- ggplot(learning2014, aes(x = attitude, y = points))
+
+# define the visualization type (points)
+p2 <- p1 + geom_point()
+
+# draw the plot
+p2
+
+# add a regression line
+p3 <- p2 + geom_smooth(method = "lm")
+
+# draw the plot
+p3
+
+#Lets try and overview summary
+p <- ggpairs(learning2014, mapping = aes(col = gender, alpha = 0.3), lower = list(combo = wrap("facethist", bins = 20)))
+# draw the plot!
+p
+
+
+## 2.8 Exploring a data frame
+
+#Often the most interesting feature of your data are the relationships between the variables. If there are only a handful of variables saved as columns in a data frame, it is possible to visualize all of these relationships neatly in a single plot.
+
+#Base R offers a fast plotting function `pairs()`, which draws all possible scatter plots from the columns of a data frame, resulting in a scatter plot matrix. Libraries **GGally** and **ggplot2** together offer a slow but more detailed look at the variables, their distributions and relationships.
+
+
+### R code
+
+# Work with the exercise in this chunk, step-by-step. Fix the R code!
+# learning2014 is available
+
+# draw a scatter plot matrix of the variables in learning2014.
+# [-1] excludes the first column (gender)
+pairs(learning2014[-1])
+
+# access the GGally and ggplot2 libraries
+library(GGally)
+library(ggplot2)
+
+# create a more advanced plot matrix with ggpairs()
+p <- ggpairs(learning2014, mapping = aes(), lower = list(combo = wrap("facethist", bins = 20)))
+
+## 2.9 Simple regression
+
+
+# Work with the exercise in this chunk, step-by-step. Fix the R code!
+# learning2014 is available
+
+# a scatter plot of points versus attitude
+library(ggplot2)
+qplot(attitude, points, data = learning2014) + geom_smooth(method = "lm")
+
+# fit a linear model
+my_model <- lm(points ~ 1, data = learning2014)
+
+# print out a summary of the model
+summary(my_model)
+
+## 2.10 Multiple regression
+# Work with the exercise in this chunk, step-by-step. Fix the R code!
+# learning2014 is available
+
+# create an plot matrix with ggpairs()
+ggpairs(learning2014, lower = list(combo = wrap("facethist", bins = 20)))
+
+# create a regression model with multiple explanatory variables
+my_model2 <- lm(points ~ attitude + stra, data = learning2014)
+
+# print out a summary of the model
+summary(my_model2)
+
+## 2.11 Graphical model validation
+# Work with the exercise in this chunk, step-by-step. Fix the R code!
+# learning2014 is available
+
+# create a regression model with multiple explanatory variables
+my_model2 <- lm(points ~ attitude + stra, data = learning2014)
+
+# draw diagnostic plots using the plot() function. Choose the plots 1, 2 and 5
+plot(my_model2, which = 1)
+
+plot(my_model2, which = 2)
+
+plot(my_model2, which = 3)
+
+plot(my_model2, which = 4)
+
+plot(my_model2, which = 5)
+
+plot(my_model2, which = 6)
+
+## 2.12 Making predictions
+
+# Create model object m
+m <- lm(points ~ attitude, data = learning2014)
+
+# print out a summary of the model
+summary(m)
+
+# New observations
+new_attitudes <- c("Mia" = 3.8, "Mike"= 4.4, "Riikka" = 2.2, "Pekka" = 2.9)
+new_data <- data.frame(attitude = new_attitudes)
+
+# Print out the new data
+summary(new_data)
+
+# Predict the new students exam points based on attitude
+predict(m, newdata = new_data)
+
 
 
 
