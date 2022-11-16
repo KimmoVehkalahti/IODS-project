@@ -14,10 +14,10 @@ output:
     toc_depth: 3
     toc_float: true
     number_section: false
-bibliography: citations.bib
+    bibliography: citations.bib
 ---
 
-Chapter 3 codes starts here
+# Chapter 3 Logistic regression
 
 # 1 Preparing 
 
