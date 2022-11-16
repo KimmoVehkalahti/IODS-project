@@ -340,7 +340,7 @@ p <- ggpairs(learning2014, mapping = aes(col = gender, alpha = 0.3), lower = lis
 p
 
 ```
-
+Fitting a regression line in a scatter plot between points and attitude doesn't provide a strong linear relationship. Would be interesting to work on this particular model as exercise to predict the relationship between these two variables.
 
 ## 2.8 Exploring a data frame
 
