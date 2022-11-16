@@ -16,11 +16,8 @@ output:
     number_section: false
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
-```
 
-# Insert chapter 2 title here
+# Chapter 2: Regression and model validation
 
 *Describe the work you have done this week and summarize your learning.*
 
@@ -38,6 +35,7 @@ date()
 ## 1.1 read the data set
 
 ```{r}
+library(tidyverse)
 learn <- read_csv(file = "data/learning2014.csv")
 ```
 
@@ -68,7 +66,7 @@ The data set has six numeric (integer type) variables and one categorical (binar
 
 ## 1.4 describe the variables
 
-   The data set includes variables about the participants' demographic characteristics such as age and sex, as well as the final points they got for certain exam (could possibly be statistics). It also includes 4 psychological dimensions including study attitude (reflecting their motivation to the subject), deep learning score (reflecting how well their learning style fit into the deep learning type), surface learning score (reflecting how well their learning style fit into the surface learning type) and strategy learning score (reflecting how well their learning style fit into the strategic learning type).
+   Under the funding of *International Survey of Approaches to Learning*, 183 Finnish students who took the course "Introduction to Social Statistics" during 2014 fall participated in a survey about their learning, resulting in a data set with 32 variables and 166 observations (due to missing data points, the sample size is smaller than 183). The current data set for analysis is a convenient subset of it. It includes variables about the participants' demographic characteristics such as age and sex, as well as the final points they got for certain exam (could possibly be statistics). It also includes 4 psychological dimensions including study attitude (reflecting their motivation to the subject), deep learning score (reflecting how well their learning style fits into the deep learning type), surface learning score (reflecting how well their learning style fits into the surface learning type) and strategy learning score (reflecting how well their learning style fits into the strategic learning type).
 
 ### 1.4.1 describe the coninuous variable
 
@@ -81,73 +79,79 @@ library(DT) # show table in a html-based neat view.
 ff_glimpse(learn)$Continuous %>% datatable() # descriptive statistics for
                    #categorical data shown in html-based data table view.
 ```
-According to their distribution shape visualized in section 1.5 (next section), non-normally distributed variables will be reported as median and Q1-Q3; roughly normal variables will be reported as mean±sd. 
+According to their distribution shapes visualized in section 1.5 (next section), non-normally distributed variables were reported as median and Q1-Q3; roughly normal variables will be reported as mean±sd. 
 
 The age of the participants was between 17 and 55 years old (median: 22; Q1-Q3:21,27 years old). Their exam points were 22.7±5.9. Their deep learning scores were 3.7±0.6. Their surface learning scores were 2.8±0.5. And their strategic learning scores were 3.1±0.8.
 
-### 1.4.1 describe the categorical variable
+### 1.4.2 describe the categorical variable
 
 ```{r}
 ff_glimpse(learn)$Categorical %>% datatable() # descriptive statistics for categorical data shown in html-based data table view.
 ```
 
-Among the 166 participants, 110 (66%) were male and 56 (34%) were female. According to a 2021 statistics, Finland has a male:female ratio of 2.8:2.74, indicating male in our sample is greatly over-represented.
+Among the 166 participants, 110 (66%) were female and 56 (34%) were male. According to a 2021 statistics, Finnish universities had a male:female ratio of 1:1.2, indicating female in our sample is over-represented.
 
 ## 1.5 visualize the data set
 
-```{r}
+```{r, fig.width=10, fig.height=6}
 library(GGally)
 library(ggplot2)
 library(tidyverse)
 #create a self-defined function so that correlation matrix produced by ggpairs could 
 #show LOWESS smoothing with scatter plot.
-my_fn <- function(data, mapping, method="loess", ...){
-      p <- ggplot(data = data, mapping = mapping) + 
-      geom_point(size = 0.3, color = "coral") + 
-      geom_smooth(size = 0.3, method=method, ...)
-      p
+my_fn <- function(data, mapping, method="loess", ...){ #require the input of two
+       #arguments: data and mapping; arguments method is set to be "Loess"
+       #for more information about using Loess to check function form, please
+       #go to (https://thestatsgeek.com/2014/09/13/checking-functional-form-in-logistic-regression-using-loess/)
+      p <- ggplot(data = data, mapping = mapping) +  #call ggplot function
+      geom_point(size = 0.3, color = "coral") +   #call point graph, reduce the 
+        #size, turn color to coral, for better visualization
+      geom_smooth(size = 0.3, method=method, ...) # fit Loess regression 
+      p  #print the result
 }
 # create an plot matrix with ggpairs()
 ggpairs(learn, 
-        lower= list(combo = wrap("facethist", bins = 20),
-                    continuous = my_fn)
+        lower= list(combo = wrap("facethist", bins = 20), 
+                    continuous = my_fn) #call self-defined function "my_fn"
         )
 
 ```
 
-According to the visualization, it is found that the distribution of age is right-skewed; other numeric variables, though with slight skewness, can be roughly treated as being normally distributed. All of the values of numeric variables did not show any remarkable difference between males and females. Variables points, attitude and deep have 1 to 3 out-liers, respectively, and age has qutie a number of out-liers. By examing the raw data, no evidence of mistaken record was detected. These outliers were thus kept for analysis. Using variable "points" as reference, variable "attitude" showed a significant linear correlation with an efficient of 0.437. Although the correlation coefficient between age and points is only -0.093, the LOESS smoothing has shown there might be a quadratic relationship between them. 
+According to the visualization, it is found that the distribution of age is right-skewed; other numeric variables, though with slight skewness, can be roughly treated as normal distribution. All of the values of numeric variables did not show any remarkable difference between males and females. Variables "points", "attitude" and "deep" have 1 to 3 out-liers, respectively, and age has quite a number of out-liers. By examining the raw data, no evidence of mistaken record was detected. These out-liers were thus kept for analysis. Using variable "points" as reference, variable "attitude" showed a significant linear correlation(*r*=0.437). Although the correlation coefficient between age and points is only -0.093, the LOESS smoothing has shown there might be a quadratic relationship between them. 
 
 # 2. Fitting the model
 
 ## 2.1 variable selection
 
-According to the visualization in section 1.4, attitude and age (as polynomial form due to non-linearity with the outcome) will enter to fit the model that predicts exam points. Alougth no noticeable gender effect was observed, it will also enter the model for it being an important factor for predicting exam points in a multitude publications. 
+According to the visualization in section 1.4, age (as polynomial form due to its non-linearity with the outcome) and attitude were used to fit the model that predicts exam points. Although no noticeable effect of gender was observed, it also entered the model for it being adopted as an important factor for predicting exam points in a multitude of publications. 
 
 ## 2.2 fitting 
 
 ```{r}
 fit1 <- learn %>%  #using attitude, the polynomial age and gender to predict exam points
-  lm(points ~ attitude  + poly(age, 2, raw =T) + gender, data = .) 
-summary(fit1) # summarise the results
+  lm(points ~ attitude  + poly(age, 2, raw =T) + gender, data = .) #ploy() is to
+    #include 2nd order function form, where "2" means the order 
+summary(fit1) # summarize the results
 ```
 
-The results showed that except for gender, other variables all had significant predicting effect (all *p*<0.01). Besides, F-statistics (*p* < 0.01) had rejected the null that the response variable can not be represented as a function of any of the predictor variables, indicating the model is valid. Adjusted R-squared showed that the model can explain 23.75% of the variance of exam points. However, I will further reduce the model complexity by removing insignificant variable base on the parsimony rule.  
+The results showed that except for gender, other variables all had significant predicting effect (all *p*<0.01). Besides, F-statistics (*p* < 0.01) had rejected the null that the response variable cannot be represented as a function of any of the predictor variables, indicating the model is valid. Adjusted R-squared showed that the model explained 23.75% of the variance of exam points. However, in the next step I further reduced the model complexity by removing insignificant variable base on the rule of parsimony.  
 
-## 2.3 removig insignifiant predictor
+## 2.3 removing insignifiant predictor
 
 The model was fit again by removing gender. 
 
 ```{r}
 fit2 <- learn %>% 
-  lm(points ~ attitude  + poly(age, 2, raw =T), data = .)
+  lm(points ~ attitude  + poly(age, 2, raw =T), data = .)#ploy() is to
+    #include 2nd order function form, where "2" means the order 
 summary(fit2)
 ```
 
-The results showed that all variables had significant predicting effect (all *p*<0.01). Besides, F-statistics (*p* < 0.01) had rejected the null that the response variable can not be represented as a function of any of the predictor variables, indicating the model is valid. Adjusted R-squared showed that the model can explain 24% of the variance of exam points, which slightly outperformed the previous model. I took this model as final model for model diagnostics.
+The results showed that all variables had significant predicting effect (all *p*<0.01). Besides, F-statistics (*p* < 0.01) had rejected the null that the response variable can not be represented as a function of any of the predictor variables, indicating the model is valid. Adjusted R-squared showed that the model explained 24% of the variance of exam points, which slightly outperformed the previous model. I took this model as the final model for model diagnostics.
 
-In the final model, variable "attitude" has a coefficient of 3.65, indicating for 1 unit of attitude increase, the exam points is expected to increase 3.65. The first order term of age has an coefficient estimate of 1.06, indicating that, overall, for every 1 unit increase of age, the exam points is expected to increase 1.06. For the second order term of age, an estimated coefficient of -0.017 indicated for different value ranges of age, the effect on exam points might be significantly different. This auto-interaction might lead to -0.017 decrease in exam points across these ranges. 
+In the final model, variable "attitude" has a coefficient of 3.65, indicating for 1 unit of attitude increase, the exam points is expected to increase 3.65, after controlling for other factors. The first order term of age has an coefficient estimate of 1.06, indicating that, overall, for every 1 unit increase of age, the exam points is expected to increase 1.06, after controlling for other factors. For the second order term of age, an estimated coefficient of -0.017 indicated for different value ranges of age, the effect on exam points might be significantly different. This auto-interaction might lead to -0.017 decrease in exam points across these ranges, after controlling for the other factors. 
 
-The practical explanation for these coefficient might be *a.* attitude reflects the motivation of study and higher motivation will 
+The practical explanation for these coefficient might be *a.* attitude reflects the motivation of study and higher motivation will lead to better exam performance; *b.* statistics requires quite a bit of domain knowledge (economics, health, psychology..), logic reasoning and math foundations. Older students might have advantage in these aspects. *c.* However, this advantage will see a ceiling effect at around 30 years old (according to the graph above), and due to the aging and family burden, students over 30 years old might start to become less and less competitive in stat learning over time.  
 
 # 3. Model diagnostic
 
@@ -155,160 +159,39 @@ In model diagnostic, some of the assumptions (linearity and normality) of linear
 
 ## 3.1 diagnostic plots
 
-```{r}
-par(mfrow =c(2,2))+ #define layout of displaying
-plot(fit2, which = c(1,2,4))  # show diagnostic plots #1,2,4
+```{r, fig.width=10, fig.height=6}
 
-cooksd <- cooks.distance(fit2)
-cooksd <- data.frame(index = 1:length(cooksd), cooksd = cooksd)
+par(cex = 0.5,fig=c(0,0.5,0.5,1)) #set the coordinate of picture 1
+plot(fit2, which = 1)  #plot diagnostic picture 1
 
-plot(cooksd$index, 
-     cooksd$cooksd, 
-     pch="*", cex=1.5, 
-     main="Influential Obs by Cooks distance") +
-abline(h = 4*mean(cooksd$cooksd), 
-       col="red")+
-text(x=cooksd$index+4, 
-     y=cooksd$cooksd, 
-     labels= ifelse(cooksd$cooksd>4*mean(cooksd$cooksd, na.rm=T),
-                    cooksd$index,""),
-     col="red")
+par(cex = 0.5,fig=c(0.5,1,0.5,1), new=TRUE)#set the coordinate of picture 2
+plot(fit2, which = 2) #plot diagnostic picture 2
 
+par(cex = 0.5, fig=c(0,1,0,0.5), new=TRUE)#set the coordinate of picture 3
+plot(fit2, which = 5)#plot diagnostic picture 3
 ```
 
+Residuals vs fitted plot (upper left) showed the data points are randomly scattered around the dotted line of y = 0, and the fitted line (red) is roughly horizontal without distinct patterns or trends, indicating a linear relationship. The linearity assumption of linear regression is met.
 
-## 3.2 other model assumptions
+The QQ plot (upper right) showed most of the points plotted on the graph lies on the dashed straight line, except for the lower and upper ends, where some points deviated from the line, indicating the distribution might be slightly skewed. Considering the fact that in large sample size the assumption of linearity is almost never perfectly met, I see the assumption of normality as being approximately met.
+
+## 3.2 other linear model assumptions
+
+   The assumption of independence requires no relation between the different observations. I do not have information of how this study was designed, hence not being able to make any conclusion. However, I could imagine how hard it took to meet it here, since including students taking courses from different lecturers or different lecturer groups would lead to violation of it. On the other hand, if the results were from students of one same lecturer (or lecturer group), it might take several semesters to collect such a large sample or might take students from several different classes/majors in one semester, either way the assumption was violated. 
+   
+   Homoscedasticity is another assumption to check. However, considering it is better evaluated by fitted values against root of standardized residuals (the #3 in plot() function), which is not required to produce in the current assignment, I did not further dig into it. By looking into its rough substitute plot "residual vs fitted" (upper left, above), no obvious heteroscedasticity was detected.  
 
 ## 3.3 influential observations
 
+Influential observations were shown in the bottom plot, where the red dashed line indicate cook's distance. Cook's distance is a commonly used estimate of the influence of a data point when performing a least-squares regression analysis. It measures the effect of deleting the observation for each given observation. In the plot, points, if there is any, outside the red dashed line are believed to have high influence. The graph for current model showed no points outside the line. The plot also showed the case numbers of 3 data points with the largest cook's distances, which are #1, #4 and #56. However, there are also other rules of thumbs for the cutoff, which are stricter. They include using an absolute value of 1, or using 4/n (n is sample size), or using 4×(the mean of the cooks distance for the whole sample). I did not further report them since it is not required in this assignment. I did it somewhere else for fun. If you are interested, please go to a r markdown file named "Supplement_Codes.html" or "Supplement_Codes.Rmd" under my "IODS-project" folder.    
+
+
+of cook's distance,
+
+where x is the index number of our sample and y is the cook's distance score for each observation. This is to evaluate, if there's any, the data points being tremendously influential to the coefficient estimate. Cook's distance is a commonly used estimate of the influence of a data point when performing a least-squares regression analysis. It measures the effect of deleting the observation for each given observation. There is no consensus on the cutoff for being influential using this indicator. The rules of thumbs include using an absolute value of 1, or using 4/n (n is sample size), or using 4×(the mean of the cooks distance for the whole sample). The plot showed the case numbers of 3 data points with the largest cook's distances, which are #1, #4 and #56. I did not further report them since it is not required in this assignment. I did it somewhere else for fun. If you are interested, please go to a r markdown file named "Supplement_Codes.html" or "Supplement_Codes.Rmd" under my "IODS-project" folder.    
+  
+  
 ***********************
-
-```{r}
-
-learn <- learn %>% mutate(index = 1:nrow(learn))
-learn <- left_join(learn, cooksd, by = "index")
-learn %>% filter(index %in% c(1,4,3,10,19,24,35,56,154))
-learn %>% filter(age>40)
-
-```
-
-
-
-
-```{r}
-fit.3predictor <- lm(points ~ attitude + stra + stra.factor + gender, data = learn)
-summary(fit.3predictor)
-
-fit.2predictor <- lm(points ~ attitude + stra + stra.factor, data = learn)
-summary(fit.2predictor)
-
-fit.1predictor <- lm(points ~ attitude + stra, data = learn)
-summary(fit.1predictor)
-
-fit.0predictor <- lm(points ~ attitude + stra * stra.factor, data = learn)
-summary(fit.0predictor)
-
-fit.predictor <- lm(points ~ attitude + stra.factor, data = learn)
-summary(fit.predictor)
-
-fit.predictor <- lm(points ~ attitude + age + stra, data = learn)
-summary(fit.predictor)
-
-
-learn %>% 
-  filter(stra.factor == "Low Stra") %>% 
-  ggplot(aes (x = stra, y = points))+
-  geom_point()+
-  geom_smooth(method = "lm")
-
-p1 <- learn %>% 
-  filter(stra.factor == "High Stra") %>% 
-  ggplot(aes (x = stra, y = points))+
-  geom_point()+
-  geom_smooth(method = "lm")
-
-
-learn  %>% 
-  ggplot(aes (x = stra, y = points))+
-  geom_point()+
-  geom_smooth(method = "loess")
-```
-
-
-```{r}
-USHSv2 <- USHSv2 %>% mutate(BMI.factor = BMI %>%  #turn BMI into factor and add labels(underweight:<18.5,                                                   #normal weight: ~25, overweight: ~30; obese: >30)
-                    cut(breaks=c(1,18.5,25,30,100), include.lowest = T) %>% 
-                    fct_recode("Underweight" = "[1,18.5]",
-                               "Normal weight" = "(18.5,25]",
-                               "Overweight" = "(25,30]",
-                               "Obese" = "(30,100]") %>% 
-                    ff_label("BMI ranges"))
-```
-
-
-```{r}
-earn  %>% ggplot(aes (x = stra, y = points)) +
-  geom_point()+
-  geom_smooth(method = "loess")
-
-learn %>% ggplot(aes(x = age))+
-  geom_boxplot()+
-  coord_flip()
-
-fit_age <- lm(points ~ age, data = learn)
-summary(fit_age)
-cooksd <- cooks.distance(fit_age)
-cooksd %>% broom::tidy()
-plot(cooksd, pch="*", cex=2, main="Influential Obs by Cooks distance") +
-abline(h = 4*mean(cooksd), col="red")+
-text(x=1:length(cooksd)+3.5, y=cooksd, labels=ifelse(cooksd>4*mean(cooksd, na.rm=T),names(cooksd),""), col="red")
-
-learn$fit_age_cooksd <- cooksd
-learn1 <- learn %>% filter(fit_age_cooksd<4*mean(fit_age_cooksd))
-
-p2 <- learn1  %>% ggplot(aes (x = age, y = points)) +
-  geom_point()+
-  geom_smooth(method = "loess")
-library(patchwork)
-p1
-learn <- learn %>% mutate(age.factor = age %>% 
-                            cut(breaks =c(0,19,22,25,27,34,100)))
-learn %>% count(age.factor)
-learn %>% 
-  filter(age.factor == "(19,22]") %>% 
-  ggplot(aes (x = age, y = points))+
-  geom_point()+
-  geom_smooth(method = "loess")
-
-fit_age1 <- learn %>% 
-  filter (age.factor == "(19,22]")%>% 
-  lm(points ~ age, data = .)
-summary(fit_age1)
-
-p1
-```
-
-```{r}
-learn <- learn %>% 
-  mutate(stra.factor = stra %>%
-           cut(breaks =c(0,3,6)) %>%
-                 fct_recode("High Stra" = "(0,3]",
-                            "Low Stra" = "(3,6]") %>% 
-           ff_label ("Stra dichotomized"))
-```
-
-```{r}
-par(cex = 0.5,fig=c(0,0.5,0.5,1))+
-plot(fit2, which = 1) 
-
-par(cex = 0.5,fig=c(0.5,1,0.5,1), new=TRUE)+
-plot(fit2, which = 2) 
-
-par(cex = 0.5, fig=c(0,1,0,0.5), new=TRUE)+
-plot(fit2, which = 4)
-```
-
-
 
 Here we go again...
 
