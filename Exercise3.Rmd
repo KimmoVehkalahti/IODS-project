@@ -348,7 +348,7 @@ Hint:
 # alc is available
 
 # access the tidyverse libraries tidyr, dplyr, ggplot2
-library(tidyr); library(dplyr); library(ggplot2)
+library(tidyr); library(dplyr); library(ggplot2);library(tidyverse)
 
 # glimpse at the alc data
 alc %>% glimpse()

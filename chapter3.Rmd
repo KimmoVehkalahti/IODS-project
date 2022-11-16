@@ -1,18 +1,25 @@
 ---
-title: "chapter3"
+title: "IODS"
+subtitle: "Assignment 3"
+
 author: "Rong Guang"
-date: '2022-11-14'
-output:
-  html_document: default
-  pdf_document: default
+date: "16/11/2022"
+
+output: 
+  html_document:
+    fig_caption: yes
+    theme: flatly
+    highlight: haddock
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    number_section: false
 bibliography: citations.bib
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
-```
+Chapter 3 codes starts here
 
-# 1 Preparing
+# 1 Preparing 
 
 ## 1.1 read the data set
 
@@ -363,7 +370,11 @@ used.predictor <- c("family.quality:sex",
                     "social:sex", 
                     "off.class.performance", 
                     "in.class.performance")
+```
 
+## 5.2 generating prediction error four all possible combinations of subsets of selected predictors
+
+```{r}
 #define a list "mylist"
 mylist <- list()
 
@@ -424,14 +435,15 @@ all.error <- all.error %>%
          sd = apply(.[,1:6], 1, function(x)sd(x, na.rm=T)))
 #check the all.error data set
 all.error
-
 ```
+
+## 5.3 plotting the trends of training&validation prediction errors by different number of predictors
 
 ```{r}
 #plot all.error
 #the error ribbon is 95% confidence interval
 #4 predictors (the fitted model) do now have a error range because there is only one combination
-all.error %>% ggplot(aes(x = factor(predictor_number), y = mean, group = tag, color = tag)) +
+all.error %>% ggplot(aes(x = factor(predictor_number), y = mean, group = tag), color = tag) +
   geom_line()+
   geom_point()+
   geom_ribbon(aes(ymin = mean-1.96*sd/sqrt(rowSums(!is.na(select(all.error,V1:V6)))), 
@@ -441,16 +453,125 @@ all.error %>% ggplot(aes(x = factor(predictor_number), y = mean, group = tag, co
   guides(fill = guide_legend(title = "Training/Cross-validation", title.position = "top"),
          color = guide_legend(title = "Training/Cross-validation", title.position = "top"))+
   theme_bw()+
-  theme(legend.position = "bottom", axis.text.x = element_text(size=12)) +
-  labs(x =  "", y = "Prediction Error")+
+  theme(legend.position = c(0.82,0.85), axis.text.x = element_text(size=12), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()) +
+  labs(x =  "", y = "Prediction Error",
+       title = "Trends of training&validation prediction errors by different number of predictors")+
   scale_x_discrete(labels = c("1 predictor", "2 predictors", "3 predictors", "4 predictors \n(fitted model)"))+
   scale_fill_discrete(labels = c("pred_cv" = "error base on cross-validation", "pred_training" = "error base on training set"))+
-  scale_color_discrete(labels = c("pred_cv" = "error base on cross-validation", "pred_training" = "error base on training set"))
+  scale_color_discrete(labels = c("pred_cv" = "error base on cross-validation", "pred_training" = "error base on training set"))+
+  annotate("text", label = "↓4-predictor model does \nnot have CI since it only \nhas one type of combination", x = 3.9, y = 0.24)
   
 ```
 
+# Supplementary: some inspiration from the super bous task (This is doing for practicing, not part of assignment Chapter 3)
+
+Inspired by the bonus task, where different <4 number of predictors' influence on prediction error was observed, I started to get interested in how different number of random combinations of predictors added to the final model would affect the error. There are almost 30 variables that were not used in the final model. Twenty-three of them do not have direct relationship with the entered predictors, and hence they were selected to be a free predictor pool. One to 15 different predictors were randomly selected from the pool, each with 100 random repetitions (if all possible combinations of the number of predictors <100, then all possible combination will be used), resulting in 1423 models. The error rate base on training dataset and 10 fold cross validation were computed and ploted in a line chart. 95% confidence interval for each number of added predictors were also calculated and visualized.
+
+The reason why only 15 maximum added predictors will be used instead of all 23 predictors is because the current sample size could not faithfully support model with more than 19 predictors, according to a rule of thumb that for each predictor used in model, a sample of 20 is required. 
+
+**Preparing the predictor pool**
+
+```{r}
+# The predictors used in final 4-factor model 
+fixed.predictor <- c("family.quality:sex", 
+                    "social:sex", 
+                    "off.class.performance", 
+                    "in.class.performance")
+
+# The variables not used in final model
+not.used.predictor <- c("sex", "famsize", "studytime", "famrel", "Dalc", "Walc", "G1", "G2", "G3", "alc_use", "high_use", "family.quality", "social", "probability", "prediction", "random.guess", "prediction.guess", "goout")
+
+#The set of free predictor pool
+free.predictor<- setdiff(names(alc), fixed.predictor)
+free.predictor<- setdiff(free.predictor, not.used.predictor)
+
+```
+
+**Building a loop that generates the result of 1423 models with 5~19 predictors (4 predictors in final model are fixed)**
+
+```{r}
+mylist <- list()
+
+ct.error <- matrix(nrow=2, ncol = 100)
 
 
+for(i in 1:15){
+  combinations <- combn(free.predictor, i)
+  if(choose(23,i)>100){
+    ss = 100
+  }else{
+    ss = choose(23,i)
+  }
+  for(j in 1:ss){
+    rn <- round(runif(1,min = 1, max = choose(23,i)), 0)
+    sample.comb <- combinations[,rn]
+    formula.text <- paste("high_use ~ family.quality:sex + social:sex + off.class.performance + in.class.performance+", paste(sample.comb, collapse = "+"))
+    model <- glm(formula.text, data = alc, family = "binomial")
+    cv <- cv.glm(data = alc, cost = loss_func, glmfit = model, K =10)
+    ct.error[1,j] <- cv$delta[1]
+    alc <- mutate(alc, probability = predict(model, type = "response"))
+    ct.error[2,j] <- loss_func(alc$high_use, alc$probability)
+  }
+  mylist[[i]] <- ct.error
+  ct.error <- matrix(nrow=2, ncol = 100)
+}
+```
+
+**Collapsing the results into different data frame and merge them**
+
+```{r}
+for(w in 1:15){
+ assign(paste0("df",w), as.data.frame(mylist[[w]]))
+  }
+
+all.error <- rbind(df1,df2,df3,df4,df5,df6,df7,df8,df9,df10,df11,df12,df13,df14,df15)
+
+tag <- rep(c("pred_cv", "pred_training"), times = 15)
+
+#add another new column in all.error, which reflects if the result of this row is
+#base on 1-15 predictors.
+predictor_number <- rep(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), each = 2)
+ 
+all.error <- all.error %>% 
+  mutate(tag = tag,
+         predictor_number = predictor_number)
+
+#calculate the mean and sd for each row.
+all.error <- all.error %>% 
+  mutate(mean = rowMeans(select(.,V1:V100), na.rm = T),
+         sd = apply(.[,1:100], 1, function(x)sd(x, na.rm=T)))
+```
+
+**Plotting*
+
+```{r}
+#plot all.error
+#the error ribbon is 95% confidence interval
+#4 predictors (the fitted model) do now have a error range because there is only one combination
+all.error %>% ggplot(aes(x = factor(predictor_number), y = mean, group = tag)) +
+  geom_line()+
+  geom_point()+
+  geom_ribbon(aes(ymin = mean-1.96*sd/sqrt(rowSums(!is.na(select(all.error,V1:V100)))), 
+                  ymax = mean+1.96*sd/sqrt(rowSums(!is.na(select(all.error,V1:V100)))),  
+                  fill = tag), alpha =0.25,
+                position = position_dodge(0.05))+
+  guides(fill = guide_legend(title = "Training/Cross-validation", title.position = "top"),
+         color = guide_legend(title = "Training/Cross-validation", title.position = "top"))+
+  theme_bw()+
+  theme(legend.position = c(0.2,0.15), axis.text.x = element_text(size=12),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  labs(x =  "Number of random predictors added to final model(4 predictors)", y = "Prediction Error",
+       title="Trends of training/validation error rates of final model plus \ndifferent number of random predictors")+
+  scale_fill_discrete(labels = c("pred_cv" = "error base on cross-validation", "pred_training" = "error base on training set"))+
+  scale_color_discrete(labels = c("pred_cv" = "error base on cross-validation", "pred_training" = "error base on training set"))+
+  geom_line(aes(y = 0.22), color = "coral", size = 0.2, alpha = 0.8)+
+  geom_line(aes(y = 0.21), color = "cyan3", size = 0.2, alpha =1)+ 
+ annotate("text", label = "↓Error rate of final model base on cross validation", x = 11, y = 0.22, vjust = -0.5)+ 
+ annotate("text", label = "↓Error rate of final model base on training dataset", x = 11, y = 0.21, vjust = -0.5)
+  
+```
 
 
 ******

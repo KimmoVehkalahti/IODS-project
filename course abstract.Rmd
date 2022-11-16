@@ -1,0 +1,17 @@
+---
+title: "Untitled"
+author: "Rong Guang"
+date: '2022-11-16'
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### How do advanced quantitative research methods transfer into a study: From measurements to tests
+
+The course _*EDUM003 Advanced quantitative research methods*_ introduces a variety of quantitative methods such as factor analysis, variance analysis and regression. The majority of the students are beginners to statistical analysis. An important issue for the teaching team to address is how to help them fit these skills into a bigger picture of research mindset, which is expected to facilitate their own research. As they are approaching the end of the course, we plan to take the opportunity and design a 2-hour presentation in the matter. 
+The presentation will guide the students through some real statistical examples, using the statistical methods they have just learned as toolkit. The idea is to encourage and enlighten them to reflect on the possibility of using the methods to tackle the scientific problems of their own research domain. Key points will cover but not limit to why and how to measure the immeasurable; why variance is used to detect difference; how to answer simple questions in a complex world.
+
+According to the students’ background, the presentation will be designed in a beginner-researcher friendly way, where technically heavy terminologies will be simplified into layman’s word. 
