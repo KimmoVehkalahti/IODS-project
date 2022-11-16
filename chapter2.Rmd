@@ -7,7 +7,7 @@ Go to each exercise in turn and do as follows:
 2. Run the (possible) pre-exercise-code chunk.
 3. Follow the instructions to fix the R code!
 
-## 2.0 INSTALL THE REQUIRED PACKAGES FIRST!
+## 2.0 Installing the packages
 
 One or more extra packages (in addition to `tidyverse`) will be needed below.
 
@@ -22,6 +22,7 @@ library(ggplot2)
 library(gapminder) 
 library(finalfit)
 library(broom)
+
 
 ```
 
@@ -276,5 +277,332 @@ setwd("~/Documents/GitHub/IODS-project")
 write_csv(learning2014, 'learning2014.csv')
 
 ```
+
+## 2.7 Visualizations with ggplot2
+
+[**ggplot2**](http://ggplot2.org/) is a popular library for creating stunning graphics with R. It has some advantages over the basic plotting system in R, mainly consistent use of function arguments and flexible plot alteration. ggplot2 is an implementation of Leland Wilkinson's *Grammar of Graphics* — a general scheme for data visualization.
+
+In ggplot2, plots may be created via the convenience function `qplot()` where arguments and defaults are meant to be similar to base R's `plot()` function. More complex plotting capacity is available via `ggplot()`, which exposes the user to more explicit elements of the grammar. (from [wikipedia](https://en.wikipedia.org/wiki/Ggplot2))
+
+RStudio has a [cheatsheet](https://www.rstudio.com/resources/cheatsheets/) for data visualization with ggplot2.
+
+```{r, echo=FALSE}
+# Pre-exercise-code (Run this code chunk first! Do NOT edit it.)
+
+# Click the green arrow ("Run Current Chunk") in the upper-right corner of this chunk. This will initialize the R objects needed in the exercise. Then move to Instructions of the exercise to start working.
+
+learning2014 <- read.table("https://raw.githubusercontent.com/KimmoVehkalahti/Helsinki-Open-Data-Science/master/datasets/learning2014.txt",
+                            sep = ",", header = T)
+```
+
+### Instructions
+
+- Access the **ggplot2** library
+- Initialize the plot with data and aesthetic mappings
+- Adjust the plot initialization: Add an aesthetic element to the plot by defining `col = gender` inside `aes()`. 
+- Define the visualization type (points)
+- Draw the plot to see how it looks at this point
+- *Add* a regression line to the plot
+- *Add* the title "Student's attitude versus exam points" with `ggtitle("<insert title here>")` to the plot with regression line
+- Draw the plot again to see the changes
+
+Hints:
+- Use `+` to add the title to the plot
+- The plot with regression line is saved in the object `p3`
+- You can draw the plot by typing the object name where the plot is saved
+
+### R code
+```{r}
+# Work with the exercise in this chunk, step-by-step. Fix the R code!
+# learning2014 is available
+
+# Access the gglot2 library
+library(ggplot2)
+
+# initialize plot with data and aesthetic mapping
+p1 <- ggplot(learning2014, aes(x = attitude, y = points))
+
+# define the visualization type (points)
+p2 <- p1 + geom_point()
+
+# draw the plot
+p2
+
+# add a regression line
+p3 <- p2 + geom_smooth(method = "lm")
+
+# draw the plot
+p3
+
+#Lets try and overview summary
+p <- ggpairs(learning2014, mapping = aes(col = gender, alpha = 0.3), lower = list(combo = wrap("facethist", bins = 20)))
+ # draw the plot!
+p
+
+```
+
+
+## 2.8 Exploring a data frame
+
+Often the most interesting feature of your data are the relationships between the variables. If there are only a handful of variables saved as columns in a data frame, it is possible to visualize all of these relationships neatly in a single plot.
+
+Base R offers a fast plotting function `pairs()`, which draws all possible scatter plots from the columns of a data frame, resulting in a scatter plot matrix. Libraries **GGally** and **ggplot2** together offer a slow but more detailed look at the variables, their distributions and relationships.
+
+```{r, echo=FALSE}
+# Pre-exercise-code (Run this code chunk first! Do NOT edit it.)
+
+# Click the green arrow ("Run Current Chunk") in the upper-right corner of this chunk. This will initialize the R objects needed in the exercise. Then move to Instructions of the exercise to start working.
+
+learning2014 <- read.table("https://raw.githubusercontent.com/KimmoVehkalahti/Helsinki-Open-Data-Science/master/datasets/learning2014.txt",
+                            sep = ",", header = T)
+```
+
+### Instructions
+
+- Draw a scatter matrix of the variables in learning2014 (other than gender)
+- Adjust the code: Add the argument `col` to the `pairs()` function, defining the colour with the 'gender' variable in learning2014. 
+- Draw the plot again to see the changes.
+- Access the **ggpot2** and **GGally** libraries and create the plot `p` with `ggpairs()`. 
+- Draw the plot. Note that the function is a bit slow.
+- Adjust the argument `mapping` of `ggpairs()` by defining `col = gender` inside `aes()`. 
+- Draw the plot again.
+- Adjust the code a little more: add another aesthetic element `alpha = 0.3` inside `aes()`.
+- See the difference between the plots?
+
+Hints:
+- You can use `$` to access a column of a data frame.
+- Remember to separate function arguments with a comma
+- You can draw the plot `p` by simply typing it's name: just like printing R objects.
+
+### R code
+```{r}
+# Work with the exercise in this chunk, step-by-step. Fix the R code!
+# learning2014 is available
+
+# draw a scatter plot matrix of the variables in learning2014.
+# [-1] excludes the first column (gender)
+pairs(learning2014[-1])
+
+# access the GGally and ggplot2 libraries
+library(GGally)
+library(ggplot2)
+
+# create a more advanced plot matrix with ggpairs()
+p <- ggpairs(learning2014, mapping = aes(), lower = list(combo = wrap("facethist", bins = 20)))
+
+
+
+
+```
+
+
+## 2.9 Simple regression
+
+[Regression analysis](https://en.wikipedia.org/wiki/Regression_analysis) with R is easy once you have your data in a neat data frame. You can simply use the `lm()` function to fit a linear model. The first argument of `lm()` is a `formula`, which defines the target variable and the explanatory variable(s). 
+
+The formula should be `y ~ x`, where `y` is the target (or outcome) variable and `x` the explanatory variable (predictor). The second argument of `lm()` is `data`, which should be a data frame where `y` and `x` are columns. 
+
+The output of `lm()` is a linear model object, which can be saved for later use. The generic function `summary()` can be used to print out a summary of the model.
+
+```{r, echo=FALSE}
+# Pre-exercise-code (Run this code chunk first! Do NOT edit it.)
+
+# Click the green arrow ("Run Current Chunk") in the upper-right corner of this chunk. This will initialize the R objects needed in the exercise. Then move to Instructions of the exercise to start working.
+
+learning2014 <- read.table("https://raw.githubusercontent.com/KimmoVehkalahti/Helsinki-Open-Data-Science/master/datasets/learning2014.txt",
+                            sep = ",", header = T)
+```
+
+### Instructions
+
+- Create a scatter plot of 'points' versus 'attitude'.
+- Fit a regression model where 'points' is the target and 'attitude' is the explanatory variable
+- Print out the summary of the linear model object
+
+Hints:
+- Replace `1` with the name of the explanatory variable in the formula inside `lm()`
+- Use `summary()` on the model object to print out a summary
+
+### R code
+```{r}
+# Work with the exercise in this chunk, step-by-step. Fix the R code!
+# learning2014 is available
+
+# a scatter plot of points versus attitude
+library(ggplot2)
+qplot(attitude, points, data = learning2014) + geom_smooth(method = "lm")
+
+# fit a linear model
+my_model <- lm(points ~ 1, data = learning2014)
+
+# print out a summary of the model
+summary(my_model)
+
+```
+
+
+## 2.10 Multiple regression
+
+When there are more than one explanatory variables in the linear model, it is called multiple regression. In R, it is easy to include more than one explanatory variables in your linear model. This is done by simply defining more explanatory variables with the `formula` argument of `lm()`, as below
+
+```
+y ~ x1 + x2 + ..
+```
+Here `y` is again the target variable and `x1, x2, ..` are the explanatory variables.
+
+```{r, echo=FALSE}
+# Pre-exercise-code (Run this code chunk first! Do NOT edit it.)
+
+# Click the green arrow ("Run Current Chunk") in the upper-right corner of this chunk. This will initialize the R objects needed in the exercise. Then move to Instructions of the exercise to start working.
+
+learning2014 <- read.table("https://raw.githubusercontent.com/KimmoVehkalahti/Helsinki-Open-Data-Science/master/datasets/learning2014.txt",
+                            sep = ",", header = T)
+```
+
+### Instructions
+
+- Draw a plot matrix of the learning2014 data with `ggpairs()`
+- Fit a regression model where `points` is the target variable and both `attitude` and `stra` are the explanatory variables. 
+- Print out a summary of the model.
+- Adjust the code: Add one more explanatory variable to the model. Based on the plot matrix, choose the variable with the third highest (absolute) correlation with the target variable and use that as the third variable. 
+- Print out a summary of the new model.
+
+Hint:
+- The variable with the third highest absolute correlation with `points` is `surf`.
+
+### R code
+```{r}
+# Work with the exercise in this chunk, step-by-step. Fix the R code!
+# learning2014 is available
+
+library(GGally)
+library(ggplot2)
+# create an plot matrix with ggpairs()
+ggpairs(learning2014, lower = list(combo = wrap("facethist", bins = 20)))
+
+# create a regression model with multiple explanatory variables
+my_model2 <- lm(points ~ attitude + stra, data = learning2014)
+
+# print out a summary of the model
+summary(my_model2)
+
+```
+
+
+## 2.11 Graphical model validation
+
+R makes it easy to graphically explore the validity of your model assumptions. If you give a linear model object as the first argument to the `plot()` function, the function automatically assumes you want diagnostic plots and will produce them. You can check the help page of plotting an lm object by typing `?plot.lm` or `help(plot.lm)` to the R console. 
+
+In the plot function you can then use the argument `which` to choose which plots you want. `which` must be an integer vector corresponding to the following list of plots:
+
+which | graphic                                 
+----- | --------
+1     | Residuals vs Fitted values 
+2     | Normal QQ-plot
+3     | Standardized residuals vs Fitted values
+4     | Cook's distances
+5     | Residuals vs Leverage 
+6     | Cook's distance vs Leverage 
+
+<br>
+We will focus on plots 1, 2 and 5: Residuals vs Fitted values, Normal QQ-plot and Residuals vs Leverage.
+
+```{r, echo=FALSE}
+# Pre-exercise-code (Run this code chunk first! Do NOT edit it.)
+
+# Click the green arrow ("Run Current Chunk") in the upper-right corner of this chunk. This will initialize the R objects needed in the exercise. Then move to Instructions of the exercise to start working.
+
+learning2014 <- read.table("https://raw.githubusercontent.com/KimmoVehkalahti/Helsinki-Open-Data-Science/master/datasets/learning2014.txt",
+                            sep = ",", header = T)
+```
+
+### Instructions
+
+- Create the linear model object `my_model2`
+- Produce the following diagnostic plots using the `plot()` function: Residuals vs Fitted values, Normal QQ-plot and Residuals vs Leverage using the argument `which`. 
+- Before the call to the `plot()` function, add the following: `par(mfrow = c(2,2))`. This will place the following 4 graphics to the same plot. Execute the code again to see the effect.
+
+Hint:
+- You can combine integers to an integer vector with `c()`. For example: `c(1,2,3)`.
+
+### R code
+```{r}
+# Work with the exercise in this chunk, step-by-step. Fix the R code!
+# learning2014 is available
+
+# create a regression model with multiple explanatory variables
+my_model2 <- lm(points ~ attitude + stra, data = learning2014)
+
+# draw diagnostic plots using the plot() function. Choose the plots 1, 2 and 5
+plot(my_model2, which = 1)
+
+plot(my_model2, which = 2)
+
+plot(my_model2, which = 3)
+
+plot(my_model2, which = 4)
+
+plot(my_model2, which = 5)
+
+plot(my_model2, which = 6)
+
+```
+
+
+## 2.12 Making predictions
+
+Okay, so let's assume that we have a linear model which seems to fit our standards. What can we do with it?
+
+The model quantifies the relationship between the explanatory variable(s) and the dependent variable. The model can also be used for predicting the dependent variable based on new observations of the explanatory variable(s). 
+
+In R, predicting can be done using the `predict()` function. (see `?predict`). The first argument of predict is a model object and the argument `newdata` (a data.frame) can be used to make predictions based on new observations. One or more columns of `newdata` should have the same name as the explanatory variables in the model object.
+
+```{r, echo=FALSE}
+# Pre-exercise-code (Run this code chunk first! Do NOT edit it.)
+
+# Click the green arrow ("Run Current Chunk") in the upper-right corner of this chunk. This will initialize the R objects needed in the exercise. Then move to Instructions of the exercise to start working.
+
+learning2014 <- read.table("https://raw.githubusercontent.com/KimmoVehkalahti/Helsinki-Open-Data-Science/master/datasets/learning2014.txt",
+                            sep = ",", header = T)
+```
+
+### Instructions
+
+- Create object `m` and print out a summary of the model
+- Create object `new_attitudes`
+- Adjust the code: Create a new data frame with a column named 'attitude' holding the new attitudes defined in `new_attitudes`
+- Print out the new data frame
+- `predict()` the new student's exam points based on their attitudes, using the `newdata` argument
+
+Hints:
+- Type `attitude = new_attitudes` inside the `data.frame()` function.
+- Give the `new_data` data.frame as the `newdata` argument for `predict()`
+
+### R code
+```{r}
+# Work with the exercise in this chunk, step-by-step. Fix the R code!
+# learning2014 is available
+
+# Create model object m
+m <- lm(points ~ attitude, data = learning2014)
+
+# print out a summary of the model
+summary(m)
+
+# New observations
+new_attitudes <- c("Mia" = 3.8, "Mike"= 4.4, "Riikka" = 2.2, "Pekka" = 2.9)
+new_data <- data.frame(attitude = new_attitudes)
+
+# Print out the new data
+summary(new_data)
+
+# Predict the new students exam points based on attitude
+predict(m, newdata = new_data)
+
+
+```
+
+**Awesome work!**
+
 
 
