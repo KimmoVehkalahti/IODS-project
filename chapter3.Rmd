@@ -2,12 +2,14 @@
 title: "chapter3"
 author: "Rong Guang"
 date: '2022-11-14'
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 bibliography: citations.bib
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
 ```
 
 # 1 Preparing
@@ -43,12 +45,13 @@ In the data set, variables including gender, quality of family relationships ("f
 
 ## 3.1 exploring the association between faimly relationship quality and alcohol overuse
 
-famrel - quality of family relationships (numeric: from 1 - very bad to 5 - excellent) 
+   The variable "famrel" in original data set elicited quality of family relationships (numeric: from 1 - very bad to 5 - excellent). In the current analysis, it is selected as a candidate predictor for the model to reflect the same idea--quality of family relationship.
 
 ### 3.1.1 numerically explore the association
 
 ```{r}
 alc %>% count(high_use, famrel)
+?count
 ```
 
 It is found the absolute sample of participants with very bad (level 1)  and/or bad (level 2) family quality is very small in number (n = 8). Caution should be taken about the potential large error. 
@@ -90,8 +93,7 @@ alc <- alc %>%
 
 ## 3.2 exploring the association between school performance (absences) and alcohol overuse
 
-absences - number of school absences (numeric: from 0 to 93) 
-studytime - weekly study time (numeric: 1 - <2 hours, 2 - 2 to 5 hours, 3 - 5 to 10 hours, or 4 - >10 hours) 
+   The variable "studytime" in original data set captured participants' weekly study time (numeric: 1 - <2 hours, 2 - 2 to 5 hours, 3 - 5 to 10 hours, or 4 - >10 hours). The variable "absences" in original data set captured participants' number of school absences (numeric: from 0 to 93). It is presumed in the current analysis that they reflect off-campus and on-campus school performance, respectively, and hence they are selected as candidate predictors. 
 
 ### 3.2.1 exploring the association between on-campus performance and alcohol overuse
 ### 3.2.1.1 numerically explore the association
@@ -182,7 +184,7 @@ alc <- alc %>%
 
 ## 3.3 exploring the association between social communication frequency and alcohol overuse
 
-goout - going out with friends (numeric: from 1 - very low to 5 - very high)
+The variable "goout" in original data set captured participants' frequency of going out with friends (numeric: from 1 - very low to 5 - very high). It is presumed in the current analysis that it reflects social involvement, and hence it is selected as a candidate predictor. 
 
 ### 3.3.1 numerically explore the association
 
@@ -272,6 +274,7 @@ Our hypothesis that *a.* family relationship quality (interactive with gender); 
 ### 4.4.2 exploring predictions
 
 #### 4.4.2.1 cross tabulation of predcition versus the actual values
+
 ```{r}
 prob <- predict(fit2, type = "response")
 
@@ -311,53 +314,132 @@ Among 259 participants who are not alcohol over-users, random guess correctly gu
 
 ## 4.5 cross validation
 
+### 4.5.1 define loss function
+
 ```{r}
 # define a loss function (average prediction error)
 loss_func <- function(class, prob) {
   n_wrong <- abs(class - prob) > 0.5
   mean(n_wrong)
 }
+```
 
+### 4.5.2 compute prediction error base on traing data set
+
+```{r}
 # compute the average number of wrong predictions in the (training) data
 training.error.full <- loss_func(alc$high_use, alc$probability)
 training.error.full
+```
+
+The prediction error rate is 21.6%, outperforming the model in Exercise Set 3, which had about 26% error.
+
+### 4.5.3 compute prediction error base on 10-fold cross validation 
+
+```{r}
 # 10-fold cross-validation
+set.seed(16)
 library(boot)
 cv <- cv.glm(data = alc, cost = loss_func, glmfit = fit2, K = 10)
 cross.val.error.full <- cv$delta[1]
 cross.val.error.full
 ```
 
+According to the result of 10 fold cross-validation, the model has an average error rate of 22.2%, a bit larger than the results from training model, but the error rate is still notably lower than the model in Exercise.
+
+# 5 Observing the relationship between prediction error and number of predictors (Bonus) 
+
+## 5.1 preparation
+```{r}
+library(utils)#install.packages("utils") library for generating all possible combinations of n elements
+
+#pass the name of 4 predictors for our final model into an object
+used.predictor <- c("family.quality:sex", "social:sex", "off.campus.performance", "on.campus.performance")
+
+#define a list "mylist"
+mylist <- list()
+
+#define a matrix with 2 rows and 6 columns, "ct.error", which means 
+#cross-validation and training error
+ct.error <- matrix(nrow=2, ncol = 6)
+
+#start a loop that generate all possible combinations of the 4 used predictors,
+#the combination could have 1-4 elements. Four each number of element, start a 
+#loop (i in 1:4); Within the loop, another loop is used to pass all the prediction
+#error results from cross validation and training data set into a matrix. Each 
+#Matrix will have two rows saving results of cv and training data set, respectively.
+#The number of columns will be dependent on how many combinations will be produced,
+#with the maximum number being 6 (number of possible combinations of  2 predictors).
+#Base on the number of i, 4 matrices will be generated, and saved in mylist. 
+
+for(i in 1:4){
+  combinations <- combn(used.predictor, i)
+   all.formula.text <- apply(combinations, 2, function(x)paste("high_use~", paste(x, collapse = "+")))
+  for(j in 1:length(all.formula.text)){
+    all.formula <- as.formula(all.formula.text[j])
+    model <- glm(all.formula, data = alc, family = "binomial")
+    cv <- cv.glm(data = alc, cost = loss_func, glmfit = model, K =10)
+    ct.error[1,j] <- cv$delta[1]
+    alc <- mutate(alc, probability = predict(model, type = "response"))
+    ct.error[2,j] <- loss_func(alc$high_use, alc$probability)
+  }
+   mylist[[i]] <- ct.error
+   ct.error <- matrix(nrow=2, ncol = 6)
+}
+
+#collapse the 4 mattrices in mylist into 4 data frames.
+for(w in 1:4){
+ assign(paste0("df",w), as.data.frame(mylist[[w]]))
+  }
+
+#merge the 4 data frames into 1 by row. 
+all.error <- rbind(df1,df2,df3,df4) #name the data set as all.error
+
+#add a new column in all.error, which reflects if the result of this row is
+#from cross validation or training set
+
+tag <- rep(c("pred_cv", "pred_training"), times = 4)
+
+#add another new column in all.error, which reflects if the result of this row is
+#base on 1, 2, 3 or 4 predictors.
+predictor_number <- rep(c(1,2,3,4), each = 2)
+
+all.error <- all.error %>% 
+  mutate(tag = tag,
+         predictor_number = predictor_number)
+
+#calculate the mean and sd for each row.
+#note that the rows base on 4 predictor will not have sd, since there is only
+#one combination. 
+all.error <- all.error %>% 
+  mutate(mean = rowMeans(select(.,V1:V6), na.rm = T),
+         sd = apply(.[,1:6], 1, function(x)sd(x, na.rm=T)))
+#check the all.error data set
+all.error
+
+```
+
+```{r}
+#plot all.error
+#the error ribbon is 95% confidence interval
+#4 predictors (the fitted model) do now have a error range because there is only one combination
+all.error %>% ggplot(aes(x = factor(predictor_number), y = mean, group = tag, color = tag)) +
+  geom_line()+
+  geom_point()+
+  geom_ribbon(aes(ymin = mean-1.96*sd/sqrt(rowSums(!is.na(select(all.error,V1:V6)))), 
+                  ymax = mean+1.96*sd/sqrt(rowSums(!is.na(select(all.error,V1:V6)))),  
+                  fill = tag), alpha =0.25,
+                position = position_dodge(0.05))+
+  guides(fill = guide_legend(title = "Training/Cross-validation", title.position = "top"),
+         color = guide_legend(title = "Training/Cross-validation", title.position = "top"))+
+  theme_bw()+
+  theme(legend.position = "bottom", axis.text.x = element_text(size=12)) +
+  labs(x =  "", y = "Prediction Error")+
+  scale_x_discrete(labels = c("1 predictor", "2 predictors", "3 predictors", "4 predictors \n(fitted model)"))+
+  scale_fill_discrete(labels = c("pred_cv" = "error base on cross-validation", "pred_training" = "error base on training set"))+
+  scale_color_discrete(labels = c("pred_cv" = "error base on cross-validation", "pred_training" = "error base on training set"))
+  
+```
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+**Reference**
