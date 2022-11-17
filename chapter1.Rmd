@@ -26,7 +26,7 @@ knitr::opts_chunk$set(echo = TRUE)
 date()
 
 ```
-
+# **Chapter 1 Start me up**
 # 1. Thoughts about the course
 
 ## 1.1 My feeling about the course
@@ -62,8 +62,8 @@ Please find it Here:
 Since I have generated the token before the new task is published (That is the only way I get my machine connected to GitHub), I will not generate it again in case any overlapping problems. 
 
 
-
-
+This is the end of chapter 1
+***********************
 
 
 

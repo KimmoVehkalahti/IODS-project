@@ -35,5 +35,5 @@ bibliography: citations.bib
 ```
 
 ***
-(more chapters to be added similarly as we proceed with the course!)
+
 

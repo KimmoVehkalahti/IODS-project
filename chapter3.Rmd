@@ -18,7 +18,7 @@ bibliography: citations.bib
     
 ---
 
-# Chapter 3 Logistic regression
+# **Chapter 3: Logistic regression**
 
 # 1 Preparing 
 
@@ -47,7 +47,7 @@ College students typically spend a tremendous amount of time with their family m
 
 According to the literature review, 4 potential early-life factors is identified to predict excessive alcohol usage among college students. They are *a.* family relationship quality (interactive with gender); *b.* school performance; *c.* social communication (interactive with gender). I herein proposed a 3-factor alcohol high-use model for college students and test it using a secondary data set collected for other purposes.
 
-In the data set, variables including gender, quality of family relationships ("famrel"), number of school absences ("absences"), weekly study time ("studytime") and frequency of going out with friends ("goout") could be candidate indicators for the current model. The variable "gender" and "famrel"'s relevance to the predictors are self-explanatory. School performance includes college students' in-class and off-class performance, which could be reflected by variables "absences" and "studytime", respectively. Variable "goout" captures the involvement of social activity, which is a good indicator to social communication. Note that base the well-reported evidence introduced above, gender will not enter the model independently. Instead, it will comprise interaction terms with family relationship quality and social communication, respectively, and then enter the model. 
+In the data set, variables including gender, quality of family relationships ("famrel"), number of school absences ("absences"), weekly study time ("studytime") and frequency of going out with friends ("goout") could be candidate indicators for the current model. The variable "gender" and "famrel"'s relevance to the predictors are self-explanatory. School performance includes college students' in-class and off-class performance, which could be reflected by variables "absences" and "studytime", respectively. Variable "goout" captures the involvement of social activity, which is a good indicator to social communication. Note that base on the well-reported evidence introduced above, gender will not enter the model independently. Instead, it will comprise interaction terms with family relationship quality and social communication, respectively, and then enter the model. 
 
 # 3 Data exploration
 
@@ -373,7 +373,7 @@ used.predictor <- c("family.quality:sex",
                     "in.class.performance")
 ```
 
-## 5.2 generating prediction error four all possible combinations of subsets of selected predictors
+## 5.2 generating prediction error for all possible combinations of subsets of selected predictors
 
 ```{r}
 #define a list "mylist"
@@ -496,7 +496,7 @@ free.predictor<- setdiff(free.predictor, not.used.predictor)
 
 **Building a loop that generates the result of 1423 models with 5~19 predictors (4 predictors in final model are fixed)**
 
-```{r}
+```{r, cache = T}
 mylist <- list()
 
 ct.error <- matrix(nrow=2, ncol = 100)
