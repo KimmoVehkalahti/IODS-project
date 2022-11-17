@@ -76,10 +76,12 @@ p1 <- alc %>%
              labeller = labeller(sex = sex.labs)) +
   labs(x = "Family relationship quality (larger is better)", 
        y = "Proportion of high-user",
-       title = "Proportion of alcohol high-use by family relationship quality and sex")+
+       title = 
+         "Proportion of alcohol high-use by family relationship quality and sex")+
   theme(legend.position = "bottom")+
   guides(fill=guide_legend(title = "Alcohol high-use"))+
-  scale_fill_discrete(labels = c("FALSE" = "Non-high-user", "TRUE" = "high-user"))+
+  scale_fill_discrete(labels = c("FALSE" = "Non-high-user", 
+                                 "TRUE" = "high-user"))+
   scale_fill_brewer(palette = "Greys")
   
 p1
@@ -127,9 +129,11 @@ p2 <- alc %>%
   scale_fill_brewer(palette = "Blues")+
   labs(x = "Alcohol high-user", 
        y = "Freuqncy of class absences",
-       title = "Frequency of class absences by alcohol high-use and gender")+
+       title = 
+         "Frequency of class absences by alcohol high-use and gender")+
   theme(legend.position = "none")+
-  scale_x_discrete(labels = c("FALSE" = "Non-high-user", "TRUE" = "high-user"))
+  scale_x_discrete(labels = c("FALSE" = "Non-high-user", 
+                              "TRUE" = "high-user"))
 p2
 ```
 
@@ -167,7 +171,8 @@ p3 <- alc %>%
        title = "Proportion of alcohol high-use by study time ranges and sex")+
   theme(legend.position = "bottom")+
   guides(fill=guide_legend(title = "Alcohol high-use"))+
-  scale_fill_discrete(labels = c("FALSE" = "Non-high-user", "TRUE" = "high-user"))+
+  scale_fill_discrete(labels = c("FALSE" = "Non-high-user", 
+                                 "TRUE" = "high-user"))+
   scale_fill_brewer(palette = "Greys")
 p3
 ```
@@ -213,10 +218,12 @@ p4 <- alc %>%
              labeller = labeller(sex = sex.labs)) +
   labs(x = "Social Communication Freuency (larger is more frequent)", 
        y = "Proportion of alcohol high-users",
-       title = "Proportion of social communication frequency ranges  by alcohol high-use and sex")+
+       title = 
+         "Proportion of social communication frequency ranges  by alcohol high-use and sex")+
   theme(legend.position = "bottom")+
   guides(fill=guide_legend(title = "Alcohol high-use"))+
-  scale_fill_discrete(labels = c("FALSE" = "Non-high-user", "TRUE" = "high-user"))+
+  scale_fill_discrete(labels = c("FALSE" = "Non-high-user", 
+                                 "TRUE" = "high-user"))+
   scale_fill_brewer(palette = "Greys")
   
 p4
@@ -255,7 +262,8 @@ alc <- alc %>%
   mutate(off.class.performance = 
            case_when(off.class.performance == "Light study"~ "Light study",
                      TRUE~ "Moderate to long study") %>% 
-           factor(levels = c("Light study", "Moderate to long study")))
+           factor(levels = c("Light study", 
+                             "Moderate to long study")))
 ```
 
 ## 4.3 fitting the model again
@@ -325,7 +333,7 @@ table(high_use = alc$high_use, prediction = alc$prediction.guess)
 
 Among 259 participants who are not alcohol high-users, random guess correctly guesses 126 (49%) of them. Among 111 participants who are alcohol high-users, random guess correctly guesses 55 of them (49%) of them. In all, among the 370 predicts, 181(49%) were inaccurate. Our model shows a tremendously better overall performance than random guess. However, its effect on correctly predicting the alcohol high-users is roughly equal to random guess, indicating the model is better applied in predicting who is a non-alcohol-high-user.
 
-## 4.5 cross validation
+## 4.5 cross validation (Bonus)
 
 ### 4.5.1 define loss function
 
@@ -360,7 +368,7 @@ cross.val.error.full
 
 According to the result of 10 fold cross-validation, the model has an average error rate of 22.2%, a bit larger than the results from training model, but the error rate is still notably lower than the model in Exercise.
 
-# 5 Observing the relationship between prediction error and number of predictors (Bonus) 
+# 5 Observing the relationship between prediction error and number of predictors (Super Bonus) 
 
 ## 5.1 preparation
 ```{r}
@@ -394,7 +402,9 @@ ct.error <- matrix(nrow=2, ncol = 6)
 
 for(i in 1:4){
   combinations <- combn(used.predictor, i)
-   all.formula.text <- apply(combinations, 2, function(x)paste("high_use~", paste(x, collapse = "+")))
+   all.formula.text <- apply(combinations, 2, 
+                             function(x)paste("high_use~", 
+                                              paste(x, collapse = "+")))
   for(j in 1:length(all.formula.text)){
     all.formula <- as.formula(all.formula.text[j])
     model <- glm(all.formula, data = alc, family = "binomial")
@@ -459,10 +469,16 @@ all.error %>% ggplot(aes(x = factor(predictor_number), y = mean, group = tag), c
         panel.grid.minor = element_blank()) +
   labs(x =  "", y = "Prediction Error",
        title = "Trends of training&validation prediction errors by different number of predictors")+
-  scale_x_discrete(labels = c("1 predictor", "2 predictors", "3 predictors", "4 predictors \n(fitted model)"))+
-  scale_fill_discrete(labels = c("pred_cv" = "error base on cross-validation", "pred_training" = "error base on training set"))+
-  scale_color_discrete(labels = c("pred_cv" = "error base on cross-validation", "pred_training" = "error base on training set"))+
-  annotate("text", label = "↓4-predictor model does \nnot have CI since it only \nhas one type of combination", 
+  scale_x_discrete(labels = c("1 predictor", "2 predictors", 
+                              "3 predictors", 
+                              "4 predictors \n(fitted model)"))+
+  scale_fill_discrete(labels = c("pred_cv" = "error base on cross-validation", 
+                                 "pred_training" = "error base on training set"))+
+  scale_color_discrete(labels = c("pred_cv" = "error base on cross-validation", 
+                                  "pred_training" = "error base on training set"))+
+  annotate("text", 
+           label = 
+             "↓4-predictor model does \nnot have CI since it only \nhas one type of combination", 
            x = 3.9, y = 0.24, color = "red")+
   geom_point(aes(x=4, y= 0.22), shape = 1, size = 10, color = "red")
   
@@ -486,7 +502,11 @@ fixed.predictor <- c("family.quality:sex",
                     "in.class.performance")
 
 # The variables not used in final model
-not.used.predictor <- c("sex", "famsize", "studytime", "famrel", "Dalc", "Walc", "G1", "G2", "G3", "alc_use", "high_use", "family.quality", "social", "probability", "prediction", "random.guess", "prediction.guess", "goout")
+not.used.predictor <- c("sex", "famsize", "studytime", "famrel", "Dalc", 
+                        "Walc", "G1", "G2", "G3", "alc_use", "high_use", 
+                        "family.quality", "social", "probability", 
+                        "prediction", "random.guess", "prediction.guess", 
+                        "goout")
 
 #The set of free predictor pool
 free.predictor<- setdiff(names(alc), fixed.predictor)
@@ -512,7 +532,9 @@ for(i in 1:15){
   for(j in 1:ss){
     rn <- round(runif(1,min = 1, max = choose(23,i)), 0)
     sample.comb <- combinations[,rn]
-    formula.text <- paste("high_use ~ family.quality:sex + social:sex + off.class.performance + in.class.performance+", paste(sample.comb, collapse = "+"))
+    formula.text <- paste(
+      "high_use ~ family.quality:sex + social:sex + off.class.performance + in.class.performance+", 
+      paste(sample.comb, collapse = "+"))
     model <- glm(formula.text, data = alc, family = "binomial")
     cv <- cv.glm(data = alc, cost = loss_func, glmfit = model, K =10)
     ct.error[1,j] <- cv$delta[1]
@@ -558,23 +580,36 @@ all.error <- all.error %>%
 all.error %>% ggplot(aes(x = factor(predictor_number), y = mean, group = tag)) +
   geom_line()+
   geom_point()+
-  geom_ribbon(aes(ymin = mean-1.96*sd/sqrt(rowSums(!is.na(select(all.error,V1:V100)))), 
-                  ymax = mean+1.96*sd/sqrt(rowSums(!is.na(select(all.error,V1:V100)))),  
+  geom_ribbon(aes(ymin = 
+                    mean-1.96*sd/sqrt(rowSums(!is.na(select(all.error,V1:V100)))), 
+                  ymax = 
+                    mean+1.96*sd/sqrt(rowSums(!is.na(select(all.error,V1:V100)))),  
                   fill = tag), alpha =0.25,
                 position = position_dodge(0.05))+
-  guides(fill = guide_legend(title = "Training/Cross-validation", title.position = "top"),
-         color = guide_legend(title = "Training/Cross-validation", title.position = "top"))+
+  guides(fill = guide_legend(title = "Training/Cross-validation", 
+                             title.position = "top"),
+         color = guide_legend(title = "Training/Cross-validation", 
+                              title.position = "top"))+
   theme_bw()+
-  theme(legend.position = c(0.2,0.15), axis.text.x = element_text(size=12),
-        panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  labs(x =  "Number of random predictors added to final model(4 predictors)", y = "Prediction Error",
-       title="Trends of training/validation error rates of final model plus \ndifferent number of random predictors")+
-  scale_fill_discrete(labels = c("pred_cv" = "error base on cross-validation", "pred_training" = "error base on training set"))+
-  scale_color_discrete(labels = c("pred_cv" = "error base on cross-validation", "pred_training" = "error base on training set"))+
+  theme(legend.position = c(0.2,0.15), 
+        axis.text.x = element_text(size=12),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank()) +
+  labs(x =  "Number of random predictors added to final model(4 predictors)", 
+       y = "Prediction Error",
+       title="Trends of training&validation error rates of final model plus \ndifferent number of random predictors")+
+  scale_fill_discrete(labels = c("pred_cv" = "error base on cross-validation", 
+                                 "pred_training" = "error base on training set"))+
+  scale_color_discrete(labels = c("pred_cv" = "error base on cross-validation", 
+                                  "pred_training" = "error base on training set"))+
   geom_line(aes(y = 0.22), color = "coral", size = 0.2, alpha = 0.8)+
   geom_line(aes(y = 0.21), color = "cyan3", size = 0.2, alpha =1)+ 
- annotate("text", label = "↓Error rate of final model base on cross validation", x = 11, y = 0.22, vjust = -0.5)+ 
- annotate("text", label = "↓Error rate of final model base on training dataset", x = 11, y = 0.21, vjust = -0.5)
+ annotate("text", 
+          label = "↓Error rate of final model base on cross validation", 
+          x = 11, y = 0.22, vjust = -0.5)+ 
+ annotate("text", 
+          label = "↓Error rate of final model base on training dataset", 
+          x = 11, y = 0.21, vjust = -0.5)
   
 ```
 

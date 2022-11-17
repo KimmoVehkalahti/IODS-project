@@ -6,10 +6,13 @@ output:
     fig_caption: yes
     theme: flatly
     highlight: haddock
-    toc: true
+    toc: yes
     toc_depth: 3
-    toc_float: true
-    number_section: false
+    toc_float: yes
+    number_section: no
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
 bibliography: citations.bib
 ---
 
