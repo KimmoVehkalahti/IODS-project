@@ -470,7 +470,7 @@ all.error %>% ggplot(aes(x = factor(predictor_number), y = mean, group = tag), c
 
 According to the plot, the prediction error of our 4-predictor final model is low comparing to the mean prediction errors of the possible combinations of either of the 1-,2-, and 3- predictor models. However, this goodness is only statistically significant comparing to 1- predictor models.(falls with 95%ci of 2- and 3- predictor models). This might be due to the possible combinations of 4 predictors is very small in number, resulting in large error ranges. 
 
-# Supplementary: some inspiration from the super bous task (This is doing for practicing, not part of assignment Chapter 3)
+# Supplementary of Chapter 3: some inspiration from the super bous task (This is doing for practicing, not part of assignment Chapter 3)
 
 Inspired by the bonus task, where different <4 number of predictors' influence on prediction error was observed, I started to get interested in how different number of random combinations of predictors added to the final model would affect the error. There are almost 30 variables that were not used in the final model. Twenty-three of them do not have direct relationship with the entered predictors, and hence they were selected to be a free predictor pool. One to 15 different predictors were randomly selected from the pool, each with 100 random repetitions (if all possible combinations of the number of predictors <100, then all possible combination will be used), resulting in 1423 models. The error rate base on training dataset and 10 fold cross validation were computed and ploted in a line chart. 95% confidence interval for each number of added predictors were also calculated and visualized.
 

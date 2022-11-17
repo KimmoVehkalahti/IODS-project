@@ -26,7 +26,7 @@ knitr::opts_chunk$set(echo = TRUE)
 date()
 
 ```
-# **Chapter 1 Start me up**
+# **Chapter 1: Start me up**
 # 1. Thoughts about the course
 
 ## 1.1 My feeling about the course
