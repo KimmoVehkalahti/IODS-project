@@ -3,13 +3,14 @@ title: "IODS course project"
 author: "Rong Guang"
 output:
   html_document:
-    theme: cosmo
+    fig_caption: yes
+    theme: flatly
+    highlight: haddock
     toc: true
-    toc_depth: 2
-    fig_caption: true
-    fig_width: 6
-    fig_height: 4
-    bibliography: citations.bib
+    toc_depth: 3
+    toc_float: true
+    number_section: false
+bibliography: citations.bib
 ---
 
 ***

@@ -14,7 +14,8 @@ output:
     toc_depth: 3
     toc_float: true
     number_section: false
-    bibliography: citations.bib
+bibliography: citations.bib
+    
 ---
 
 # Chapter 3 Logistic regression
@@ -444,7 +445,7 @@ all.error
 #the error ribbon is 95% confidence interval
 #4 predictors (the fitted model) do now have a error range because there is only one combination
 all.error %>% ggplot(aes(x = factor(predictor_number), y = mean, group = tag), color = tag) +
-  geom_line()+
+  geom_line(aes(color = tag))+
   geom_point()+
   geom_ribbon(aes(ymin = mean-1.96*sd/sqrt(rowSums(!is.na(select(all.error,V1:V6)))), 
                   ymax = mean+1.96*sd/sqrt(rowSums(!is.na(select(all.error,V1:V6)))),  
@@ -461,9 +462,13 @@ all.error %>% ggplot(aes(x = factor(predictor_number), y = mean, group = tag), c
   scale_x_discrete(labels = c("1 predictor", "2 predictors", "3 predictors", "4 predictors \n(fitted model)"))+
   scale_fill_discrete(labels = c("pred_cv" = "error base on cross-validation", "pred_training" = "error base on training set"))+
   scale_color_discrete(labels = c("pred_cv" = "error base on cross-validation", "pred_training" = "error base on training set"))+
-  annotate("text", label = "↓4-predictor model does \nnot have CI since it only \nhas one type of combination", x = 3.9, y = 0.24)
+  annotate("text", label = "↓4-predictor model does \nnot have CI since it only \nhas one type of combination", 
+           x = 3.9, y = 0.24, color = "red")+
+  geom_point(aes(x=4, y= 0.22), shape = 1, size = 10, color = "red")
   
 ```
+
+According to the plot, the prediction error of our 4-predictor final model is low comparing to the mean prediction errors of the possible combinations of either of the 1-,2-, and 3- predictor models. However, this goodness is only statistically significant comparing to 1- predictor models.(falls with 95%ci of 2- and 3- predictor models). This might be due to the possible combinations of 4 predictors is very small in number, resulting in large error ranges. 
 
 # Supplementary: some inspiration from the super bous task (This is doing for practicing, not part of assignment Chapter 3)
 
@@ -544,7 +549,7 @@ all.error <- all.error %>%
          sd = apply(.[,1:100], 1, function(x)sd(x, na.rm=T)))
 ```
 
-**Plotting*
+**Plotting**
 
 ```{r}
 #plot all.error
@@ -573,6 +578,9 @@ all.error %>% ggplot(aes(x = factor(predictor_number), y = mean, group = tag)) +
   
 ```
 
+It is found in the plot that the prediction error rate of the 4-predictor final model by cross validation is always lower than the mean prediction error (and their lower ends of confidence interval) of the final model plus 1 to 15 randomly selected predictors, indicating the goodness of our final model.
+
+It is also interesting to observe that the more predictors introduced to the model, the error rate by training data set keeps decreasing, indicating more predictors produce better models. However, the results of error rate by cross validation show an opposite effect, where the error rates generally increase with more predictors (though some flucutations are present). Put together, it can be infered that measuring model error rates using training data set itself would lead to over-estimation of the model goodness when more predictors enter the model. 
 
 ******
 **Reference**
