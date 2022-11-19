@@ -1,0 +1,293 @@
+---
+title: "IODS"
+subtitle: "Assignment 3"
+
+author: "Rong Guang"
+date: "16/11/2022"
+
+output: 
+  html_document:
+    fig_caption: yes
+    theme: flatly
+    highlight: haddock
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    number_section: false
+bibliography: citations.bib
+    
+---
+
+# **Chapter 3: Logistic regression**
+
+# 1 Create a new R Markdown file and save it as an empty file named ‘chapter4.Rmd’. Then include the file as a child file in your ‘index.Rmd’ file.
+
+
+## 1.1  Create a new R Markdown file and save it as an empty file named ‘chapter4.Rmd’
+
+Done!
+
+## 1.2 include the file as a child file in your ‘index.Rmd’ file.
+
+Done!
+
+# 2 Load the Boston data from the MASS package. Explore the structure and the dimensions of the data and describe the dataset briefly, assuming the reader has no previous knowledge of it.
+
+## 2.1 Load the Boston data from the MASS package.
+
+```{r}
+# access the MASS package
+library(MASS)
+
+# load the data
+data("Boston")
+
+# pass Boston to another object for easy typing
+bos <- Boston
+```
+
+
+## 2.2 Explore the structure and the dimensions of the data  
+
+```{r}
+library(tidyverse)
+#explore structure
+str(bos)
+
+#explore dimensions
+dim(bos)
+
+#generate a codebook
+# string is copy from dataset introduction
+codebook <- data.frame(variable = "CRIM - per capita crime rate by town/ZN - proportion of residential land zoned for lots over 25,000 sq.ft./INDUS - proportion of non-retail business acres per town./CHAS - Charles River dummy variable (1 if tract bounds river; 0 otherwise)/NOX - nitric oxides concentration (parts per 10 million)/RM - average number of rooms per dwelling/AGE - proportion of owner-occupied units built prior to 1940/DIS - weighted distances to five Boston employment centres/RAD - index of accessibility to radial highways/TAX - full-value property-tax rate per $10,000/PTRATIO - pupil-teacher ratio by town/B - 1000(Bk-0.63)^2 where Bk is the proportion of blacks by town/LSTAT - % lower status of the population/MEDV - Median value of owner-occupied homes in $1000's") 
+
+codebook <- codebook %>% 
+  separate_rows(variable, sep = "/") %>%  # "/" is the delimiter for rows
+  separate(variable, sep = " - ",      #" - " is the delimiter for variables
+           into = c("name", "description"),  # names of sparated variables
+           remove = T)  #remove old column
+#check codebook
+library(DT)
+codebook %>% datatable 
+```
+
+The data set has 506 observations of 14 variables. Variable CHAS is a dummy variable where 1 means the the place having tract that bounds river, and 0 means otherwise. It needs to be converted to a factor.
+
+```{r}
+bos <- bos %>% mutate(chas = chas %>% 
+                        factor() %>% 
+                        fct_recode("With tracts that bonds river" = "1",
+                                   "Otherwise" = "0")
+                        )
+```
+
+## 2.3 describe the dataset
+
+Each of the 506 rows in the dataset describes a Boston suburb or town, and it has 14 columns with information such as average number of rooms per dwelling, pupil-teacher ratio, and per capita crime rate. The last row describes the median price of owner-occupied homes.
+
+# 3 Show a graphical overview of the data and show summaries of the variables in the data. Describe and interpret the outputs, commenting on the distributions of the variables and the relationships between them. 
+
+
+
+
+## 3.1 Show a graphical overview of the data
+
+```{r, fig.height = 8}
+library(GGally)
+library(ggplot2)
+
+ggpairs(bos, 
+        lower = list(
+          continuous = wrap ("points", size = 0.5, color = "blue", size = 0.5),
+          combo = wrap("facethist", bins = 20)),
+        col = 1:7)
+
+```
+
+```{r, fig.height = 8}
+ggpairs(bos, 
+        lower = list(
+          continuous = wrap ("points", size = 0.5, color = "blue", size = 0.5)),
+        col = 8:14)
+```
+## 3.2 Show summaries of the variables in the data. 
+
+```{r}
+library(finalfit)
+#summarise the coninuous data
+ff_glimpse(bos)$Continuous %>% datatable
+# summarise the categorical data
+ff_glimpse(bos)$Categorical %>% datatable
+```
+
+```{r}
+bos %>% ggplot(aes(x= crim)) +
+  geom_boxplot()
+```
+
+
+## 3.3 Describe and interpret the outputs, commenting on the distributions of the variables and the relationships between them. 
+
+### 3.3.1 interpreting continuous variables
+
+There are 13 continuous variables in the dataset. The crime rate of the town was 0.3(0.1~3.7)%; the proportion of a town's residential land zoned for lots over 25,000 sq.ft. was 0 (0~12.5)%; the proportion of non-retail business acres per town was 9.7(5.2~18.1)%; the nitric oxides concentration was 0.5(0.4~0.6) parts per 10 million; the average number of rooms per dwelling was 6.3±0.7 rooms; the proportion of owner-occupied units built prior to 1940 was 77.5(45.0~94.1)%; the weighted distances to five Boston employment centres was 3.2 (2.1~5.2) kilometers; the index of accessibility to radial highways was 5(4~24) units of accessibility; the full-value property-tax rate was $330(279~666) per \$10,000; the pupil-teacher ratio by town was 19.1(17.4~20.2); the Black proportion of population after taking the formula of 1000(Bk-0.63)^2 was 391.4(375.4~396.2); the proportion of population that is lower status was 11.4(6.9~17.0)%; the median value of owner-occupied homes was \$21.2(17~25)*1000. 
+### 3.3.2 interpreting categorical variable
+
+35(6.9%) towns have tracts that bonds Charles River. 
+
+### 3.3.3 commenting on the relationships between variables
+
+to be supplemented.
+
+# 4 Standardize the dataset and print out summaries of the scaled data. How did the variables change? Create a categorical variable of the crime rate in the Boston dataset (from the scaled crime rate). Use the quantiles as the break points in the categorical variable. Drop the old crime rate variable from the dataset. Divide the dataset to train and test sets, so that 80% of the data belongs to the train set.
+
+## 4.1 Standardize the dataset and print out summaries of the scaled data
+
+```{r}
+library(MASS)
+bos.s <- as.data.frame(scale(bos[-4])) # there is no need to scale categorical data, so it was held out for scaling
+bos.s$chas <- bos$chas # add categorical variable back for further analysis
+```
+
+
+## 4.2 How did the variables change?
+
+```{r}
+ff_glimpse(bos.s)$Con %>% datatable
+```
+
+All the numeric variables after scaling had a mean of 0 and most of variables' values ranged from -4 and 4, only except for variables crim, which had very large number of outliers.  
+
+## 4.3 Create a categorical variable of the crime rate in the Boston dataset (from the scaled crime rate)
+
+## 4.4 Use the quantiles as the break points in the categorical variable and drop the old crime rate variable from the dataset.
+
+## 4.5 Divide the dataset to train and test sets, so that 80% of the data belongs to the train set
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
