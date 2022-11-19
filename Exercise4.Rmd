@@ -489,16 +489,15 @@ Hints:
 ```{r}
 # Work with the exercise in this chunk, step-by-step. Fix the R code!
 # Boston dataset is available
-glimpse(Boston)
+
 # k-means clustering
 km <- kmeans(Boston, centers = 4)
 km
 # plot the Boston dataset with clusters
 pairs(Boston[6:10], col = km$cluster)
-pairs(Boston[1:5], col = km$cluster)
-pairs(Boston[11:14], col = km$cluster)
 
-?pairs
+
+
 ```
 
 
@@ -532,13 +531,13 @@ Hints:
 - Numeric values do not need quotes in R
 
 ### R code
-```{r, fig.height=8}
+```{r}
 # Work with the exercise in this chunk, step-by-step. Fix the R code!
 # MASS, ggplot2 and Boston dataset are available
 set.seed(123)
 
 # determine the number of clusters
-k_max <- 10
+k_max <- "change me!"
 
 # calculate the total within sum of squares
 twcss <- sapply(1:k_max, function(k){kmeans(Boston, k)$tot.withinss})
@@ -547,51 +546,11 @@ twcss <- sapply(1:k_max, function(k){kmeans(Boston, k)$tot.withinss})
 qplot(x = 1:k_max, y = twcss, geom = 'line')
 
 # k-means clustering
-km <- kmeans(Boston, centers = 2)
-km
+km <- kmeans(Boston, centers = "change me!")
+
 # plot the Boston dataset with clusters
-pairs(Boston[1:8], col = km$cluster)
-pairs(Boston[9:14], col = km$cluster)
+pairs(Boston, col = km$cluster)
+
 ```
 
 **Well done!**
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
