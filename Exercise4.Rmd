@@ -408,7 +408,6 @@ lda.pred <- predict(lda.fit, newdata = test)
 lda.pred
 # cross tabulate the results
 table(correct = correct_classes, predicted = lda.pred$class)
-
 ```
 
 

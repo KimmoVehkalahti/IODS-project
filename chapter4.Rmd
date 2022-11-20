@@ -31,7 +31,7 @@ Done!
 
 Done!
 
-## 2 Load the Boston data from the MASS package. Explore the structure and the dimensions of the data and describe the dataset briefly, assuming the reader has no previous knowledge of it.
+## 2 Load the Boston data from the MASS package. Explore the structure and the dimensions of the data and describe the dataset briefly, assuming the reader has no previous knowledge of it. (0-1 points)
 
 ### 2.1 Load the Boston data from the MASS package.
 
@@ -86,10 +86,7 @@ bos <- bos %>% mutate(chas = chas %>%
 
 Each of the 506 rows in the dataset describes a Boston suburb or town, and it has 14 columns with information such as average number of rooms per dwelling, pupil-teacher ratio, and per capita crime rate. The last row describes the median price of owner-occupied homes.
 
-## 3 Show a graphical overview of the data and show summaries of the variables in the data. Describe and interpret the outputs, commenting on the distributions of the variables and the relationships between them. 
-
-
-
+## 3 Show a graphical overview of the data and show summaries of the variables in the data. Describe and interpret the outputs, commenting on the distributions of the variables and the relationships between them. (0-2 points)
 
 ### 3.1 Show a graphical overview of the data
 
@@ -156,7 +153,7 @@ There are 13 continuous variables in the dataset. The crime rate of the town was
 
 to be supplemented.
 
-## 4 Standardize the dataset and print out summaries of the scaled data. How did the variables change? Create a categorical variable of the crime rate in the Boston dataset (from the scaled crime rate). Use the quantiles as the break points in the categorical variable. Drop the old crime rate variable from the dataset. Divide the dataset to train and test sets, so that 80% of the data belongs to the train set.
+## 4 Standardize the dataset and print out summaries of the scaled data. How did the variables change? Create a categorical variable of the crime rate in the Boston dataset (from the scaled crime rate). Use the quantiles as the break points in the categorical variable. Drop the old crime rate variable from the dataset. Divide the dataset to train and test sets, so that 80% of the data belongs to the train set. (0-2 points)
 
 ### 4.1 Standardize the dataset and print out summaries of the scaled data
 
@@ -193,22 +190,59 @@ bos.s <- bos.s %>%
 bos.s <- bos.s %>% select(-crim)
 ```
 
-
 ## 4.4 Divide the dataset to train and test sets, so that 80% of the data belongs to the train set
 
+```{r}
+set.seed(2022)
+#generate an object containing the number of obs.
+n <-  nrow(bos.s)
+
+#
+ind <- sample(1:n, size = n*0.8)
+#
+train <- bos.s[ind,]
+test <- bos.s[-ind,]
+```
+
+## 5 Fit the linear discriminant analysis on the train set. Use the categorical crime rate as the target variable and all the other variables in the dataset as predictor variables. Draw the LDA (bi)plot (0-3 points)
+
+### 5.1 Fit the linear discriminant analysis on the train set (Use the categorical crime rate as the target variable and all the other variables in the dataset as predictor variables)
+
+```{r}
+lda.fit <- lda(crime ~ ., data = train) 
+```
+
+### 5.2 Draw the LDA (bi)plot
+
+```{r}
+# the function for lda biplot arrows
+lda.arrows <- function(x, myscale = 1, arrow_heads = 0.1, color = "red", tex = 0.75, choices = c(1,2)){
+  heads <- coef(x)
+  arrows(x0 = 0, y0 = 0, 
+         x1 = myscale * heads[,choices[1]], 
+         y1 = myscale * heads[,choices[2]], col=color, length = arrow_heads)
+  text(myscale * heads[,choices], labels = row.names(heads), 
+       cex = tex, col=color, pos=3)
+}
+# target classes as numeric
+classes <- as.numeric(factor(train$crime))
+#plot the lda results
+plot(lda.fit, dimen = 2,  pch = classes, col = classes)+
+lda.arrows(lda.fit, myscale = 4)
+
+```
+
+## 6 Save the crime categories from the test set and then remove the categorical crime variable from the test dataset. Then predict the classes with the LDA model on the test data. Cross tabulate the results with the crime categories from the test set. Comment on the results. (0-3 points)
+
+### 6.1 Save the crime categories from the test set and then remove the categorical crime variable from the test dataset
 
 
+### 6.2 predict the classes with the LDA model on the test data
+
+### 6.3 Cross tabulate the results with the crime categories from the test set.
 
 
-
-
-
-
-
-
-
-
-
+### 6.4 Comment on the results
 
 
 
