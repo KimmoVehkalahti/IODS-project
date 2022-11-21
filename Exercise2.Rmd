@@ -354,7 +354,6 @@ p
 
 ```
 
-
 ## 2.8 Exploring a data frame
 
 Often the most interesting feature of your data are the relationships between the variables. If there are only a handful of variables saved as columns in a data frame, it is possible to visualize all of these relationships neatly in a single plot.
