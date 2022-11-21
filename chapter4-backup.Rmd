@@ -1,0 +1,613 @@
+---
+  title: "IODS"
+subtitle: "Assignment 3"
+
+author: "Rong Guang"
+date: "16/11/2022"
+
+output: 
+  html_document:
+  fig_caption: yes
+theme: flatly
+highlight: haddock
+toc: true
+toc_depth: 3
+toc_float: true
+number_section: false
+bibliography: citations.bib
+
+---
+  
+  # **Chapter 3: Logistic regression**
+  
+  ## 1 Create a new R Markdown file and save it as an empty file named ‘chapter4.Rmd’. Then include the file as a child file in your ‘index.Rmd’ file.
+  
+  
+  ### 1.1  Create a new R Markdown file and save it as an empty file named ‘chapter4.Rmd’
+  
+  Done!
+  
+  ### 1.2 include the file as a child file in your ‘index.Rmd’ file.
+  
+  Done!
+  
+  ## 2 Load the Boston data from the MASS package. Explore the structure and the dimensions of the data and describe the dataset briefly, assuming the reader has no previous knowledge of it. (0-1 points)
+  
+  ### 2.1 Load the Boston data from the MASS package.
+  
+```{r}
+# access the MASS package
+library(MASS)
+
+# load the data
+data("Boston")
+
+# pass Boston to another object for easy typing
+bos <- Boston
+```
+
+
+### 2.2 Explore the structure and the dimensions of the data  
+
+```{r}
+library(tidyverse)
+#explore structure
+str(bos)
+
+#explore dimensions
+dim(bos)
+
+#generate a codebook
+# string is copy from dataset introduction
+codebook <- data.frame(variable = "CRIM - per capita crime rate by town/ZN - proportion of residential land zoned for lots over 25,000 sq.ft./INDUS - proportion of non-retail business acres per town./CHAS - Charles River dummy variable (1 if tract bounds river; 0 otherwise)/NOX - nitric oxides concentration (parts per 10 million)/RM - average number of rooms per dwelling/AGE - proportion of owner-occupied units built prior to 1940/DIS - weighted distances to five Boston employment centres/RAD - index of accessibility to radial highways/TAX - full-value property-tax rate per $10,000/PTRATIO - pupil-teacher ratio by town/B - 1000(Bk-0.63)^2 where Bk is the proportion of blacks by town/LSTAT - % lower status of the population/MEDV - Median value of owner-occupied homes in $1000's") 
+
+codebook <- codebook %>% 
+  separate_rows(variable, sep = "/") %>%  # "/" is the delimiter for rows
+  separate(variable, sep = " - ",      #" - " is the delimiter for variables
+           into = c("name", "description"),  # names of sparated variables
+           remove = T)  #remove old column
+#check codebook
+library(DT)
+codebook %>% datatable 
+```
+
+The data set has 506 observations of 14 variables. Variable CHAS is a dummy variable where 1 means the the place having tract that bounds river, and 0 means otherwise. It needs to be converted to a factor.
+
+```{r}
+bos <- bos %>% mutate(chas = chas %>% 
+                        factor() %>% 
+                        fct_recode("With tracts that bonds river" = "1",
+                                   "Otherwise" = "0")
+)
+```
+
+### 2.3 describe the dataset
+
+Each of the 506 rows in the dataset describes a Boston suburb or town, and it has 14 columns with information such as average number of rooms per dwelling, pupil-teacher ratio, and per capita crime rate. The last row describes the median price of owner-occupied homes.
+
+## 3 Show a graphical overview of the data and show summaries of the variables in the data. Describe and interpret the outputs, commenting on the distributions of the variables and the relationships between them. (0-2 points)
+
+### 3.1 Show a graphical overview of the data
+
+```{r, fig.height = 8, fig.width = 14, fig.cap = "Visualized relations of Boston dataset, variable #1~#7"}
+library(GGally)
+library(ggplot2)
+
+my.fun <- function(data, mapping, method = "lm",...){
+  p <- ggplot(data = data, mapping = mapping) +
+    geom_point(size = 0.3, color = "blue",...) +
+    geom_smooth(size = 0.5, color = "red", method = method)
+  p
+}
+
+names1 <- pull(codebook[1:7,], description)
+names1 <- sapply(names1, function(x) paste(strwrap(x, 35), collapse = "\n"))
+
+ggpairs(bos, 
+        lower = list(
+          continuous = my.fun,
+          combo = wrap("facethist", bins = 20)),
+        col = 1:7,
+        columnLabels = names1)
+```
+
+```{r, fig.height = 8, fig.width = 14,fig.cap = "Visualized relations of Boston dataset, variable #8~#14"}
+
+names2 <- pull(codebook[8:14,], description)
+names2 <- sapply(names1, function(x) paste(strwrap(x, 35), collapse = "\n"))
+
+ggpairs(bos, 
+        lower = list(
+          continuous = my.fun),
+        col = 8:14,
+        columnLabels = names2,
+)
+```
+### 3.2 Show summaries of the variables in the data. 
+
+```{r}
+library(finalfit)
+#summarise the coninuous data
+ff_glimpse(bos)$Continuous %>% datatable
+# summarise the categorical data
+ff_glimpse(bos)$Categorical %>% datatable
+```
+
+```{r}
+bos %>% ggplot(aes(x= crim)) +
+  geom_boxplot()
+```
+
+
+### 3.3 Describe and interpret the outputs, commenting on the distributions of the variables and the relationships between them. 
+
+#### 3.3.1 interpreting continuous variables
+
+There are 13 continuous variables in the dataset. The crime rate of the town was 0.3(0.1~3.7)%; the proportion of a town's residential land zoned for lots over 25,000 sq.ft. was 0 (0~12.5)%; the proportion of non-retail business acres per town was 9.7(5.2~18.1)%; the nitric oxides concentration was 0.5(0.4~0.6) parts per 10 million; the average number of rooms per dwelling was 6.3±0.7 rooms; the proportion of owner-occupied units built prior to 1940 was 77.5(45.0~94.1)%; the weighted distances to five Boston employment centres was 3.2 (2.1~5.2) kilometers; the index of accessibility to radial highways was 5(4~24) units of accessibility; the full-value property-tax rate was $330(279~666) per \$10,000; the pupil-teacher ratio by town was 19.1(17.4~20.2); the Black proportion of population after taking the formula of 1000(Bk-0.63)^2 was 391.4(375.4~396.2); the proportion of population that is lower status was 11.4(6.9~17.0)%; the median value of owner-occupied homes was \$21.2(17~25)*1000. 
+#### 3.3.2 interpreting categorical variable
+
+35(6.9%) towns have tracts that bonds Charles River. 
+
+#### 3.3.3 commenting on the relationships between variables
+
+to be supplemented.
+
+## 4 Standardize the dataset and print out summaries of the scaled data. How did the variables change? Create a categorical variable of the crime rate in the Boston dataset (from the scaled crime rate). Use the quantiles as the break points in the categorical variable. Drop the old crime rate variable from the dataset. Divide the dataset to train and test sets, so that 80% of the data belongs to the train set. (0-2 points)
+
+### 4.1 Standardize the dataset and print out summaries of the scaled data
+
+```{r}
+library(MASS)
+bos.s <- as.data.frame(scale(bos[-4])) # there is no need to scale categorical data, so it was held out for scaling
+
+# bos.s means Boston Scaled
+bos.s$chas <- bos$chas # add categorical variable back for further analysis
+```
+
+
+### 4.2 How did the variables change?
+
+```{r}
+ff_glimpse(bos.s)$Con %>% datatable
+```
+
+All the numeric variables after scaling had a mean of 0 and most of variables' values ranged from -4 and 4, only except for variables crim, which might be due to outliers.  
+
+## 4.3 Use the quantiles as the break points in the categorical variable and drop the old crime rate variable from the dataset.
+
+```{r}
+#generate cutoff according to quantile
+bins <- quantile(bos.s$crim)
+#generate a categorical variable "crime" and re-code it
+bos.s <- bos.s %>% 
+  mutate(crime = crim %>% 
+           cut(breaks = bins, include.lowest = TRUE) %>% 
+           fct_recode("Low" = "[-0.419,-0.411]",
+                     "MediumLow" = "(-0.411,-0.39]",
+                     "MediumHigh" = "(-0.39,0.00739]",
+                     "High" = "(0.00739,9.92]"))
+#remove crim
+bos.s <- bos.s %>% select(-crim)
+```
+
+## 4.4 Divide the dataset to train and test sets, so that 80% of the data belongs to the train set
+
+```{r}
+set.seed(2022)
+#generate an object containing the number of obs.
+n <-  nrow(bos.s)
+
+#
+ind <- sample(1:n, size = n*0.8)
+#
+train <- bos.s[ind,]
+test <- bos.s[-ind,]
+```
+
+## 5 Fit the linear discriminant analysis on the train set. Use the categorical crime rate as the target variable and all the other variables in the dataset as predictor variables. Draw the LDA (bi)plot (0-3 points)
+
+### 5.1 Fit the linear discriminant analysis on the train set (Use the categorical crime rate as the target variable and all the other variables in the dataset as predictor variables)
+
+```{r}
+lda.fit <- lda(crime ~ ., data = train) 
+```
+
+### 5.2 Draw the LDA (bi)plot
+
+```{r}
+# the function for lda biplot arrows
+lda.arrows <- function(x, myscale = 1, arrow_heads = 0.1, color = "red", tex = 0.75, choices = c(1,2)){
+  heads <- coef(x)
+  arrows(x0 = 0, y0 = 0, 
+         x1 = myscale * heads[,choices[1]], 
+         y1 = myscale * heads[,choices[2]], col=color, length = arrow_heads)
+  text(myscale * heads[,choices], labels = row.names(heads), 
+       cex = tex, col=color, pos=3)
+}
+# target classes as numeric
+classes <- as.numeric(factor(train$crime))
+#plot the lda results
+plot(lda.fit, dimen = 2,  pch = classes, col = classes)+
+lda.arrows(lda.fit, myscale = 4)
+
+```
+
+## 6 Save the crime categories from the test set and then remove the categorical crime variable from the test dataset. Then predict the classes with the LDA model on the test data. Cross tabulate the results with the crime categories from the test set. Comment on the results. (0-3 points)
+
+### 6.1 Save the crime categories from the test set and then remove the categorical crime variable from the test dataset
+
+```{r}
+#save
+classes.test <- test$crime
+#remove old
+test$crime <- NULL
+```
+
+
+### 6.2 predict the classes with the LDA model on the test data
+
+```{r}
+predicted.test <- predict(lda.fit, test)
+```
+
+
+### 6.3 Cross tabulate the results with the crime categories from the test set.
+
+```{r}
+a <- table(correct = classes.test, predicted = predicted.test$class )
+a
+correct.n = 0
+for (i in 1:4){
+  correct.c <- a[which(rownames(a) == colnames(a)[i]), i]
+  correct.n = correct.c+ correct.n
+} 
+correct.n/(nrow(bos.s)*0.2)
+
+```
+
+
+### 6.4 Comment on the results
+
+```{r}
+```
+
+## 7 Reload the Boston dataset and standardize the dataset (we did not do this in the Exercise Set, but you should scale the variables to get comparable distances). Calculate the distances between the observations. Run k-means algorithm on the dataset. Investigate what is the optimal number of clusters and run the algorithm again. Visualize the clusters (for example with the pairs() or ggpairs() functions, where the clusters are separated with colors) and interpret the results. (0-4 points)
+
+### 7.1 Reload the Boston dataset and standardize the dataset
+
+```{r}
+#reload Boston
+data("Boston")
+bos <- Boston
+#standardize the dataset
+bos.s <- scale(bos)
+```
+
+### 7.2 Calculate the distances between the observations
+
+```{r}
+
+dis_eu <- dist(bos)
+summary(dis_eu)
+```
+
+### 7.3 Run k-means algorithm on the dataset
+
+```{r}
+bos.s.km <- kmeans(bos.s, centers = 4) 
+```
+
+
+### 7.4 Investigate what is the optimal number of clusters
+
+```{r}
+set.seed(22)
+
+# determine the number of clusters
+k_max <- 10
+
+# calculate the total within sum of squares
+twcss <- sapply(1:k_max, function(k){kmeans(bos.s, k)$tot.withinss})
+
+# visualize the results
+qplot(x = 1:k_max, y = twcss, geom = 'line')
+```
+
+### 7.5  run the algorithm again
+
+```{r}
+km <- kmeans(bos.s, centers = 3)
+```
+
+
+### 7.6 Visualize the clusters 
+
+```{r}
+ggpairs(bos, 
+        lower = list(
+          continuous = wrap("points", size = 0.3, color = factor(km$cluster)),
+          combo = wrap("facethist", bins = 20)
+          ),
+        col = 1:7)
+```
+
+```{r}
+ggpairs(bos[8:14],
+        lower = list(
+          continuous = wrap("points", size = 0.3, color = factor(km$cluster),
+          combo = wrap("facethist", bins = 20))))
+```
+
+```{r}
+bos %>% ggplot(aes(x = black, y = medv, color = factor(km$cluster))) +
+  geom_point() +
+  geom_abline(intercept = 40, slope = -0.1)+
+  geom_abline(intercept = 30, slope = -0.01) +
+  stat_ellipse(geom = "polygon",
+               aes(fill = km$cluster),
+               alpha = 0.25)
+  
+```
+```{r}
+bos %>% ggplot(aes(x = nox, y = age, color = factor(km$cluster))) +
+  geom_point() +
+  geom_abline(intercept = 140, slope = -120)+
+  geom_abline(intercept = 230, slope = -250) +
+  stat_ellipse(geom = "polygon",
+               aes(fill = km$cluster),
+               alpha = 0.25)
+  
+```
+
+
+```{r}
+bos %>% ggplot(aes(x = dis, y = black, color = factor(km$cluster))) +
+  geom_point() +
+  geom_abline(intercept = 480, slope = -25)+
+  geom_abline(intercept = 400, slope = -80) +
+  stat_ellipse(geom = "polygon",
+               aes(fill = km$cluster),
+               alpha = 0.25)
+  
+```
+
+### 7.7 interpret the results
+
+## 8 Bonus: Perform k-means on the original Boston data with some reasonable number of clusters (> 2). Remember to standardize the dataset. Then perform LDA using the clusters as target classes. Include all the variables in the Boston data in the LDA model. Visualize the results with a biplot (include arrows representing the relationships of the original variables to the LDA solution). Interpret the results. Which variables are the most influential linear separators for the clusters? (0-2 points to compensate any loss of points from the above exercises)
+
+### 8.1 Perform k-means on the original Boston data with some reasonable number of clusters (> 2)(Remember to standardize the dataset)
+
+```{r}
+km <- kmeans(scale(Boston), centers = 3)
+```
+
+### 8.2  Perform LDA using the clusters as target classes.
+
+```{r}
+bos.s  <- as.data.frame(scale(Boston))
+bos.s$km.cluster <- km$cluster
+lda.km <- lda(km.cluster ~ ., data = bos.s) 
+```
+
+### 8.3 Visualize the results with a biplot (include arrows representing the relationships of the original variables to the LDA solution)
+
+```{r}
+# target classes as numeric
+classes <- as.numeric(factor(bos.s$km.cluster))
+#plot the lda results
+plot(lda.km, dimen = 2,  pch = classes, col = classes)+
+lda.arrows(lda.km, myscale = 4)
+
+```
+
+### 8.4 Interpret the results
+
+
+
+## 9 Super-Bonus: Run the code below for the (scaled) train data that you used to fit the LDA. The code creates a matrix product, which is a projection of the data points.
+
+```{r}
+bos.s <- as.data.frame(scale(Boston))
+#generate cutoff according to quantile
+bins <- quantile(bos.s$crim)
+#generate a categorical variable "crime" and re-code it
+bos.s <- bos.s %>% 
+  mutate(crime = crim %>% 
+           cut(breaks = bins, include.lowest = TRUE) %>% 
+           fct_recode("Low" = "[-0.419,-0.411]",
+                     "MediumLow" = "(-0.411,-0.39]",
+                     "MediumHigh" = "(-0.39,0.00739]",
+                     "High" = "(0.00739,9.92]"))
+#remove crim
+bos.s <- bos.s %>% select(-crim)
+set.seed(2022)
+#generate an object containing the number of obs.
+n <-  nrow(bos.s)
+#
+ind <- sample(1:n, size = n*0.8)
+#
+train <- bos.s[ind,]
+test <- bos.s[-ind,]
+
+```
+
+```{r}
+model_predictors <- dplyr::select(train, -crime)
+
+# check the dimensions
+dim(model_predictors)
+dim(lda.fit$scaling)
+str(model_predictors)
+str(lda.fit$scaling)
+# matrix multiplication
+matrix_product <- as.matrix(model_predictors) %*% lda.fit$scaling
+matrix_product <- as.data.frame(matrix_product)
+as.matrix(model_predictors) %*% lda.fit$scaling
+
+library(plotly)
+p1 <- plot_ly(x = matrix_product$LD1, 
+        y = matrix_product$LD2, 
+        z = matrix_product$LD3, 
+        type= 'scatter3d', 
+        mode='markers', 
+        color = train$crime,
+        size = 2)
+p1
+```
+
+```{r}
+model_predictors <- dplyr::select(train, -crime)
+train.km <- kmeans(model_predictors, centers = 3) 
+
+
+p2 <- plot_ly(x = matrix_product$LD1, 
+        y = matrix_product$LD2, 
+        z = matrix_product$LD3, 
+        type= 'scatter3d', 
+        mode='markers', 
+        color = factor(train.km$cluster),
+        size = 1.5)
+p2
+```
+
+```{r}
+train.crime3 <- train %>% 
+  mutate(crime3 = crime %>% 
+           fct_recode("Medium" = "MediumHigh" ,
+                      "Low" = "MediumLow",
+                      "High" = "High",
+                      "Low" = "Low"))
+
+km.cluster <- factor(train.km$cluster)
+levels(km.cluster) <- c("Medium","Low","High")
+
+accuracy.tab <- table(correct = train.crime3$crime3, kmean.pred = km.cluster)
+accuracy.tab
+
+
+correct.n = 0
+for (i in 1:3){
+  correct.c <- accuracy.tab[which(rownames(accuracy.tab) == colnames(accuracy.tab)[i]), i]
+  correct.n = correct.c+ correct.n
+} 
+correct.n
+correct.n/(nrow(bos.s)*0.8)
+```
+
+```{r}
+
+```
+
+
+
+```{r}
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
