@@ -33,6 +33,7 @@ alc <- read_csv(file = "data/alc.csv")
 ```{r}
 glimpse(alc)
 ```
+
 # 2 Hypothesis
 
 ## 2.1 introduction
