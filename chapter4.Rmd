@@ -94,9 +94,9 @@ Each of the 506 rows in the dataset describes a Boston suburb or town, and it ha
 library(GGally)
 library(ggplot2)
 
-my.fun <- function(data, mapping, method = "lm"){
+my.fun <- function(data, mapping, method = "lm",...){
   p <- ggplot(data = data, mapping = mapping) +
-    geom_point(size = 0.3, color = "blue") +
+    geom_point(size = 0.3, color = "blue",...) +
     geom_smooth(size = 0.5, color = "red", method = method)
   p
 }
@@ -160,6 +160,7 @@ to be supplemented.
 ```{r}
 library(MASS)
 bos.s <- as.data.frame(scale(bos[-4])) # there is no need to scale categorical data, so it was held out for scaling
+ 
                                        # bos.s means Boston Scaled
 bos.s$chas <- bos$chas # add categorical variable back for further analysis
 ```
@@ -236,13 +237,193 @@ lda.arrows(lda.fit, myscale = 4)
 
 ### 6.1 Save the crime categories from the test set and then remove the categorical crime variable from the test dataset
 
+```{r}
+#save
+classes.test <- test$crime
+#remove old
+test$crime <- NULL
+```
+
 
 ### 6.2 predict the classes with the LDA model on the test data
 
+```{r}
+predicted.test <- predict(lda.fit, test)
+```
+
+
 ### 6.3 Cross tabulate the results with the crime categories from the test set.
+
+```{r}
+a <- table(correct = classes.test, predicted = predicted.test$class )
+a
+correct.n = 0
+for (i in 1:4){
+  correct.c <- a[which(rownames(a) == colnames(a)[i]), i]
+  correct.n = correct.c+ correct.n
+} 
+correct.n/(nrow(bos.s)*0.2)
+
+```
 
 
 ### 6.4 Comment on the results
+
+```{r}
+```
+
+## 7 Reload the Boston dataset and standardize the dataset (we did not do this in the Exercise Set, but you should scale the variables to get comparable distances). Calculate the distances between the observations. Run k-means algorithm on the dataset. Investigate what is the optimal number of clusters and run the algorithm again. Visualize the clusters (for example with the pairs() or ggpairs() functions, where the clusters are separated with colors) and interpret the results. (0-4 points)
+
+### 7.1 Reload the Boston dataset and standardize the dataset
+
+```{r}
+#reload Boston
+data("Boston")
+bos <- Boston
+#standardize the dataset
+bos.s <- scale(bos)
+```
+
+### 7.2 Calculate the distances between the observations
+
+```{r}
+
+dis_eu <- dist(bos)
+summary(dis_eu)
+```
+
+### 7.3 Run k-means algorithm on the dataset
+
+```{r}
+bos.s.km <- kmeans(bos.s, centers = 4) 
+```
+
+
+### 7.4 Investigate what is the optimal number of clusters
+
+```{r}
+set.seed(22)
+
+# determine the number of clusters
+k_max <- 10
+
+# calculate the total within sum of squares
+twcss <- sapply(1:k_max, function(k){kmeans(bos.s, k)$tot.withinss})
+
+# visualize the results
+qplot(x = 1:k_max, y = twcss, geom = 'line')
+```
+
+### 7.5  run the algorithm again
+
+```{r}
+km <- kmeans(bos.s, centers = 3)
+```
+
+
+### 7.6 Visualize the clusters 
+
+```{r}
+ggpairs(bos, 
+        lower = list(
+          continuous = wrap("points", size = 0.3, color = factor(km$cluster)),
+          combo = wrap("facethist", bins = 20)
+          ),
+        col = 1:7)
+```
+
+```{r}
+ggpairs(bos[8:14],
+        lower = list(
+          continuous = wrap("points", size = 0.3, color = factor(km$cluster),
+          combo = wrap("facethist", bins = 20))))
+```
+
+```{r}
+bos %>% ggplot(aes(x = black, y = medv, color = factor(km$cluster))) +
+  geom_point() +
+  geom_abline(intercept = 40, slope = -0.1)+
+  geom_abline(intercept = 30, slope = -0.01) +
+  stat_ellipse(geom = "polygon",
+               aes(fill = km$cluster),
+               alpha = 0.25)
+  
+```
+```{r}
+bos %>% ggplot(aes(x = nox, y = age, color = factor(km$cluster))) +
+  geom_point() +
+  geom_abline(intercept = 140, slope = -120)+
+  geom_abline(intercept = 230, slope = -250) +
+  stat_ellipse(geom = "polygon",
+               aes(fill = km$cluster),
+               alpha = 0.25)
+  
+```
+
+
+```{r}
+bos %>% ggplot(aes(x = dis, y = black, color = factor(km$cluster))) +
+  geom_point() +
+  geom_abline(intercept = 480, slope = -25)+
+  geom_abline(intercept = 400, slope = -80) +
+  stat_ellipse(geom = "polygon",
+               aes(fill = km$cluster),
+               alpha = 0.25)
+  
+```
+
+### 7.7 interpret the results
+
+## 8 Bonus: Perform k-means on the original Boston data with some reasonable number of clusters (> 2). Remember to standardize the dataset. Then perform LDA using the clusters as target classes. Include all the variables in the Boston data in the LDA model. Visualize the results with a biplot (include arrows representing the relationships of the original variables to the LDA solution). Interpret the results. Which variables are the most influential linear separators for the clusters? (0-2 points to compensate any loss of points from the above exercises)
+
+### 8.1 Perform k-means on the original Boston data with some reasonable number of clusters (> 2)(Remember to standardize the dataset)
+
+```{r}
+km <- kmeans(scale(Boston), centers = 3)
+```
+
+### 8.2  Perform LDA using the clusters as target classes.
+
+```{r}
+bos.s  <- as.data.frame(scale(Boston))
+bos.s$km.cluster <- km$cluster
+lda.km <- lda(km.cluster ~ ., data = bos.s) 
+```
+
+### 8.3 Visualize the results with a biplot (include arrows representing the relationships of the original variables to the LDA solution)
+
+```{r}
+# target classes as numeric
+classes <- as.numeric(factor(bos.s$km.cluster))
+#plot the lda results
+plot(lda.km, dimen = 2,  pch = classes, col = classes)+
+lda.arrows(lda.km, myscale = 4)
+
+```
+
+### 8.4 Interpret the results
+
+
+
+## 9 Super-Bonus: Run the code below for the (scaled) train data that you used to fit the LDA. The code creates a matrix product, which is a projection of the data points.
+
+
+```{r}
+model_predictors <- dplyr::select(train, -crime)
+
+# check the dimensions
+dim(model_predictors)
+dim(lda.fit$scaling)
+str(model_predictors)
+str(lda.fit$scaling)
+# matrix multiplication
+matrix_product <- as.matrix(model_predictors) %*% lda.fit$scaling
+matrix_product <- as.data.frame(matrix_product)
+as.matrix(model_predictors) %*% lda.fit$scaling
+install.packages("plotly")
+library(plotly)
+matrix_product 
+```
 
 
 
