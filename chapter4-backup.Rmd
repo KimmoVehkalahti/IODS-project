@@ -402,8 +402,6 @@ lda.arrows(lda.km, myscale = 4)
 
 ### 8.4 Interpret the results
 
-
-
 ## 9 Super-Bonus: Run the code below for the (scaled) train data that you used to fit the LDA. The code creates a matrix product, which is a projection of the data points.
 
 ```{r}
@@ -495,7 +493,29 @@ correct.n/(nrow(bos.s)*0.8)
 ```
 
 ```{r}
+model_predictors <- dplyr::select(test, -crime)
+test.km <- kmeans(model_predictors, centers = 3) 
+test.crime3 <- test %>% 
+  mutate(crime3 = crime %>% 
+           fct_recode("Medium" = "MediumHigh" ,
+                      "Low" = "MediumLow",
+                      "High" = "High",
+                      "Low" = "Low"))
 
+km.cluster <- factor(test.km$cluster)
+levels(km.cluster) <- c("Medium","Low","High")
+
+accuracy.tab <- table(correct = test.crime3$crime3, kmean.pred = km.cluster)
+accuracy.tab
+
+
+correct.n = 0
+for (i in 1:3){
+  correct.c <- accuracy.tab[which(rownames(accuracy.tab) == colnames(accuracy.tab)[i]), i]
+  correct.n = correct.c+ correct.n
+} 
+correct.n
+correct.n/(nrow(bos.s)*0.2)
 ```
 
 
