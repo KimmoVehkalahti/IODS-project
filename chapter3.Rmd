@@ -44,7 +44,7 @@ Despite the health risk and public harm associated with heavy drinking, alcohol 
 
 College students typically spend a tremendous amount of time with their family members, emphasizing the influence of family quality on any type of habit acquisitions.  Evidence has shown family relationship quality is strongly correlated with early alcohol use [@Kelly2011; @Brody1993], and the effect is interactive with gender [@Kelly2011]. Since studying also comprises an important part of college life, it is important to evaluate how college life and alcohol use interact with each other. An 21 year follow-up of 3,478 Australian since they were child has found level of academic performance predicts their drinking problems, independently of a selected group of individual and family con-founders [@Hayatbakhsh2011]. College students start to build up their social networks. An increased exposure to social communications is reasonably expected among them, which might incur alcohol involvement. A survey has found typical social drinking contexts were associated with men's average daily number of drinks and frequency of drunkenness, indicating social communications, interacted with gender, might have influence on college students' alcohol usage[@Senchak1998].
 
-## 2.3 Hypothesis
+## 2.3 Proposing hypothesis
 
 According to the literature review, 4 potential early-life factors is identified to predict excessive alcohol usage among college students. They are *a.* family relationship quality (interactive with gender); *b.* school performance; *c.* social communication (interactive with gender). I herein proposed a 3-factor alcohol high-use model for college students and test it using a secondary data set collected for other purposes.
 
