@@ -397,7 +397,6 @@ classes <- as.numeric(factor(bos.s$km.cluster))
 #plot the lda results
 plot(lda.km, dimen = 2,  pch = classes, col = classes)+
 lda.arrows(lda.km, myscale = 4)
-
 ```
 
 ### 8.4 Interpret the results
