@@ -59,7 +59,7 @@ g1 <- ggplot(stu_alc2014, aes(x = high_use, y = freetime))
 g1 + geom_boxplot() + ylab("Freetime")
 
 ```
-General overview from the plot infers a greater association between high alcohol use and age and final grade. It would be interesting to fit this kind of model to see the relationship. Absences show some effect but on a lower scale and free time doesn't seem to have much effect on alcohol consumption
+General overview from the plot infers some association between high alcohol use and absence and also age (holds true). It would be interesting to fit this kind of model to see the relationship. Final grade and alcohol consumption shows some association but there appears to be some difference in their mean for true and false.Free time doesn't seem to have much effect on alcohol consumption.
 
 
 ## 3.4 Logistic regression 
@@ -69,7 +69,7 @@ General overview from the plot infers a greater association between high alcohol
 m1 <- glm(high_use ~ absences + G3 + age + freetime, data = stu_alc2014_2, family = "binomial")
 summary(m1)
 ```
-This seems to be an interesting outcome. Fitted model seem to contradict my above hypothesis based on box plot and distribution, absences and free time are actually most significant among other variable. Absence has the highest significance (p = 0.000249) and free time is significant with p = 0.001511. 
+This seems to be an interesting outcome. Fitted model seem to match my above hypothesis based on box plot and distribution for some variable, absences for instant is the most significant and free time is second most significant among other variable. Absence has the highest significance (p = 0.000249) and free time is significant with p = 0.001511. Final grade and age however doesn't have the same lever of significance as other two. Final grade has p = 0.05 which can be considered significant result but comparatively, two other variable stands out the most. 
 
 ## 3.5 Power of the model 
 
@@ -81,6 +81,8 @@ CI <- confint(m1) %>% exp
 #Print OR and CI 
 cbind(OR, CI)
 ```
+Coefficient and Confidence Interval: Looking at the coefficient, final grade has negative value suggesting an opposite association between higher alcohol consumption which makes sense because higher grade can result in lower alcohol consumption. absences, age and free time shows positive association with free time being the most cause of higher alcohol consumption followed by age and absences. This is also supported by the odds ratio and confidence interval for each tested variable.  
+The above hypothesis therefore holds true for most variable. It is quite obviously important to explore other variable to see effect of an additional variable on an outcome through multivariate analysis. 
 
 
 
