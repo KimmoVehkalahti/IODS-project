@@ -548,7 +548,6 @@ plot(my_model2, which = 6)
 
 ```
 
-
 ## 2.12 Making predictions
 
 Okay, so let's assume that we have a linear model which seems to fit our standards. What can we do with it?
@@ -601,8 +600,5 @@ predict(m, newdata = new_data)
 
 
 ```
-
-**Awesome work!**
-
 
 
