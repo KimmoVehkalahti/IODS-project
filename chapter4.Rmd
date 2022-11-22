@@ -3,9 +3,6 @@ title: "IODS"
 author: "Rong Guang"
 date: "22/11/2022"
 output:
-  pdf_document:
-    toc: yes
-    toc_depth: '3'
   html_document:
     fig_caption: yes
     theme: flatly
@@ -14,6 +11,9 @@ output:
     toc_depth: 3
     toc_float: yes
     number_section: no
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
 subtitle: Chapter 4
 bibliography: citations.bib
 ---
@@ -523,7 +523,7 @@ p2
 
 The LDA was trained according to a mathematical category of crime rates (quantiles), which has 4 categories. While k = 3 was adopted for the k-means clustering base on the size of within-cluster sum of square. Since LDA is a supervised technique, we know what are each categories represent, which are also labeled in the caption. K-means clustering is a unsupervised method and thus I do not know anything about the real-world representation of the 3 clusters identified before observing closely. 
 
-However, by observing the pictures together, it is interesting to find out that, cluster 3 from k-means nicely overlaps with High category from LDA. Also, cluster 2 from k-means roughly overlaps with Low and Medium low categories from LDA. As such, I will re-code categories from LDA according to this finding and see closely on how well results from k-means and LDA are consistent.
+However, by observing the pictures together, it is interesting to find out that, cluster 3 from k-means nicely overlaps with High category from LDA. Also, cluster 2 from k-means roughly overlaps with Low and Medium low categories from LDA. As such, I will re-code categories from LDA according to this finding and see closely how well results from k-means and LDA are consistent.
 
 #### 9.4.1 Recode categories from LDA into High, Medium and Low (old Low + Medium Low)
 
