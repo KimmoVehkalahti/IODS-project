@@ -390,7 +390,7 @@ ggpairs(bos, mapping = aes(fill=factor(km$cluster)),
         lower = list(
           continuous = my.fun.km
           ),
-        col = 8:14)
+        col = 8:14) 
 ```
 
 
