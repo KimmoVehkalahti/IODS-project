@@ -4,17 +4,17 @@
 #IODS Exercise set 3 - Logistic Regression
 #R-learning codes for Logistic Regression 
 
-#We will be working with two new data sets retrieved from the [UCI Machine Learning Repository]
+#We will be working with two new data sets retrieved from the UCI Machine Learning Repository
 #Resource for data base: https://archive.ics.uci.edu/ml/datasets.html
 #The data are from two identical questionnaires related to secondary school student alcohol consumption in Portugal
 
-#This script consists all the codes used during the data wrangling exercise
+#This script consists of all the codes used during the data wrangling exercise.
 
 # LET'S START !!! 
 
-#Two csv files has been downloaded in the course folder from the resource mention above. 
+#Two csv files has been downloaded in the course folder from the link in the description. 
 
-#Import data set into R 
+#Importing data set into R 
 
 math <- read.table("student-mat.csv", sep = ";", header = TRUE)
 por <- read.table("student-por.csv", sep = ";", header = TRUE)
@@ -27,15 +27,18 @@ dim(math)
 str(math)
 colnames(math)
 
+##395 observation of  33 variables
 
 ##data set por
 dim(por)
 str(por)
 colnames(por)
+## 649 observation of  33 variables
+
 
 # Lets join the two columns
 
-#But before that we set the columns not to use as identifier
+#But before that we set the columns not to be used as identifier
 free_cols <- c("failures", "paid", "absences", "G1", "G2", "G3")
 
 # Then set columns to be joined
@@ -50,8 +53,7 @@ dim(math_por)
 
 #370 rows and 39 columns
 
-#Removing the duplicated
-#now getting rid of duplicates
+#Removing the duplicates
 
 alc <- select(math_por, all_of(join_cols))
 
@@ -71,13 +73,16 @@ for(col_name in free_cols) {
   }
 }
 
-# glimpse at the new combined data
+# Lets see the data using "glimpse"
 glimpse(alc)
+
+#And dimention
 dim(alc)
-#Now data has 370 rows and 33 columns
+#Dataset now consists of 370 rows and 33 columns
 
 #Joining two data sets and making changes
-## calculating weekday and weekend average alcohol consumption and add column
+
+## calculating weekday and weekend average alcohol consumption and adding column
 alc <- mutate(alc, alc_use = (Dalc + Walc) / 2)
 
 ## adding a new column "high use" if consumption value is greater than 2
