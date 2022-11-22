@@ -18,22 +18,22 @@ bibliography: citations.bib
 
 ---
   
-  # **Chapter 3: Logistic regression**
+# **Chapter 3: Logistic regression**
   
-  ## 1 Create a new R Markdown file and save it as an empty file named ‘chapter4.Rmd’. Then include the file as a child file in your ‘index.Rmd’ file.
+## 1 Create a new R Markdown file and save it as an empty file named ‘chapter4.Rmd’. Then include the file as a child file in your ‘index.Rmd’ file.
   
   
-  ### 1.1  Create a new R Markdown file and save it as an empty file named ‘chapter4.Rmd’
-  
-  Done!
-  
-  ### 1.2 include the file as a child file in your ‘index.Rmd’ file.
+### 1.1  Create a new R Markdown file and save it as an empty file named ‘chapter4.Rmd’
   
   Done!
   
-  ## 2 Load the Boston data from the MASS package. Explore the structure and the dimensions of the data and describe the dataset briefly, assuming the reader has no previous knowledge of it. (0-1 points)
+### 1.2 include the file as a child file in your ‘index.Rmd’ file.
   
-  ### 2.1 Load the Boston data from the MASS package.
+  Done!
+  
+## 2 Load the Boston data from the MASS package. Explore the structure and the dimensions of the data and describe the dataset briefly, assuming the reader has no previous knowledge of it. (0-1 points)
+  
+### 2.1 Load the Boston data from the MASS package.
   
 ```{r}
 # access the MASS package
@@ -58,7 +58,7 @@ str(bos)
 dim(bos)
 
 #generate a codebook
-# string is copy from dataset introduction
+# this string is copy from dataset introduction
 codebook <- data.frame(variable = "CRIM - per capita crime rate by town/ZN - proportion of residential land zoned for lots over 25,000 sq.ft./INDUS - proportion of non-retail business acres per town./CHAS - Charles River dummy variable (1 if tract bounds river; 0 otherwise)/NOX - nitric oxides concentration (parts per 10 million)/RM - average number of rooms per dwelling/AGE - proportion of owner-occupied units built prior to 1940/DIS - weighted distances to five Boston employment centres/RAD - index of accessibility to radial highways/TAX - full-value property-tax rate per $10,000/PTRATIO - pupil-teacher ratio by town/B - 1000(Bk-0.63)^2 where Bk is the proportion of blacks by town/LSTAT - % lower status of the population/MEDV - Median value of owner-occupied homes in $1000's") 
 
 codebook <- codebook %>% 
@@ -71,13 +71,15 @@ library(DT)
 codebook %>% datatable 
 ```
 
-The data set has 506 observations of 14 variables. Variable CHAS is a dummy variable where 1 means the the place having tract that bounds river, and 0 means otherwise. It needs to be converted to a factor.
+The data set has 506 observations of 14 variables. Variable CHAS is a binary variable where 1 means the the place having tract that bounds river, and 0 means otherwise. It needs to be converted to a factor.
 
 ```{r}
-bos <- bos %>% mutate(chas = chas %>% 
-                        factor() %>% 
-                        fct_recode("With tracts that bonds river" = "1",
-                                   "Otherwise" = "0")
+bos <- bos %>% 
+  mutate(chas = chas %>%
+           factor() %>% 
+           fct_recode(
+             "With tracts that bonds river" = "1", #old value 1 to new label
+             "Otherwise" = "0") # old value 0 to new label
 )
 ```
 
