@@ -1,4 +1,85 @@
-# Week 3: Logistic regression 
 
-##Data wrangling exercise
-##Analysis
+## 3.0 Loading packages
+
+```{r}
+library("boot")
+library("readr")
+```
+
+## 3.1 Data wrangling
+
+Data wrangling completed using the UCI Machine Learning Repository (https://archive.ics.uci.edu/ml/datasets.html). csv files downloaded from the repository and final data set "alc.csv" has been exported into the project folder. Rcodes in the learning diary has been updated. 
+
+## 3.1 Creating new R Markdown file
+
+New Rmd file has been created with tittle "chapter3" and now saved in the project folder.
+
+## 3.2 Importing the data set and exploration
+
+```{r}
+library(tidyverse)
+stu_alc2014 <- read_csv("alc.csv" , show_col_types= FALSE)
+spec(stu_alc2014)
+
+#looking at the data
+dim(stu_alc2014)
+colnames(stu_alc2014)
+glimpse(stu_alc2014)
+```
+## 3.3 Choosing the variables 
+
+```{r}
+stu_alc2014_2 <- select(stu_alc2014, absences, G3, age, freetime, high_use)
+str(stu_alc2014_2)
+colnames(stu_alc2014_2)
+```
+In above data set we have 370 observations and 35 variables. These data set belong to a survey from questionnaire in two secondary school from Portugal in which different variables, demographics and socio-economic features measures students association with alcohol consumption. Here I choose 4 interesting variable that I think has greater influence in the level of alcohol consumption among these school kids. 
+My rationale behind choosing these variables is that certain age groups have higher access to alcohol, ages above 16 lets say can access alcohol easily than ages below 16 so I wish to see the relation here. Also free time activities and amount of free time influences alcohol consumption. Likewise final grade and absences can directly correlate with higher use. So I wish to test my model with these variables.
+
+## 3.4 Exploring and plotting the choosen variable
+
+```{r}
+#Let's explore the choose variables using box plots
+
+##Let's see for absences
+g1 <- ggplot(stu_alc2014, aes(x = high_use, y = absences))
+g1 + geom_boxplot() + ylab("Absences")
+
+##Let's see for G3(Final Grade)
+g1 <- ggplot(stu_alc2014, aes(x = high_use, y = G3))
+g1 + geom_boxplot() + ylab("Final Grade")
+
+##Let's see for age
+g1 <- ggplot(stu_alc2014, aes(x = high_use, y = age))
+g1 + geom_boxplot() + ylab("Age")
+
+##And for freetime
+g1 <- ggplot(stu_alc2014, aes(x = high_use, y = freetime))
+g1 + geom_boxplot() + ylab("Freetime")
+
+```
+General overview from the plot infers a greater association between high alcohol use and age and final grade. It would be interesting to fit this kind of model to see the relationship. Absences show some effect but on a lower scale and free time doesn't seem to have much effect on alcohol consumption
+
+
+## 3.4 Logistic regression 
+
+```{r}
+##Lets call this model-1 (m1) which explores 4 variable
+m1 <- glm(high_use ~ absences + G3 + age + freetime, data = stu_alc2014_2, family = "binomial")
+summary(m1)
+```
+This seems to be an interesting outcome. Fitted model seem to contradict my above hypothesis based on box plot and distribution, absences and free time are actually most significant among other variable. Absence has the highest significance (p = 0.000249) and free time is significant with p = 0.001511. 
+
+## 3.5 Power of the model 
+
+```{r}
+coef(m1)
+OR <- coef(m1) %>% exp
+CI <- confint(m1) %>% exp
+
+#Print OR and CI 
+cbind(OR, CI)
+```
+
+
+

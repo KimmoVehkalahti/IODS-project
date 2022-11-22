@@ -1,35 +1,9 @@
----
-title: "**Introduction to Open Data Science, Exercise Set 3**"
 
-subtitle: "**Logistic regression**"
-
-output: 
-  html_document:
-    theme: flatly
-    highlight: haddock
-    toc: true
-    toc_depth: 2
-    number_section: false
----
-
-
-This set consists of a few numbered exercises.
-Go to each exercise in turn and do as follows:
-
-1. Read the brief description of the exercise.
-2. Run the (possible) pre-exercise-code chunk.
-3. Follow the instructions to fix the R code!
-
-## 3.0 INSTALL THE REQUIRED PACKAGES FIRST!
-
-One or more extra packages (in addition to `tidyverse`) will be needed below.
+## 3.0 Installing packages
 
 ```{r}
-# Select (with mouse or arrow keys) the install.packages("...") and
-# run it (by Ctrl+Enter / Cmd+Enter):
-
-# install.packages("boot")
-# install.packages("readr")
+install.packages("boot")
+install.packages("readr")
 ```
 
 
