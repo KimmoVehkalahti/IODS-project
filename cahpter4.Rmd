@@ -18,7 +18,7 @@ bibliography: citations.bib
     
 ---
 
-# **Chapter 3: Logistic regression**
+# **Chapter 4: Clustering**
 
 ## 1 Create a new R Markdown file and save it as an empty file named ‘chapter4.Rmd’. Then include the file as a child file in your ‘index.Rmd’ file.
 
@@ -75,11 +75,13 @@ codebook %>% datatable
 The data set has 506 observations of 14 variables. Variable CHAS is a dummy variable where 1 means the the place having tract that bounds river, and 0 means otherwise. It needs to be converted to a factor.
 
 ```{r}
-bos <- bos %>% mutate(chas = chas %>% 
-                        factor() %>% 
-                        fct_recode("With tracts that bonds river" = "1",
-                                   "Otherwise" = "0")
-                        )
+bos <- bos %>% 
+  mutate(chas = chas %>%
+           factor() %>% 
+           fct_recode(
+             "With tracts that bonds river" = "1", #old value 1 to new label
+             "Otherwise" = "0") # old value 0 to new label
+)
 ```
 
 ### 2.3 describe the dataset
@@ -398,15 +400,37 @@ classes <- as.numeric(factor(bos.s$km.cluster))
 #plot the lda results
 plot(lda.km, dimen = 2,  pch = classes, col = classes)+
 lda.arrows(lda.km, myscale = 4)
- 
+
 ```
 
 ### 8.4 Interpret the results
 
-
-
 ## 9 Super-Bonus: Run the code below for the (scaled) train data that you used to fit the LDA. The code creates a matrix product, which is a projection of the data points.
 
+```{r}
+bos.s <- as.data.frame(scale(Boston))
+#generate cutoff according to quantile
+bins <- quantile(bos.s$crim)
+#generate a categorical variable "crime" and re-code it
+bos.s <- bos.s %>% 
+  mutate(crime = crim %>% 
+           cut(breaks = bins, include.lowest = TRUE) %>% 
+           fct_recode("Low" = "[-0.419,-0.411]",
+                     "MediumLow" = "(-0.411,-0.39]",
+                     "MediumHigh" = "(-0.39,0.00739]",
+                     "High" = "(0.00739,9.92]"))
+#remove crim
+bos.s <- bos.s %>% select(-crim)
+set.seed(2022)
+#generate an object containing the number of obs.
+n <-  nrow(bos.s)
+#
+ind <- sample(1:n, size = n*0.8)
+#
+train <- bos.s[ind,]
+test <- bos.s[-ind,]
+
+```
 
 ```{r}
 model_predictors <- dplyr::select(train, -crime)
@@ -420,11 +444,85 @@ str(lda.fit$scaling)
 matrix_product <- as.matrix(model_predictors) %*% lda.fit$scaling
 matrix_product <- as.data.frame(matrix_product)
 as.matrix(model_predictors) %*% lda.fit$scaling
-install.packages("plotly")
+
 library(plotly)
-matrix_product
-``` 
-  
+p1 <- plot_ly(x = matrix_product$LD1, 
+        y = matrix_product$LD2, 
+        z = matrix_product$LD3, 
+        type= 'scatter3d', 
+        mode='markers', 
+        color = train$crime,
+        size = 2)
+p1
+```
+
+```{r}
+model_predictors <- dplyr::select(train, -crime)
+train.km <- kmeans(model_predictors, centers = 3) 
+
+
+p2 <- plot_ly(x = matrix_product$LD1, 
+        y = matrix_product$LD2, 
+        z = matrix_product$LD3, 
+        type= 'scatter3d', 
+        mode='markers', 
+        color = factor(train.km$cluster),
+        size = 1.5)
+p2
+```
+
+```{r}
+train.crime3 <- train %>% 
+  mutate(crime3 = crime %>% 
+           fct_recode("Medium" = "MediumHigh" ,
+                      "Low" = "MediumLow",
+                      "High" = "High",
+                      "Low" = "Low"))
+
+km.cluster <- factor(train.km$cluster)
+levels(km.cluster) <- c("Medium","Low","High")
+
+accuracy.tab <- table(correct = train.crime3$crime3, kmean.pred = km.cluster)
+accuracy.tab
+
+
+correct.n = 0
+for (i in 1:3){
+  correct.c <- accuracy.tab[which(rownames(accuracy.tab) == colnames(accuracy.tab)[i]), i]
+  correct.n = correct.c+ correct.n
+} 
+correct.n
+correct.n/(nrow(bos.s)*0.8)
+```
+
+
+
+```{r}
+model_predictors <- dplyr::select(test, -crime)
+test.km <- kmeans(model_predictors, centers = 3) 
+test.crime3 <- test %>% 
+  mutate(crime3 = crime %>% 
+           fct_recode("Medium" = "MediumHigh" ,
+                      "Low" = "MediumLow",
+                      "High" = "High",
+                      "Low" = "Low"))
+
+km.cluster <- factor(test.km$cluster)
+levels(km.cluster) <- c("Medium","Low","High")
+
+accuracy.tab <- table(correct = test.crime3$crime3, kmean.pred = km.cluster)
+accuracy.tab
+
+
+correct.n = 0
+for (i in 1:3){
+  correct.c <- accuracy.tab[which(rownames(accuracy.tab) == colnames(accuracy.tab)[i]), i]
+  correct.n = correct.c+ correct.n
+} 
+correct.n
+correct.n/(nrow(bos.s)*0.2)
+```
+
 
 
 

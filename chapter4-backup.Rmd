@@ -91,7 +91,7 @@ Each of the 506 rows in the dataset describes a Boston suburb or town, and it ha
 
 ### 3.1 Show a graphical overview of the data
 
-```{r, fig.height = 8, fig.width = 14, fig.cap = "Visualized relations of Boston dataset, variable #1~#7"}
+```{r fig.cap="Visualized relations of Boston dataset, message=FALSE, warning=FALSE, paged.print=FALSE}
 library(GGally)
 library(ggplot2)
 
@@ -399,10 +399,7 @@ classes <- as.numeric(factor(bos.s$km.cluster))
 #plot the lda results
 plot(lda.km, dimen = 2,  pch = classes, col = classes)+
 lda.arrows(lda.km, myscale = 4)
-<<<<<<< HEAD:chapter4-backup.Rmd
-=======
- 
->>>>>>> 34dc6f7e8577140aa83b99a1383d8b910b4a830d:chapter4.Rmd
+
 ```
 
 ### 8.4 Interpret the results
@@ -448,7 +445,6 @@ matrix_product <- as.data.frame(matrix_product)
 as.matrix(model_predictors) %*% lda.fit$scaling
 
 library(plotly)
-<<<<<<< HEAD:chapter4-backup.Rmd
 p1 <- plot_ly(x = matrix_product$LD1, 
         y = matrix_product$LD2, 
         z = matrix_product$LD3, 
@@ -497,10 +493,8 @@ for (i in 1:3){
 correct.n
 correct.n/(nrow(bos.s)*0.8)
 ```
-=======
-matrix_product
-``` 
->>>>>>> 34dc6f7e8577140aa83b99a1383d8b910b4a830d:chapter4.Rmd
+
+
 
 ```{r}
 model_predictors <- dplyr::select(test, -crime)
@@ -527,14 +521,6 @@ for (i in 1:3){
 correct.n
 correct.n/(nrow(bos.s)*0.2)
 ```
-
-
-
-```{r}
-
-
-```
-
 
 
 
