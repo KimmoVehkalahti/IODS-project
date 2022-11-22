@@ -96,26 +96,38 @@ Each of the 506 rows in the dataset describes a Boston suburb or town, and it ha
 library(GGally)
 library(ggplot2)
 
-my.fun <- function(data, mapping, method = "lm",...){
-  p <- ggplot(data = data, mapping = mapping) +
-    geom_point(size = 0.3, color = "blue",...) +
-    geom_smooth(size = 0.5, color = "red", method = method)
-  p
+#define a function that allows me to fine-tune the matrix
+my.fun <- function(data, mapping, method = "lm",...){ #define arguments
+  p <- ggplot(data = data, mapping = mapping) + #pass arguments
+    geom_point(size = 0.3, 
+               color = "blue",...) + #define points size and color
+    geom_smooth(size = 0.5, 
+                color = "red", 
+                method = method) #define line size and color; define lm regression
+  p #print the results
 }
 
-names1 <- pull(codebook[1:7,], description)
-names1 <- sapply(names1, function(x) paste(strwrap(x, 35), collapse = "\n"))
+#the abbreviated variable names are not self-explanatory, set column and row
+#names to be the variable labels for better reading
+#this new object will be used in ggpairs function
+names1 <- pull(codebook[1:7,], description)  # extract row 1：7 of var description
+names1 <- sapply(names1,    #collapse the description into multiple lines
+                 function(x) paste(strwrap(x, 35),  # for better reading
+                                   collapse = "\n")) # "\n" calls for a new line
 
 ggpairs(bos, 
         lower = list(
           continuous = my.fun,
           combo = wrap("facethist", bins = 20)),
         col = 1:7,
-        columnLabels = names1)
+        columnLabels = names1) #define column labels as the names I just set
 ```
+
+Note that variable about crime rate is plagued with outliers.
 
 ```{r, fig.height = 8, fig.width = 14,fig.cap = "Visualized relations of Boston dataset, variable #8~#14"}
 
+#repeat what is done in the last chunk for variable 8~14
 names2 <- pull(codebook[8:14,], description)
 names2 <- sapply(names1, function(x) paste(strwrap(x, 35), collapse = "\n"))
 
@@ -126,19 +138,19 @@ ggpairs(bos,
         columnLabels = names2,
         )
 ```
+
 ### 3.2 Show summaries of the variables in the data. 
 
 ```{r}
 library(finalfit)
-#summarise the coninuous data
+#summarize the continuous data
 ff_glimpse(bos)$Continuous %>% datatable
-# summarise the categorical data
-ff_glimpse(bos)$Categorical %>% datatable
 ```
 
+
 ```{r}
-bos %>% ggplot(aes(x= crim)) +
-  geom_boxplot()
+# summarize the categorical data
+ff_glimpse(bos)$Categorical %>% datatable
 ```
 
 
@@ -153,7 +165,7 @@ There are 13 continuous variables in the dataset. The crime rate of the town was
 
 #### 3.3.3 commenting on the relationships between variables
 
-to be supplemented.
+Except for the one binary variable about tract that bonds river, each variable in our data set shows a >0.3 and/or <-0.3 correlation with at least one of the other variables. Some of them have correlation as high as 0.9. All of the correlation coefficients are significant (_p_<0.001). 
 
 ## 4 Standardize the dataset and print out summaries of the scaled data. How did the variables change? Create a categorical variable of the crime rate in the Boston dataset (from the scaled crime rate). Use the quantiles as the break points in the categorical variable. Drop the old crime rate variable from the dataset. Divide the dataset to train and test sets, so that 80% of the data belongs to the train set. (0-2 points)
 
@@ -161,10 +173,13 @@ to be supplemented.
 
 ```{r}
 library(MASS)
-bos.s <- as.data.frame(scale(bos[-4])) # there is no need to scale categorical data, so it was held out for scaling
- 
-                                       # bos.s means Boston Scaled
-bos.s$chas <- bos$chas # add categorical variable back for further analysis
+#binary variables with values as number will not influence the result of 
+#standardization and clustering, hence I will reload Boston without re-coding
+#binary variable. This is for easiness of matrix multiplication in the following
+#operations
+              
+bos <- Boston 
+bos.s <- as.data.frame(scale(bos))# bos.s means Boston Scaled
 ```
 
 
@@ -174,8 +189,7 @@ bos.s$chas <- bos$chas # add categorical variable back for further analysis
 ff_glimpse(bos.s)$Con %>% datatable
 ```
 
-All the numeric variables after scaling had a mean of 0 and most of variables' values ranged from -4 and 4, only except for variables crim, which might be due to outliers.  
-
+All the variables after scaling had a mean of 0 and most of variables' values ranged from -4 and 4, only except for variables crim (crime rate), which might be due to out-liers (corresponds to the finding from the correlation matrix).  
 ## 4.3 Use the quantiles as the break points in the categorical variable and drop the old crime rate variable from the dataset.
 
 ```{r}
@@ -196,13 +210,14 @@ bos.s <- bos.s %>% select(-crim)
 ## 4.4 Divide the dataset to train and test sets, so that 80% of the data belongs to the train set
 
 ```{r}
-set.seed(2022)
-#generate an object containing the number of obs.
+set.seed(2022) 
+#generate an object containing the number of observations in bos dataset
 n <-  nrow(bos.s)
 
-#
+#generate an object "ind", which contains a random selected set of the indexing 
+#of bos dataset, and the number of indexing takes up 80% of number of observations
 ind <- sample(1:n, size = n*0.8)
-#
+#generate train&test sets according to the random set of indexing number
 train <- bos.s[ind,]
 test <- bos.s[-ind,]
 ```
@@ -212,6 +227,7 @@ test <- bos.s[-ind,]
 ### 5.1 Fit the linear discriminant analysis on the train set (Use the categorical crime rate as the target variable and all the other variables in the dataset as predictor variables)
 
 ```{r}
+# fit an linear discriminant model on the train set, named as "lda.fit"
 lda.fit <- lda(crime ~ ., data = train) 
 ```
 
@@ -232,7 +248,6 @@ classes <- as.numeric(factor(train$crime))
 #plot the lda results
 plot(lda.fit, dimen = 2,  pch = classes, col = classes)+
 lda.arrows(lda.fit, myscale = 4)
-
 ```
 
 ## 6 Save the crime categories from the test set and then remove the categorical crime variable from the test dataset. Then predict the classes with the LDA model on the test data. Cross tabulate the results with the crime categories from the test set. Comment on the results. (0-3 points)
@@ -240,9 +255,9 @@ lda.arrows(lda.fit, myscale = 4)
 ### 6.1 Save the crime categories from the test set and then remove the categorical crime variable from the test dataset
 
 ```{r}
-#save
+#save crime into an object
 classes.test <- test$crime
-#remove old
+#remove crime
 test$crime <- NULL
 ```
 
@@ -257,22 +272,31 @@ predicted.test <- predict(lda.fit, test)
 ### 6.3 Cross tabulate the results with the crime categories from the test set.
 
 ```{r}
-a <- table(correct = classes.test, predicted = predicted.test$class )
-a
-correct.n = 0
-for (i in 1:4){
-  correct.c <- a[which(rownames(a) == colnames(a)[i]), i]
-  correct.n = correct.c+ correct.n
-} 
-correct.n/(nrow(bos.s)*0.2)
+#generate a table that evaluate the accuracy of model, and pass the table into
+#an object named "accuracy.tab"
+accuracy.tab <- table(correct = classes.test, predicted = predicted.test$class )
 
+#show the accuracy table
+accuracy.tab
+
+#ask R to identify the correct predictions and add them up
+correct.n = 0 # the number of correct predictions starting at 0
+for (i in 1:4){ #4 loops because we have 4 rows/columns
+  correct.c <- accuracy.tab[
+    which(rownames(accuracy.tab) == colnames(accuracy.tab)[i]), 
+    i] # if a cell has same row and column names, pass its value into "correct.c"
+  correct.n = correct.c+ correct.n # update the value of correct prediction
+}                                  # by adding "correct.c"
+
+# calculate the percent of correct predictions for test set
+correct.n/(nrow(bos.s)*0.2) #denominator is the number of obs. in test set
 ```
+
 
 
 ### 6.4 Comment on the results
 
-```{r}
-```
+Overall, 66.2% of the predictions are correct, showing not quite satisfactory predicting effect of our linear discriminant analysis. Observe the result closely, it is found that the for high and medium high crime rate regions, the analysis did the best predictions, with 90% (47/52) of accuracy. For Low and medium low regions, the predictive effect of our analysis decreased tremendously. This might be the result of *a.* the violation of the assumption of multivariate normality (but evidence showed even when this is violated, LDA also exhibited good accuracy); *b.* large number of out-liers in the dependent variable before re-coding (LDA is sensitive to out-liers); *c.* The small size of category Low in test set; *d.* better categorization strategy for dependent variable needed (the current categorization is only base on quantiles, which is lack of more evidence-based foundation).
 
 ## 7 Reload the Boston dataset and standardize the dataset (we did not do this in the Exercise Set, but you should scale the variables to get comparable distances). Calculate the distances between the observations. Run k-means algorithm on the dataset. Investigate what is the optimal number of clusters and run the algorithm again. Visualize the clusters (for example with the pairs() or ggpairs() functions, where the clusters are separated with colors) and interpret the results. (0-4 points)
 
@@ -283,14 +307,13 @@ correct.n/(nrow(bos.s)*0.2)
 data("Boston")
 bos <- Boston
 #standardize the dataset
-bos.s <- scale(bos)
+bos.s <- as.data.frame(scale(bos))
 ```
 
 ### 7.2 Calculate the distances between the observations
 
 ```{r}
-
-dis_eu <- dist(bos)
+dis_eu <- dist(bos.s)
 summary(dis_eu)
 ```
 
@@ -300,11 +323,11 @@ summary(dis_eu)
 bos.s.km <- kmeans(bos.s, centers = 4) 
 ```
 
-
 ### 7.4 Investigate what is the optimal number of clusters
 
 ```{r}
-set.seed(22)
+date()
+set.seed(22) #22 is the date I carried out the analysis
 
 # determine the number of clusters
 k_max <- 10
@@ -315,6 +338,7 @@ twcss <- sapply(1:k_max, function(k){kmeans(bos.s, k)$tot.withinss})
 # visualize the results
 qplot(x = 1:k_max, y = twcss, geom = 'line')
 ```
+There is a huge reduction in variation with K =3, but after that the variation does not go down as quickly.
 
 ### 7.5  run the algorithm again
 
