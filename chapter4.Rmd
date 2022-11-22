@@ -423,7 +423,7 @@ as.matrix(model_predictors) %*% lda.fit$scaling
 install.packages("plotly")
 library(plotly)
 matrix_product
-```
+``` 
 
 
 
