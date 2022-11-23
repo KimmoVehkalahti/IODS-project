@@ -54,11 +54,41 @@ In the data set, variables including gender, quality of family relationships ("f
 
 # 3 Data exploration
 
-## 3.1 exploring the association between faimly relationship quality and alcohol high-use
+## 3.1 The distribution of the chosen variables
+
+```{r}
+wrap.lab <- c("in-class performance (absences, smaller is better)", 
+                          "family relationship quality (famrel)",
+                          "social (goout)",
+                          "off-class performance (studytime)")
+names(wrap.lab) <- c("absences", "studytime", "famrel", "goout")
+
+alc %>% 
+  select(absences, studytime, famrel, goout) %>% 
+  pivot_longer(everything(), 
+               names_to = "variable", 
+               values_to = "value") %>% 
+  ggplot(aes(x = value))+
+  geom_bar(width =1, fill = "white", color = "black")+
+  facet_wrap(~variable, scales = "free", 
+             labeller = labeller(variable = wrap.lab))+
+  scale_fill_brewer(palette = "Greys") +
+  theme(panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "lightgrey"))+
+  labs(title = "Distribution of the interested variables",
+       x  = "Values of each variable",
+       y = "Frequency")
+```
+
+The distribution of in-class performance reflected by class absences is skewed to right with very long tail. This indicates that most students have full or almost full attendance of class, while a small number of students might be absent for quite a number of classes. Other three variables are semi-numeric ordinal obtained by item with Likert-marks, with labeling value ranging from 1 to 5. It is found most Finnish students tend to be very social, with more around 2/3 of them being at the high end the choices. For off-class performance reflected by study time, it is found that most Finnish students spend 2~10 hours a week studying. For family relationship quality, it is surprising to find only roughly 1/3 of the students having good or very good family relationship quality, and none of them believe they have excellent family relationship quality. 
+
+
+## 3.2 exploring the association between faimly relationship quality and alcohol high-use
 
    The variable "famrel" in original data set elicited quality of family relationships (numeric: from 1 - very bad to 5 - excellent). In the current analysis, it is selected as a candidate predictor for the model to reflect the same idea--quality of family relationship.
 
-### 3.1.1 numerically explore the association
+### 3.2.1 numerically explore the association
 
 ```{r}
 alc %>% count(high_use, famrel)
@@ -66,25 +96,28 @@ alc %>% count(high_use, famrel)
 
 It is found the absolute sample of participants with very bad (level 1)  and/or bad (level 2) family quality is very small in number (n = 8). Caution should be taken about the potential large error. 
 
-### 3.1.2 graphically explore the association
+### 3.2.2 graphically explore the association
 
 ```{r}
+#adapt the titles for each wrapped graph
 sex.labs <- c("Female", "Male")
 names(sex.labs) <- c("F", "M")
+
+#draw the bar plot
 p1 <- alc %>%
   ggplot(aes(x = factor(famrel), fill = high_use)) +
   geom_bar(position = "fill", color ="black") +
-  facet_wrap(~sex, 
-             labeller = labeller(sex = sex.labs)) +
+  facet_wrap(~sex,  #warp by sex
+             labeller = labeller(sex = sex.labs)) + #label each
   labs(x = "Family relationship quality (larger is better)", 
        y = "Proportion of high-user",
        title = 
          "Proportion of alcohol high-use by family relationship quality and sex")+
-  theme(legend.position = "bottom")+
-  guides(fill=guide_legend(title = "Alcohol high-use"))+
-  scale_fill_discrete(labels = c("FALSE" = "Non-high-user", 
-                                 "TRUE" = "high-user"))+
-  scale_fill_brewer(palette = "Greys")
+  theme(legend.position = "bottom")+ #adapt the legend position
+  guides(fill=guide_legend(title = "Alcohol high-use"))+ #define legend title
+  scale_fill_discrete(labels = c("FALSE" = "Non-high-user",  
+                                 "TRUE" = "high-user"))+ #define legend text
+  scale_fill_brewer(palette = "Greys") #define color theme
   
 p1
 ```
@@ -95,32 +128,39 @@ According to the bar plot of proportion, the hypothesis of using the current var
 
 To facilitate understanding, the variable's name will be changed to family.quality according to the hypothesis.
 
-### 3.1.3 re-code the variable of family relationship quality
+### 3.2.3 re-code the variable of family relationship quality
 
 ```{r}
 alc <- alc %>% 
-  mutate(family.quality = famrel)
+  mutate(family.quality = famrel) #create a new variable family.quality
+                                  #it has the same value with famrel
 ```
 
 
-## 3.2 exploring the association between school performance (absences) and alcohol high-use
+## 3.3 exploring the association between school performance (absences) and alcohol high-use
 
    The variable "studytime" in original data set captured participants' weekly study time (numeric: 1 - <2 hours, 2 - 2 to 5 hours, 3 - 5 to 10 hours, or 4 - >10 hours). The variable "absences" in original data set captured participants' number of school absences (numeric: from 0 to 93). It is presumed in the current analysis that they reflect off-class and in-class school performance, respectively, and hence they are selected as candidate predictors. 
 
-### 3.2.1 exploring the association between in-class performance and alcohol high-use
-### 3.2.1.1 numerically explore the association
+### 3.3.1 exploring the association between in-class performance and alcohol high-use
+### 3.3.1.1 numerically explore the association
 
 ```{r}
+library(DT)
 alc %>% group_by(high_use, sex) %>% 
   summarise(mean = mean(absences), 
             sd = sd(absences), 
-            sampleSize = n())
+            median = median(absences),
+            Q1 = quantile(absences, prob = 0.25),
+            Q3 = quantile(absences, prob = 0.75),
+            sampleSize = n()) %>% 
+  datatable() %>% 
+  formatRound(columns = c(3:4), digits = 2)
 ```
 
-From the table, it is found that the frequency of class absences differed greatly between alcohol high-users and non-high-users, indicating its validity in entering the model. 
+From the table, it is found that both the frequency and median(Q1,Q3) of class absences differed greatly between alcohol high-users and non-high-users, indicating its validity in entering the model. 
 
 
-### 3.2.1.2 graphically explore the association
+### 3.3.1.2 graphically explore the association
 
 ```{r}
 p2 <- alc %>%
@@ -141,7 +181,7 @@ p2
 
 The box plot showed similar information to the previous table. No noticeable difference in proportions of absences can be observed between genders, and hence their interaction would not be considered in fitting the model. 
 
-### 3.2.1.3 rename the variable
+### 3.3.1.3 rename the variable
 
 To facilitate understanding, the name of variable "absences" will be changed to in.class.performance according to the hypothesis of current study.
 
@@ -151,8 +191,8 @@ alc <- alc %>%
 ```
 
 
-### 3.2.2 exploring the association between off-class performance (study time) and alcohol high-use
-### 3.2.2.1 numerically explore the association
+### 3.3.2 exploring the association between off-class performance (study time) and alcohol high-use
+### 3.3.2.1 numerically explore the association
 
 ```{r}
 alc %>% count(high_use, studytime)
@@ -160,7 +200,7 @@ alc %>% count(high_use, studytime)
 
 From the table, it is found the sample of participants with long and very long (level 4 and 5) study time in alcohol high-user group is very small in number (n = 12). Caution should be taken about the potential large error. 
 
-### 3.2.2.2 graphically explore the association
+### 3.3.2.2 graphically explore the association
 
 ```{r}
 p3 <- alc %>%
@@ -185,7 +225,7 @@ According to the bar plot of proportion, it is found that with the increasing of
 
 To facilitate understanding, the name of variable "studytime" will be changed to off.class.performance according to the hypothesis.
 
-### 3.2.3 re-code the variable of study length
+### 3.3.3 re-code the variable of study length
 
 ```{r}
 alc <- alc %>% 
@@ -198,11 +238,11 @@ alc <- alc %>%
 ```
 
 
-## 3.3 exploring the association between social communication frequency and alcohol high-use
+## 3.4 exploring the association between social communication frequency and alcohol high-use
 
 The variable "goout" in original data set captured participants' frequency of going out with friends (numeric: from 1 - very low to 5 - very high). It is presumed in the current analysis that it reflects social involvement, and hence it is selected as a candidate predictor. 
 
-### 3.3.1 numerically explore the association
+### 3.4.1 numerically explore the association
 
 ```{r}
 alc %>% count(high_use, goout)
@@ -210,7 +250,7 @@ alc %>% count(high_use, goout)
 
 From the table, it is found the sample of participants having very low frequency of social communication (level 1) is small in number (n = 21). Caution should be taken about the potential large error. 
 
-### 3.3.2 graphically explore the association
+### 3.4.2 graphically explore the association
 
 ```{r}
 p4 <- alc %>%
@@ -218,11 +258,12 @@ p4 <- alc %>%
   geom_bar(position = "fill", color = "black") +
   facet_wrap(~sex, 
              labeller = labeller(sex = sex.labs)) +
-  labs(x = "Social Communication Freuency (larger is more frequent)", 
+  labs(x = "Social Communication Frequency (larger is more frequent)", 
        y = "Proportion of alcohol high-users",
        title = 
          "Proportion of social communication frequency ranges  by alcohol high-use and sex")+
-  theme(legend.position = "bottom")+
+  theme(legend.position = "bottom",
+        plot.title = element_text(size = 10))+
   guides(fill=guide_legend(title = "Alcohol high-use"))+
   scale_fill_discrete(labels = c("FALSE" = "Non-high-user", 
                                  "TRUE" = "high-user"))+
@@ -233,7 +274,7 @@ p4
 
 According to the bar plot, the proportion of alcohol high-users changed tremendously across different levels of social communication, indicating good validity of our model hypothesis about this variable. There is a clear borderline between social communication levels 1-3 and levels 4-5, though the difference is varied across genders. The levels are hence re-coded into two--Infrequent (original level 1-3) and Frequent (original level 4+5). Its interaction with sex will also be considered in fitting the model. This corresponds to the finding of previous evidence[@Senchak1998].
 
-### 3.2.3 re-code the variable of social communication
+### 3.4.3 re-code the variable of social communication
 
 ```{r}
 alc <- alc %>% 
