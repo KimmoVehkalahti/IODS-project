@@ -18,9 +18,15 @@ subtitle: Chapter 4
 bibliography: citations.bib
 ---
 
-# **Chapter 4: Clustering**
+# **Chapter 4: Clustering and classification**
 
-## 1 Create a new R Markdown file and save it as an empty file named ‘chapter4.Rmd’. Then include the file as a child file in your ‘index.Rmd’ file.
+I do not come up with any better way to arrange everything than follow the pathway of assignment requirement. I will report the analysis with each main section being one of the requirement and each subsection being a component of that requirement, consecutively. I hope this would also make your rating process easier.
+
+## 1 Assignment requirement #1
+
+Quoted from the assignment: 
+
+_"Create a new R Markdown file and save it as an empty file named ‘chapter4.Rmd’. Then include the file as a child file in your ‘index.Rmd’ file."_
 
 
 ### 1.1  Create a new R Markdown file and save it as an empty file named ‘chapter4.Rmd’
@@ -31,7 +37,11 @@ Done!
 
 Done!
 
-## 2 Load the Boston data from the MASS package. Explore the structure and the dimensions of the data and describe the dataset briefly, assuming the reader has no previous knowledge of it. (0-1 points)
+## 2  Assignment requirement #2
+
+Quoted from the assignment: 
+
+_"Load the Boston data from the MASS package. Explore the structure and the dimensions of the data and describe the dataset briefly, assuming the reader has no previous knowledge of it. *(0-1 points)*"_
 
 ### 2.1 Load the Boston data from the MASS package.
 
@@ -88,7 +98,11 @@ bos <- bos %>%
 
 Each of the 506 rows in the dataset describes a Boston suburb or town, and it has 14 columns with information such as average number of rooms per dwelling, pupil-teacher ratio, and per capita crime rate. The last row describes the median price of owner-occupied homes.
 
-## 3 Show a graphical overview of the data and show summaries of the variables in the data. Describe and interpret the outputs, commenting on the distributions of the variables and the relationships between them. (0-2 points)
+## 3 Assignment requirement #3
+
+Quoted from the assignment:
+
+_"Show a graphical overview of the data and show summaries of the variables in the data. Describe and interpret the outputs, commenting on the distributions of the variables and the relationships between them. *(0-2 points)*"_
 
 ### 3.1 Show a graphical overview of the data
 
@@ -167,7 +181,11 @@ There are 13 continuous variables in the dataset. The crime rate of the town was
 
 Except for the one binary variable about tract that bonds river, each variable in our data set shows a >0.3 and/or <-0.3 correlation with at least one of the other variables. Some of them have correlation as high as 0.9. All of the correlation coefficients are significant (_p_<0.001). 
 
-## 4 Standardize the dataset and print out summaries of the scaled data. How did the variables change? Create a categorical variable of the crime rate in the Boston dataset (from the scaled crime rate). Use the quantiles as the break points in the categorical variable. Drop the old crime rate variable from the dataset. Divide the dataset to train and test sets, so that 80% of the data belongs to the train set. (0-2 points)
+## 4 Assignment requirement #4
+
+Quoted from the assignment:
+
+_"Standardize the dataset and print out summaries of the scaled data. How did the variables change? Create a categorical variable of the crime rate in the Boston dataset (from the scaled crime rate). Use the quantiles as the break points in the categorical variable. Drop the old crime rate variable from the dataset. Divide the dataset to train and test sets, so that 80% of the data belongs to the train set. *(0-2 points)*"_
 
 ### 4.1 Standardize the dataset and print out summaries of the scaled data
 
@@ -222,7 +240,11 @@ train <- bos.s[ind,]
 test <- bos.s[-ind,]
 ```
 
-## 5 Fit the linear discriminant analysis on the train set. Use the categorical crime rate as the target variable and all the other variables in the dataset as predictor variables. Draw the LDA (bi)plot (0-3 points)
+## 5 Assignment requirement #5
+
+Quoted from the assignment:
+
+_"Fit the linear discriminant analysis on the train set. Use the categorical crime rate as the target variable and all the other variables in the dataset as predictor variables. Draw the LDA (bi)plot *(0-3 points)*"_
 
 ### 5.1 Fit the linear discriminant analysis on the train set (Use the categorical crime rate as the target variable and all the other variables in the dataset as predictor variables)
 
@@ -257,7 +279,11 @@ Biplot based on LD1  and LD2 was generated, see fig 5.2. The most of four cluste
 
 Based on arrows, varaibles lstat explained the most for cluster High. Contributions of variables to other clusters are not clear enough due to the heavy overlap.
 
-## 6 Save the crime categories from the test set and then remove the categorical crime variable from the test dataset. Then predict the classes with the LDA model on the test data. Cross tabulate the results with the crime categories from the test set. Comment on the results. (0-3 points)
+## 6 Assignment requirement #6
+
+Quoted from the assignment:
+
+_"Save the crime categories from the test set and then remove the categorical crime variable from the test dataset. Then predict the classes with the LDA model on the test data. Cross tabulate the results with the crime categories from the test set. Comment on the results. *(0-3 points)*"_
 
 ### 6.1 Save the crime categories from the test set and then remove the categorical crime variable from the test dataset
 
@@ -305,7 +331,11 @@ correct.n/(nrow(bos.s)*0.2) #denominator is the number of obs. in test set
 
 Overall, 66.2% of the predictions are correct, showing not quite satisfactory predicting effect of our linear discriminant analysis. Observe the result closely, it is found that the for high and medium high crime rate regions, the analysis did the best predictions, with 90% (47/52) of accuracy. For Low and medium low regions, the predictive effect of our analysis decreased tremendously. This might be the result of *a.* the violation of the assumption of multivariate normality (but evidence showed even when this is violated, LDA also exhibited good accuracy); *b.* large number of out-liers in the dependent variable before re-coding (LDA is sensitive to out-liers); *c.* The small size of category Low in test set; *d.* better categorization strategy for dependent variable needed (the current categorization is only base on quantiles, which is lack of more evidence-based foundation).
 
-## 7 Reload the Boston dataset and standardize the dataset (we did not do this in the Exercise Set, but you should scale the variables to get comparable distances). Calculate the distances between the observations. Run k-means algorithm on the dataset. Investigate what is the optimal number of clusters and run the algorithm again. Visualize the clusters (for example with the pairs() or ggpairs() functions, where the clusters are separated with colors) and interpret the results. (0-4 points)
+## 7 Assignment requirement #7
+
+Quoted from the assignment:
+
+_"Reload the Boston dataset and standardize the dataset (we did not do this in the Exercise Set, but you should scale the variables to get comparable distances). Calculate the distances between the observations. Run k-means algorithm on the dataset. Investigate what is the optimal number of clusters and run the algorithm again. Visualize the clusters (for example with the pairs() or ggpairs() functions, where the clusters are separated with colors) and interpret the results. *(0-4 points)*"_
 
 ### 7.1 Reload the Boston dataset and standardize the dataset
 
@@ -408,7 +438,11 @@ bos %>% ggplot(aes(x = dis, y = black, color = factor(km$cluster))) +
                alpha = 0.25)
 ```
 
-## 8 Bonus: Perform k-means on the original Boston data with some reasonable number of clusters (> 2). Remember to standardize the dataset. Then perform LDA using the clusters as target classes. Include all the variables in the Boston data in the LDA model. Visualize the results with a biplot (include arrows representing the relationships of the original variables to the LDA solution). Interpret the results. Which variables are the most influential linear separators for the clusters? (0-2 points to compensate any loss of points from the above exercises)
+## 8 Assignment requirement #2
+
+Quoted from the assignment:
+
+_"Bonus: Perform k-means on the original Boston data with some reasonable number of clusters (> 2). Remember to standardize the dataset. Then perform LDA using the clusters as target classes. Include all the variables in the Boston data in the LDA model. Visualize the results with a biplot (include arrows representing the relationships of the original variables to the LDA solution). Interpret the results. Which variables are the most influential linear separators for the clusters? *(0-2 points to compensate any loss of points from the above exercises)"*_
 
 ### 8.1 Perform k-means on the original Boston data with some reasonable number of clusters (> 2)(Remember to standardize the dataset)
 
@@ -443,7 +477,11 @@ Biplot based on LD1  and LD2 was generated, see fig 8.3. The three clusters sepa
 
 Based on arrows, variables rm, dis and crim explained more for cluster 1;  variables indus, rad, tax and nox explained more for cluster 2; and variables black, chas and ptratio explained more for clusters 3. Other variables' role in clustering was much weaker. 
 
-## 9 Super-Bonus: Run the code below for the (scaled) train data that you used to fit the LDA. The code creates a matrix product, which is a projection of the data points.  Install and access the plotly package. Create a 3D plot of the columns of the matrix product using the given code. Adjust the code: add argument color as a argument in the plot_ly() function. Set the color to be the crime classes of the train set. Draw another 3D plot where the color is defined by the clusters of the k-means. How do the plots differ? Are there any similarities? (0-3 points to compensate any loss of points from the above exercises)
+## 9 Assignment requirement #9
+
+Quoted from the assignment:
+
+_"Super-Bonus: Run the code below for the (scaled) train data that you used to fit the LDA. The code creates a matrix product, which is a projection of the data points.  Install and access the plotly package. Create a 3D plot of the columns of the matrix product using the given code. Adjust the code: add argument color as a argument in the plot_ly() function. Set the color to be the crime classes of the train set. Draw another 3D plot where the color is defined by the clusters of the k-means. How do the plots differ? Are there any similarities? *(0-3 points to compensate any loss of points from the above exercises)*"_
 
 ### 9.1 Run the code below for the (scaled) train data that you used to fit the LDA. The code creates a matrix product, which is a projection of the data points.
 
