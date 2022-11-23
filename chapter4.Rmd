@@ -208,7 +208,7 @@ ff_glimpse(bos.s)$Con %>% datatable
 ```
 
 All the variables after scaling had a mean of 0 and most of variables' values ranged from -4 and 4, only except for variables crim (crime rate), which might be due to out-liers (corresponds to the finding from the correlation matrix).  
-## 4.3 Use the quantiles as the break points in the categorical variable and drop the old crime rate variable from the dataset.
+### 4.3 Use the quantiles as the break points in the categorical variable and drop the old crime rate variable from the dataset.
 
 ```{r}
 #generate cutoff according to quantile
@@ -225,7 +225,7 @@ bos.s <- bos.s %>%
 bos.s <- bos.s %>% select(-crim)
 ```
 
-## 4.4 Divide the dataset to train and test sets, so that 80% of the data belongs to the train set
+### 4.4 Divide the dataset to train and test sets, so that 80% of the data belongs to the train set
 
 ```{r}
 set.seed(2022) 
