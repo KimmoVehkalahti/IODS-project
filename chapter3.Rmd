@@ -181,11 +181,7 @@ p2
 
 The box plot showed similar information to the previous table. No noticeable difference in proportions of absences can be observed between genders, and hence their interaction would not be considered in fitting the model. 
 
-<<<<<<< HEAD
-### 3.2.1.3 rename the variable
-=======
 ### 3.3.1.3 rename the variable
->>>>>>> 1af2bfba67c112e109cdfef34363dd2e85433156
 
 To facilitate understanding, the name of variable "absences" will be changed to in.class.performance according to the hypothesis of current study.
 
