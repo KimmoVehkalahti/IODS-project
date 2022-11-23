@@ -60,7 +60,6 @@ In the data set, variables including gender, quality of family relationships ("f
 
 ```{r}
 alc %>% count(high_use, famrel)
-?count
 ```
 
 It is found the absolute sample of participants with very bad (level 1)  and/or bad (level 2) family quality is very small in number (n = 8). Caution should be taken about the potential large error. 
@@ -140,7 +139,7 @@ p2
 
 The box plot showed similar information to the previous table. No noticeable difference in proportions of absences can be observed between genders, and hence their interaction would not be considered in fitting the model. 
 
-###3.2.1.3 rename the variable
+### 3.2.1.3 rename the variable
 
 To facilitate understanding, the name of variable "absences" will be changed to in.class.performance according to the hypothesis of current study.
 
@@ -287,7 +286,7 @@ ORCI <- cbind(OR,CI)
 print(ORCI, digits = 2)
 ```
 
-Our hypothesis that *a.* family relationship quality (interactive with gender); *b.* school performance; *c.* social communication (interactive with gender) could be predictors for alcohol high-use among college students is justified. According to the final model, comparing to participants who study less than 5 hours per week, those who study more than 5 hours have on average 0.55 times less odds to be an alcohol high-user. Participants who have one more time of absence from class will on average have 1.07 times more odds being an alcohol high-user. These findings about the predictive effect of academic performance on alcohol use is consistent with previous evidence[@Hayatbakhsh2011].For female college students, every one unit of family relationship quality increase would lead to 0.66 times less odds being alcohol high-user. For male students, every one unit of family relationship quality increase would lead to 0.71 times less odds being alcohol high-user. These indicate the predictive effects of family relationship on alcohol use are present and different across genders. This finding is consistent with previous evidence [@Kelly2011]. For female college students, comparing to students who do not have social involvement frequently, those who usually have social engagement have 2.77 times more odds of being alcohol high-users. For male students, this effect is also present but the effect size goes as high as 12.36 times more odds of being alcohol high-users. These indicate the predictive effects of social engagement on alcohol use are present and tremendously different across genders. This finding is consistent with previous evidence[@Senchak1998].
+Our hypothesis that *a.* family relationship quality (interactive with gender); *b.* school performance; *c.* social communication (interactive with gender) could be predictors for alcohol high-use among college students is justified. According to the final model, comparing to participants who study less than 5 hours per week, those who study more than 5 hours have on average 0.56 (95%CI: 0.31~1.02) times less odds to be an alcohol high-user (95%CI: 0.31~1.02). Participants who have one more time of absence from class will on average have 1.07 (95%CI: 1.03~1.13) times more odds being an alcohol high-user. These findings about the predictive effect of academic performance on alcohol use is consistent with previous evidence[@Hayatbakhsh2011].For female college students, every one unit of family relationship quality increase would lead to 0.67 (95%CI: 0.49~9.90) times less odds being alcohol high-user. For male students, every one unit of family relationship quality increase would lead to 0.71 (95%CI: 0.53~0.94) times less odds being alcohol high-user. These indicate the predictive effects of family relationship on alcohol use are present and different across genders. This finding is consistent with previous evidence [@Kelly2011]. For female college students, comparing to students who do not have social involvement frequently, those who usually have social engagement have 2.77 (95%CI: 12.36~5.84) times more odds of being alcohol high-users. For male students, this effect is also present but the effect size goes as high as 12.36 times more odds of being alcohol high-users. These indicate the predictive effects of social engagement on alcohol use are present and tremendously different across genders. This finding is consistent with previous evidence[@Senchak1998].
 
 ### 4.4.2 exploring predictions
 
@@ -301,12 +300,64 @@ alc <- alc %>%
 
 alc <- alc %>% 
   mutate(prediction = probability>0.5)
-table(high_use = alc$high_use, prediction = alc$prediction)
+
+high_use <- alc$high_use %>% 
+  factor(level = c("TRUE", "FALSE"))
+
+prediction <- alc$prediction %>% 
+  factor(level = c("TRUE", "FALSE"))
+
+accuracy.table <- table(high_use = high_use, prediction = prediction)%>%
+  addmargins
+accuracy.table 
 ```
 
-Among 259 participants who are not alcohol high-users, our model correctly predicts 236 (91%) of them. Among 111 participants who are alcohol high-users, our model correctly predicts 54 of them (49%) of them. In all, among the 370 predicts, 80(21.6%) were inaccurate. 
+```{r}
+#generate proportion of predictive performance
+table(high_use = high_use, prediction = prediction) %>% 
+  prop.table %>% 
+  addmargins %>% 
+  print(digits = 2)
+```
 
-### 4.4.2.2 scatter plot of the precition versus the actual values
+```{r}
+#generate a function that calculates some indicators for sensitivity and specificity
+my.fun <- function(array){
+  TP <- array[1,1] #true positive
+  FN <- array[1,2] #false negative
+  FP <- array[2,1] #false positive 
+  TN <- array[2,2] #true negative
+  PP <- array[3,1] #positive
+  PN <- array[3,2] #negative
+  P <- array[1,3] # positive
+  N <- array[2,3] # negative
+  PPV <- TP/PP #positive predictive value
+  FOR <- FN/PN #false omission rate
+  FDR <- FP/PP # false discovery rate
+  NPV <-  TN/PN # negative predictive value
+  TPR <- TP/P #true positive rate
+  FPR <- FP/N #false positive rate
+  FNR <- FN/P #false negative rate
+  TNR <- TN/N #true negative rate
+  a <- paste("Positive predictive value is", round(PPV,2))
+  b <- paste("False omission rate is", round(FOR,2))
+  c <- paste("False discovery rate is", round(FDR,2))
+  d <- paste("Negative predictive value is", round(NPV,2))
+  e <- paste("True positive rate is", round(TPR,2))
+  f <- paste("False positive rate is", round(FPR,2))
+  g <- paste("False negative rate is", round(FNR,2))
+  h <- paste("True negative rate is", round(TNR,2))
+  
+  output <- list(a,b,c,d,e,f,g,h)
+  return(output)
+}
+my.fun(accuracy.table)
+```
+
+
+Among 259 participants who are not alcohol high-users, our model correctly predicts 236 (91%) of them (True negative rate). Among 111 participants who are alcohol high-users, our model correctly predicts 54 of them (49%) of them (True positive rate). In all, among the 370 predicts, 80(21.6%) were inaccurate. 
+
+### 4.4.2.2 scatter plot of the prediction versus the actual values
 
 ```{r}
 library(dplyr); library(ggplot2)
@@ -327,12 +378,27 @@ p5
 random.guess <- runif(n= nrow(alc), min = 0, max = 1)
 alc <- alc %>% 
   mutate(random.guess = random.guess)
+
 alc <- alc %>% 
   mutate(prediction.guess = random.guess>0.5)
-table(high_use = alc$high_use, prediction = alc$prediction.guess)
+
+high_use = alc$high_use %>% 
+  factor(levels = c("TRUE", "FALSE"))
+
+prediction.guess = alc$prediction.guess %>% 
+  factor(levels = c("TRUE", "FALSE"))
+
+accuracy.tab.rand<- table(high_use = high_use, prediction = prediction.guess) %>% 
+  addmargins()
+
+accuracy.tab.rand  
 ```
 
-Among 259 participants who are not alcohol high-users, random guess correctly guesses 126 (49%) of them. Among 111 participants who are alcohol high-users, random guess correctly guesses 55 of them (49%) of them. In all, among the 370 predicts, 181(49%) were inaccurate. Our model shows a tremendously better overall performance than random guess. However, its effect on correctly predicting the alcohol high-users is roughly equal to random guess, indicating the model is better applied in predicting who is a non-alcohol-high-user.
+```{r}
+my.fun(accuracy.tab.rand)
+```
+
+Among 259 participants who are not alcohol high-users, random guess correctly guesses 126 (57%) of them. Among 111 participants who are alcohol high-users, random guess correctly guesses 55 of them (47%) of them. In all, among the 370 predicts, 181(49%) were inaccurate. Our model shows a tremendously better overall performance than random guess. However, its effect on correctly predicting the alcohol high-users is roughly equal to random guess, indicating the model is better applied in predicting who is a non-alcohol-high-user.
 
 ## 4.5 cross validation (Bonus)
 
@@ -487,9 +553,9 @@ all.error %>% ggplot(aes(x = factor(predictor_number), y = mean, group = tag), c
 
 According to the plot, the prediction error of our 4-predictor final model is low comparing to the mean prediction errors of the possible combinations of either of the 1-,2-, and 3- predictor models. However, this goodness is only statistically significant comparing to 1- predictor models.(falls with 95%ci of 2- and 3- predictor models). This might be due to the possible combinations of 4 predictors is very small in number, resulting in large error ranges. 
 
-# Supplementary of Chapter 3: some inspiration from the super bous task (This is doing for practicing, not part of assignment Chapter 3)
+# Super Bonus: Continued
 
-Inspired by the bonus task, where different <4 number of predictors' influence on prediction error was observed, I started to get interested in how different number of random combinations of predictors added to the final model would affect the error. There are almost 30 variables that were not used in the final model. Twenty-three of them do not have direct relationship with the entered predictors, and hence they were selected to be a free predictor pool. One to 15 different predictors were randomly selected from the pool, each with 100 random repetitions (if all possible combinations of the number of predictors <100, then all possible combination will be used), resulting in 1423 models. The error rate base on training dataset and 10 fold cross validation were computed and ploted in a line chart. 95% confidence interval for each number of added predictors were also calculated and visualized.
+Inspired by the bonus task, where different <4 number of predictors' influence on prediction error was observed, I started to get interested in how different number of random combinations of predictors added to the final model would affect the error. There are almost 30 variables that were not used in the final model. Twenty-three of them do not have direct relationship with the entered predictors, and hence they were selected to be a free predictor pool. One to 15 different predictors were randomly selected from the pool, each with 100 random repetitions (if all possible combinations of the number of predictors <100, then all possible combination will be used), resulting in 1423 models. The error rate base on training dataset and 10 fold cross validation were computed and plotted in a line chart. 95% confidence interval for each number of added predictors were also calculated and visualized.
 
 The reason why only 15 maximum added predictors will be used instead of all 23 predictors is because the current sample size could not faithfully support model with more than 19 predictors, according to a rule of thumb that for each predictor used in model, a sample of 20 is required. 
 
