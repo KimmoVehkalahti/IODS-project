@@ -276,7 +276,7 @@ Hint:
 # modified human, dplyr and the corrplot functions are available
 
 # remove the Country variable
-human_ <- select(human, -Country)
+human_ <- select(human, -Country) 
 
 # Access GGally
 library(GGally)
