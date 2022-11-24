@@ -1,0 +1,43 @@
+---
+title: "IODS"
+author: "Rong Guang"
+date: "22/11/2022"
+output:
+  html_document:
+    fig_caption: yes
+    theme: flatly
+    highlight: haddock
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+    number_section: no
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+subtitle: Chapter 4
+bibliography: citations.bib
+---
+
+# **Chapter 4: Dimensionality reduction technique**
+
+# 1 Data wrangling
+
+## 1.1 Mutate the data
+
+"Mutate the data: transform the Gross National Income (GNI) variable to numeric (using string manipulation). Note that the mutation of 'human' was NOT done in the Exercise Set. (1 point)"
+
+## 1.2 Exclude unneeded variables
+
+"Exclude unneeded variables: keep only the columns matching the following variable names (described in the meta file above):  "Country", "Edu2.FM", "Labo.FM", "Edu.Exp", "Life.Exp", "GNI", "Mat.Mor", "Ado.Birth", "Parli.F" (1 point)"
+
+## 1.3 Remove rows 
+
+"Remove all rows with missing values (1 point)"
+
+## 1.4 Remove observations 
+
+"Remove the observations which relate to regions instead of countries. (1 point)"
+
+## 1.5 Define row names
+
+"Define the row names of the data by the country names and remove the country name column from the data. The data should now have 155 observations and 8 variables. Save the human data in your data folder including the row names. You can overwrite your old ‘human’ data. (1 point)"
