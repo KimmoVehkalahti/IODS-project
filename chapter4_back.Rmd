@@ -435,7 +435,12 @@ bos %>% ggplot(aes(x = dis, y = black, color = factor(km$cluster))) +
   geom_abline(intercept = 400, slope = -80) +
   stat_ellipse(geom = "polygon",
                aes(fill = km$cluster),
-               alpha = 0.25)
+               alpha = 0.25)+
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank())+
+  labs(x = "Weighted distances to five Boston employment centres", y = "Proportion of blacks by town")
+
 ```
 
 ## 8 Assignment requirement #2
