@@ -494,7 +494,7 @@ mca <- MCA(tea_time, graph = FALSE)
 summary(mca)
 
 # visualize MCA
-plot("change me!", invisible=c("ind"), habillage = "quali", graph.type = "classic")
+plot(mca, invisible=c("ind"), habillage = "quali", graph.type = "classic")
 
 ```
 
