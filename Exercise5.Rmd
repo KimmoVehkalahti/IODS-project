@@ -331,8 +331,8 @@ Hint:
 human_std <- scale(human)
 
 # print out summaries of the standardized variables
-
-
+library(finalfit)
+ff_glimpse(human)
 # perform principal component analysis (with the SVD method)
 pca_human <- prcomp(human_std)
 
@@ -381,19 +381,19 @@ Hints:
 
 # create and print out a summary of pca_human
 s <- summary(pca_human)
-
-
+s$importance
+s
 # rounded percentanges of variance captured by each PC
 pca_pr <- round(1*s$importance[2, ], digits = 5)
 
 # print out the percentages of variance
 
-
+pca_pr
 # create object pc_lab to be used as axis labels
 paste0(names(pca_pr), " (", pca_pr, "%)")
 
 # draw a biplot
-biplot(pca_human, cex = c(0.8, 1), col = c("grey40", "deeppink2"), xlab = NA, ylab = NA)
+biplot(pca_human, cex = c(0.7, 1), col = c("grey40", "deeppink2"), xlab = NA, ylab = NA)
 
 
 ```
@@ -440,16 +440,18 @@ library(tidyr)
 keep_columns <- c("Tea", "How", "how", "sugar", "where", "lunch")
 
 # select the 'keep_columns' to create a new dataset
-tea_time <- select(tea, "change me!")
+tea_time <- select(tea, one_of(keep_columns))
 
 # look at the summaries and structure of the data
-
-
+glimpse(tea_time)
+str(tea_time)
 # visualize the dataset
 library(ggplot2)
 pivot_longer(tea_time, cols = everything()) %>% 
-  ggplot(aes(value)) + facet_wrap("name", scales = "free")
-
+  ggplot(aes(x = value)) + 
+  geom_bar()+
+  facet_wrap("name", scales = "free") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8))
 
 ```
 
@@ -467,7 +469,7 @@ pivot_longer(tea_time, cols = everything()) %>%
 
 tea_time <- read.table("https://raw.githubusercontent.com/KimmoVehkalahti/Helsinki-Open-Data-Science/master/datasets/tea_time.csv", 
                        sep = ",", header = T)
-library(FactoMineR)
+library(FactoMineR)#install.packages("FactoMineR")
 ```
 
 ### Instructions
@@ -486,10 +488,10 @@ Hint:
 
 # multiple correspondence analysis
 library(FactoMineR)
-mca <- MCA("change me!", graph = FALSE)
+mca <- MCA(tea_time, graph = FALSE)
 
 # summary of the model
-
+summary(mca)
 
 # visualize MCA
 plot("change me!", invisible=c("ind"), habillage = "quali", graph.type = "classic")
