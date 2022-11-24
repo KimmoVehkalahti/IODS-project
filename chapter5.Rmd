@@ -26,18 +26,117 @@ bibliography: citations.bib
 
 "Mutate the data: transform the Gross National Income (GNI) variable to numeric (using string manipulation). Note that the mutation of 'human' was NOT done in the Exercise Set. (1 point)"
 
+1.1.1 read the data-set
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+human <- read.table("https://raw.githubusercontent.com/KimmoVehkalahti/Helsinki-Open-Data-Science/master/datasets/human1.txt", 
+                    sep =",", header = T)
+```
+
+1.1.2 label the variables
+
+```{r}
+library(finalfit)
+library(labelled)
+hd <- read_csv("https://raw.githubusercontent.com/KimmoVehkalahti/Helsinki-Open-Data-Science/master/datasets/human_development.csv")
+gii <- read_csv("https://raw.githubusercontent.com/KimmoVehkalahti/Helsinki-Open-Data-Science/master/datasets/gender_inequality.csv", na = "..")
+names(hd);names(gii)
+hu.names <- rbind(data.frame(name = names(hd)), 
+                  data.frame(name =names(gii)),
+                  data.frame(name = 
+                               c(" ratio of Female and Male populations with secondary education in each country", 
+                                 " ratio of labor force participation of females and males in each country")))
+hu.names <- hu.names[-10,1]
+
+for(i in 1:19){
+  var_label(human[i]) <- hu.names[i]
+}
+library(DT)
+codebook <- ff_glimpse(human)$Con[1] 
+codebook %>% datatable
+```
+
+1.1.3 mutate
+
+```{r}
+library(stringr)
+str(human$GNI)
+human$GNI <- str_replace(human$GNI, pattern = ",", replace = "") %>% 
+  as.numeric
+str(human$GNI)
+```
+
 ## 1.2 Exclude unneeded variables
 
 "Exclude unneeded variables: keep only the columns matching the following variable names (described in the meta file above):  "Country", "Edu2.FM", "Labo.FM", "Edu.Exp", "Life.Exp", "GNI", "Mat.Mor", "Ado.Birth", "Parli.F" (1 point)"
+
+```{r}
+keep.var <- c("Country", "Edu2.FM", "Labo.FM", "Edu.Exp", "Life.Exp", "GNI", "Mat.Mor", "Ado.Birth", "Parli.F")
+
+human <- human %>% select(one_of(keep.var))
+
+human %>% names()
+```
 
 ## 1.3 Remove rows 
 
 "Remove all rows with missing values (1 point)"
 
+```{r}
+human.all <- human %>% filter(complete.cases(human))
+```
+
+
 ## 1.4 Remove observations 
 
 "Remove the observations which relate to regions instead of countries. (1 point)"
 
+```{r}
+last <- nrow(human.all) - 7
+# choose everything until the last 7 observations
+human.all <- human.all[1:last, ]
+
+```
+
+
 ## 1.5 Define row names
 
 "Define the row names of the data by the country names and remove the country name column from the data. The data should now have 155 observations and 8 variables. Save the human data in your data folder including the row names. You can overwrite your old ‘human’ data. (1 point)"
+
+```{r}
+#row names
+rownames(human.all) <- human.all$Country
+human.all$Country <- NULL
+dim(human.all)
+```
+
+# 2 Analysis
+
+## 2.1 Graphical overview
+
+"Show a graphical overview of the data and show summaries of the variables in the data. Describe and interpret the outputs, commenting on the distributions of the variables and the relationships between them. (0-3 points)"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
