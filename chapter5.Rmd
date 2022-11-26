@@ -513,7 +513,6 @@ tea
 ```{r, fig.width= 14, fig.height= 20}
 library(tidyverse)
 tea %>% dplyr::select(-age) %>% 
-  dplyr::select(1:35) %>% 
   pivot_longer(everything()) %>% 
   ggplot(aes(x = value, fill = value))+
   geom_bar(color = "black")+
@@ -540,6 +539,18 @@ scale_fill_brewer(palette = "Greys")
 
 
 ### 2.5.5 Multiple Correspondence Analysis on the data set
+
+```{r}
+tea.f <- tea %>% dplyr::select(-age)
+mca.tea <- MCA(tea.f, graph = FALSE)
+
+# summary of the model
+summary(mca)
+
+# visualize MCA
+plot(mca, invisible=c("ind"), habillage = "quali", graph.type = "classic")
+```
+
 
 ### 2.5.6 Interpret the results
 
