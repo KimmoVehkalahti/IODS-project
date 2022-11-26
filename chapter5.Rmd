@@ -537,13 +537,37 @@ tea %>% dplyr::select(-age) %>%
 scale_fill_brewer(palette = "Greys") 
 ```
 
+```{r, fig.width= 16}
+install.packages("vcd")
+library(vcd)
+
+# Initialize empty matrix to store coefficients
+empty_m <- matrix(ncol = length(df),
+            nrow = length(df),
+            dimnames = list(names(df), 
+                            names(df)))
+# Function that accepts matrix for coefficients and data and returns a correlation matrix
+calculate_cramer <- function(m, df) {
+ for (r in seq(nrow(m))){
+   for (c in seq(ncol(m))){
+     m[[r, c]] <- assocstats(table(df[[r]], df[[c]]))$cramer
+   }
+ }
+    return(m)
+}
+empty_m <- matrix(ncol = 35, nrow = 35)
+cor_matrix <- calculate_cramer(empty_m, tea.f)
+cor_matrix
+corrplot(cor_matrix)
+```
+
 
 ### 2.5.5 Multiple Correspondence Analysis on the data set
 
 ```{r}
 tea.f <- tea %>% dplyr::select(-age)
 mca.tea <- MCA(tea.f, graph = FALSE)
-
+?MCA
 # summary of the model
 summary(mca)
 
