@@ -48,16 +48,19 @@ names(hd);names(gii)
 hu.names <- rbind(data.frame(name = names(hd)), 
                   data.frame(name =names(gii)),
                   data.frame(name = 
-                               c(" ratio of Female and Male populations with secondary education in each country", 
-                                 " ratio of labor force participation of females and males in each country")))
-hu.names <- hu.names[-10,1]
+                               c("ratio of Female and Male populations with secondary education", 
+                                 "ratio of labor force participation of females and males")))
+hu.names <- hu.names[-10,1] #the 10th row is country that comes up 2nd times
 
 for(i in 1:19){
   var_label(human[i]) <- hu.names[i]
 }
+
 library(DT)
-codebook <- ff_glimpse(human)$Con[1] 
+codebook <- rbind(data.frame(ff_glimpse(human)$Con[1]), data.frame(ff_glimpse(human)$Categorical[1]))
+codebook$variable <- rownames(codebook)
 codebook %>% datatable
+
 ```
 
 1.1.3 mutate
@@ -77,7 +80,9 @@ str(human$GNI)
 ```{r}
 keep.var <- c("Country", "Edu2.FM", "Labo.FM", "Edu.Exp", "Life.Exp", "GNI", "Mat.Mor", "Ado.Birth", "Parli.F")
 
-human <- human %>% select(one_of(keep.var))
+codebook <- codebook %>% filter(rownames(codebook) %in% c("Edu2.FM", "Labo.FM", "Edu.Exp", "Life.Exp", "GNI", "Mat.Mor", "Ado.Birth", "Parli.F"))
+
+human <- human %>% dplyr::select(one_of(keep.var))
 
 human %>% names()
 ```
@@ -116,9 +121,447 @@ dim(human.all)
 
 # 2 Analysis
 
-## 2.1 Graphical overview
+## 2.1 Requirement 1
 
 "Show a graphical overview of the data and show summaries of the variables in the data. Describe and interpret the outputs, commenting on the distributions of the variables and the relationships between them. (0-3 points)"
+
+### 2.1.1 Show a graphical overview of the data
+
+```{r, fig.width =12}
+library(GGally)
+my.fun.smooth <- function(data, mapping, method = "lm"){
+  ggplot(data = data, mapping = mapping)+
+           geom_point(size = 0.3, color = "blue")+
+           geom_smooth(method = method, size = 0.3, color = "red")+
+           theme(panel.grid.major = element_blank(), 
+                 panel.grid.minor = element_blank(),
+                 panel.background = element_rect(fill = "#F0E442",
+                                                 color = "black"))
+} 
+
+my.fun.density <- function(data, mapping, ...) {
+
+    ggplot(data = data, mapping = mapping) +
+       geom_histogram(aes(y=..density..),
+                      color = "black", 
+                      fill = "white")+
+       geom_density(fill = "#FF6666", alpha = 0.25) +
+       theme(panel.grid.major = element_blank(), 
+             panel.grid.minor = element_blank(),
+             panel.background = element_rect(fill = "#9999CC",
+                                             color = "black"))
+} 
+
+
+
+
+ggpairs(human.all, 
+        lower = list(continuous = my.fun.smooth),
+        diag = list(continuous = my.fun.density),
+        title = "Fig. 2.1.1 Relationships between variables") +
+  theme (plot.title = element_text(size = 22,
+                                   face = "bold"))
+```
+
+```{r}
+library(corrplot)
+cor(human.all) %>% 
+  round(digits = 2) %>% 
+  datatable(caption = 
+              "Tab. 2.1.1 Correlation Coeeficients bewteen the variables")
+```
+
+### 2.1.2 Show summaries of the variables in the data
+
+#### 2.1.2.1 summarising the descriptive statistics
+
+```{r}
+library(finalfit)
+ff_glimpse(human.all)$Con %>% 
+  datatable (caption = "Tab. 2.1.2.1 Discriptive statistics for variables")
+```
+
+#### 2.1.2.1 Summarising the distributions
+
+```{r, fig.width=14}
+label.name <- paste(codebook$variable, paste("\n(",codebook$label,")"))
+names(label.name) <- c("Life.Exp",
+                  "Edu.Exp",
+                  "Mat.Mor",
+                  "Ado.Birth",
+                  "Parli.F",
+                  "Edu2.FM",
+                  "Labo.FM", 
+                  "GNI")
+
+human.all %>% 
+  pivot_longer(everything()) %>% 
+  ggplot(aes(x = value)) +
+  geom_histogram(aes(y = ..density..), 
+                 color = "black",
+                 fill = "#9999CC")+
+  geom_density(fill = "pink", alpha = 0.25)+
+  facet_wrap(~name, scales = "free", labeller = labeller(name = label.name)) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white",
+                                        color = "black"),
+        strip.background = element_rect(color = "black",
+                                        fill = "steelblue"),
+        strip.text = element_text(size =12, color = "white"),
+        axis.title.x = element_text(size = 20),
+        axis.title.y = element_text(size = 20),
+        plot.title = element_text(size = 26, face = "bold"))+
+  labs(title = "Fig. 2.1.2.1 Distribution of variables",
+       )
+```
+
+
+### 2.1.3 Describe and interpret the outputs
+
+```{r}
+```
+
+### 2.1.4 Commenting on the distributions of the variables and the relationships between them.
+
+```{r}
+```
+
+## 2.2 Requirement 2
+
+Perform principal component analysis (PCA) on the raw (non-standardized) human data. Show the variability captured by the principal components. Draw a biplot displaying the observations by the first two principal components (PC1 coordinate in x-axis, PC2 coordinate in y-axis), along with arrows representing the original variables.
+
+### 2.2.1 Perform principal component analysis (PCA) on the raw (non-standardized) human data
+
+PCA is performed on unstandardized dataset.
+
+```{r}
+# perform principal component analysis with 
+#results passing into pca.human
+pca.human <- prcomp(human.all)
+```
+
+
+### 2.2.2 Show the variability captured by the principal components
+
+#### 2.2.2.1 show variability numerically
+
+First, I checked the names of the lists of the pca results.
+
+```{r}
+names(pca.human)
+```
+
+By reading the help file, I get the idea that list "sdev" is the eignvalues of the components. Since variability captured by a component _vc_ using eignvalue _ev_ can be formulated as:
+
+$$
+vc =\frac{ev_{i}^{2}}{ \sum_{i=1}^{n}ev_{i}^{2}} 
+$$
+
+The variability captured by each component is hence calculated.
+
+```{r}
+eig <- pca.human$sdev^2
+for (i in 1:8){
+  a <- eig[i]/sum(eig)
+  b <- paste("PC", i , "captures", a*100, "% of varibility")
+  print(b)
+}
+```
+
+It is found that PC1 explains 99.99% of the variability of the data set. Other components' contribution in totality is less the 0.1%.
+
+Package FactoMineR calculates the variability captured automatically, I will try using it and see if my calculation replicates its. 
+
+```{r}
+library(FactoMineR)#install.packages("FactoMineR")
+eig.human <- get_eigenvalue(pca.human)
+eig.human[2]
+```
+
+They are same. PC1 explains 99.99% of the variability of the data set
+
+#### 2.2.2.2 show variability visually
+
+```{r}
+#explore the varai
+library(factoextra)#install.packages("factoextra")
+fviz_eig(pca.human)
+```
+
+#### 2.2.2.3 check the loading score numerically
+
+Although this is not required by the assignment, I feel it could be also interesting to check the proportion of each variable's contribution to each components (loading scores). This could shed light on the comparison between standardized and un-standardized datasets for PCA. By checking the help file of prcomp, I found it is easy to obtain these loading scores from the "rotation" list of PCA result
+
+```{r}
+#obtain loading scores of my PCA result and pass it into pca.human.ls
+pca.human.ls <- pca.human$rotation%>% data.frame
+#check the loading scores
+pca.human.ls
+#There are quite a number of extremely small numbers in each column. To get
+#a better reading experience, I passed the largest score in each column to an
+#object "largest.ls" and extracted their row names(the variable name), merging
+#into a dataframe
+largest.ls<- apply(pca.human.ls, 2, function(x)max(abs(x))) # largest scores
+name<- rownames(pca.human.ls)[apply(pca.human.ls, 2, which.max)] # row names
+data.frame(largest.ls = largest.ls, name =name) %>% datatable (caption = "Fig. 2.2.2.3 largest factor loading for each components") %>%  # data frame
+  formatRound(columns = 1, digits = 2) #round to increase readability
+```
+
+It is interesting to find out that each variable loads almost exclusively on one components (Six out of 8 variables have loading score on one unique component larger than 0.99).  
+
+### 2.2.3 Draw a biplot 
+
+Quoted from the requirement:
+"Draw a biplot Biplot displaying the observations by the first two principal components, along with arrows representing the original variables."
+
+```{r}
+# draw a biplot of the principal component representation and the original variables
+
+biplot(pca.human)
+
+
+```
+
+In the biplot, red texts stand for variables, while black texts for rows (countries). The position of GNI is far away from the origin (0,0) in the direction of x axis (PC1), indicating its strong contribution to PC1. Most of the countries clustered tightly around the origin (0,0), which points to the fact that they are not well-represented on the factor map. 
+
+I visualized another biplot using outside package. The graph will have different visual effect but same idea. 
+
+```{r}
+p1 <- fviz_pca_biplot(pca.human, repel = TRUE, ggtheme = theme_test(),
+               title = "Fig. 2.2.1 a PCA for unstandardized dataset")
+p1
+```
+
+The graph carrys idea that is same with the graph generated by base function.
+
+## 2.3 Requirment 3 
+
+Standardize the variables in the human data and repeat the above analysis. Interpret the results of both analysis (with and without standardizing). Are the results different? Why or why not? Include captions (brief descriptions) in your plots where you describe the results by using not just your variable names, but the actual phenomena they relate to. 
+
+### 2.3.1 Standardize the variables 
+
+```{r}
+human.all.scaled <- scale(human.all)
+```
+
+### 2.3.2 Repeat the above analysis
+
+#### 2.3.2.1 PCA
+```{r}
+spca.human <- prcomp(human.all.scaled)
+```
+
+#### 2.3.2.1 Check variability captured by each component
+
+```{r}
+eig <- spca.human$sdev^2
+for (i in 1:8){
+  a <- eig[i]/sum(eig)
+  b <- paste("PC", i , "captures", a*100, "% of varibility")
+  print(b)
+}
+```
+
+```{r}
+fviz_screeplot(spca.human, addlabel =T)
+```
+
+Interesting change happens. Thanks to scaling, the "scree" doesn't plummet this time. Comment will be given in section 2.3.3.
+
+#### 2.3.2.2 Check factor laodings of each variable on each component
+
+```{r}
+#obtain loading scores of my PCA result and pass it into pca.human.ls
+spca.human.ls <- spca.human$rotation%>% data.frame
+#check the loading scores
+spca.human.ls
+#There are quite a number of extremely small numbers in each column. To get
+#a better reading experience, I passed the largest score in each column to an
+#object "largest.ls" and extracted their row names(the variable name), merging
+#into a dataframe
+largest.ls<- apply(spca.human.ls, 2, function(x)max(abs(x))) # largest scores
+name<- rownames(spca.human.ls)[apply(spca.human.ls, 2, which.max)] # row names
+data.frame(largest.ls = largest.ls, name =name) %>% datatable %>%  # data frame
+  formatRound(columns = 1, digits = 2) #round to increase readability
+```
+
+Interesting change happens. The one-variable-to-one-component loading style has disappeared Comment will be given in section 2.3.3.
+
+#### 2.3.2.3 Biplot
+
+```{r}
+biplot(spca.human)
+```
+
+This time the texts representing both the rows and columns are scattered away from each other and more column text (in red) are visualized. 
+
+I visualized another biplot using outside package. The graph will have different visual effect but same idea. 
+
+```{r}
+p2 <- fviz_pca_biplot(spca.human, repel = TRUE, ggtheme = theme_test(),
+               title = "Fig. 2.2.1 a PCA for unstandardized dataset")
+p2
+```
+
+### 2.3.3 Interpret the results of both analysis
+
+Some interesting findings by looking at both analyses are:
+
+#### 2.3.3.1 Difference between PCA results with standardized and un-standardized data sets
+
+*a. Variability explained* 
+
+With un-standardized data set, PCA produced result showing PC1 explains 99.99% of the variability of the data set; other components' contribution in totality is less the 0.1%. With standardized data set, PC1 and PC2 together explains 69.8% of the variability of the data set, with the amount of variability explained falling gradually for the components following. 
+
+*b. Factor loading* 
+
+With un-standardized data set, PCA produced result showing each variable loads almost exclusively on one components (Six out of 8 variables have loading score on one unique component larger than 0.99). While this one-variable-to-one-component loading style has disappeared in results from standardized data set.
+
+*b. Biplot* 
+
+With un-standardized data set, most of the countries clustered tightly around the origin (0,0), which points to the fact that they are not well-represented on the factor map. Besides, only one variable GNI locates far away from the origin (0,0) in the direction of x axis (PC1), indicating its strong contribution to PC1. However, when I use standardized data set, row and column points are more well scattered across the coordinate panel and all the variables are visualized more reasonably. 
+
+#### 2.3.3.2 Possible explanation for the difference
+
+Base on finding above, it is not hard to draw the conclusion that PCA with standardized data set produces results better for analysis. 
+
+Possible explanation for this is the different scales of the variables make it difficult to compare each pair of features. PCA is calculated based on co-variance. Unlike correlation, which is dimensionless, covariance is in units obtained by multiplying the units of the two variables. When data set is not scaled, this makes each variable not easily comparable with others (since they all have their own value ranges). Further, each variable loads almost exclusively on one components because they can hardly find another variable with comparable value range. This assumption is further consolidated by the fact that the only two variables with smaller loading scores are Edu2.FM and Labo.FM, both of which happen to have similar value range from 0 to 1. 
+
+Also, co-variance also gives some variable extremely high leverage in our data set. To better deliver the idea, I reproduce the table from 2.1.21 about variable descriptions:
+
+```{r}
+ff_glimpse(human.all)$Con %>% 
+  datatable (caption = "Tab. 2.1.2.1 Discriptive statistics for variables")
+```
+
+The table (see the column "mean") has shown GNI has a scale tremendously larger than other variables. This might lead to its large co-variances with any other variable, and further results in its over-contribution to the factor solution. 
+
+All of these mis-representation of data would cause the poor quality of contribution, and hence the biplot shows most of the countries clustered tightly together, indicating the PCA has not produced a factor map with acceptable dissimilarity between rows. Also, the over-contribution of GNI to the factor solution leads to a graph with only one variable GNI showing in visible range. 
+
+## 2.4 Requirement 4
+
+Give your personal interpretations of the first two principal component dimensions based on the biplot drawn after PCA on the standardized human data
+
+To improve readability, I will visualize the biplot 2.2.1 again and interpret it.
+
+```{r}
+p2
+```
+
+The scattered row names exhibit they are well-represented by the factor map. For example, country Rwanda's profile is better represented by PC2 (Dim2, far away from origin in the direction of y axis), while Niger is better represented by PC1 (Dim1, far away from origin in the direction of x axis). Same idea, variables Labo.FM and Parli.F have strong contribution to positive side of PC2(Dim2), while Mat.Mor and ado.birth made a good amount of contribution to the positive side of PC1(Dim1). The Education related variables, GNI and life.EXp contributes more to the negative side of PC1 (Dim1). 
+
+## 2.5 Assignment 5
+
+Quoted from the assignment :
+
+"Load the tea dataset from the text file
+https://raw.githubusercontent.com/KimmoVehkalahti/Helsinki-Open-Data-Science/master/datasets/tea.csv 
+where the column separator is a comma and the first row includes the column names).
+
+Explore the data briefly: look at the structure and the dimensions of the data. Use View(tea) to browse its contents. As you see, all variables are categorical. Convert them explicitly to factors, for example:
+tea$sugar <- factor(tea$sugar)
+and then visualize the data.
+
+Use Multiple Correspondence Analysis (MCA) on the tea data (or on just certain columns of the data, it is up to you!). Interpret the results of the MCA and draw at least the variable biplot of the analysis. You can also explore other plotting options for MCA. Comment on the output of the plots. (0-4 points)"
+
+
+### 2.5.1 Load the tea dataset
+
+```{r}
+tea <- read.table("https://raw.githubusercontent.com/KimmoVehkalahti/Helsinki-Open-Data-Science/master/datasets/tea.csv", 
+                    sep =",", header = T)
+```
+
+
+### 2.5.2 Explore the data briefly
+
+#### 2.5.2.1 Structure
+
+```{r}
+str(tea)
+```
+
+All the variables are of character type, excpet for age, which is integer. 
+
+#### 2.5.2.2 Dimensions
+
+```{r}
+dim(tea)
+```
+The data set records information of 300 obs. on 36 variable
+
+#### 2.5.2.3 Browse content
+
+```{r}
+view(tea) %>% head
+```
+
+### 2.5.3 Convert to factors
+
+```{r}
+#use lapply function to generate a loop that runs through 
+#every column and convert it to factor
+tea[sapply(tea, is.character)] <- lapply(tea[sapply(tea, is.character)],
+                                        as.factor)
+tea
+```
+
+
+### 2.5.4 Visualiz after conversion
+
+```{r, fig.width= 14, fig.height= 20}
+library(tidyverse)
+tea %>% dplyr::select(-age) %>% 
+  dplyr::select(1:35) %>% 
+  pivot_longer(everything()) %>% 
+  ggplot(aes(x = value, fill = value))+
+  geom_bar(color = "black")+
+  theme_bw()+
+  facet_wrap(~name, scale ="free")+
+  theme(legend.position = "none")+
+  scale_fill_manual(values = rep("grey", 89))+
+  theme(axis.text.x = element_text(size = 12,
+                                   angle = 45,
+                                   vjust =1,
+                                   hjust =1),
+        strip.text = element_text(size = 10,
+                                  face = "bold",
+                                  color = "black"),
+        strip.background = element_rect(color = "black",
+                                        fill = "lightgrey"),
+        axis.title = element_blank(),
+        plot.title = element_text(size =25))+
+  labs(title = "Frequency of each level of the variables")
+  
+  
+scale_fill_brewer(palette = "Greys") 
+```
+
+
+### 2.5.5 Multiple Correspondence Analysis on the data set
+
+### 2.5.6 Interpret the results
+
+
+### 2.5.7 Visualization
+
+#### 2.5.7.1 Biplot
+
+#### 2.5.7.2 
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
