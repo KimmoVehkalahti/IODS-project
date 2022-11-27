@@ -84,5 +84,20 @@ cbind(OR, CI)
 Coefficient and Confidence Interval: Looking at the coefficient, final grade has negative value suggesting an opposite association between higher alcohol consumption which makes sense because higher grade can result in lower alcohol consumption. absences, age and free time shows positive association with free time being the most cause of higher alcohol consumption followed by age and absences. This is also supported by the odds ratio and confidence interval for each tested variable.  
 The above hypothesis therefore holds true for most variable. It is quite obviously important to explore other variable to see effect of an additional variable on an outcome through multivariate analysis. 
 
+## 3.6 Cross validation (Bonus)
+
+```{r}
+
+
+```
+
+
+## 3.7 Cross validation of different model (Super-Bonus)
+
+```{r}
+
+```
+
+
 
 

@@ -36,5 +36,10 @@ date()
 ***
 
 ```{r child = "chapter3.Rmd"}
+#Includes exercise and assignment from exercise 3 - Logistic Regression
+```
 
+
+```{r child = "chapter4.Rmd"}
+#This weeks exercises includes tasks from exercise 4, Clustering and classification
 ```
