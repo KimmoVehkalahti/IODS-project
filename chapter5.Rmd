@@ -471,10 +471,13 @@ Use Multiple Correspondence Analysis (MCA) on the tea data (or on just certain c
 ```{r}
 tea <- read.table("https://raw.githubusercontent.com/KimmoVehkalahti/Helsinki-Open-Data-Science/master/datasets/tea.csv", 
                     sep =",", header = T)
+tea.full <- tea
 ```
 
 
 ### 2.5.2 Explore the data briefly
+
+The data used here concern a questionnaire on tea. A number of 300 participants were asked about how they drink tea (18 questions), what are their product's perception (12 questions) and some personal details (4 questions).
 
 #### 2.5.2.1 Structure
 
@@ -504,7 +507,6 @@ view(tea) %>% head
 #every column and convert it to factor
 tea[sapply(tea, is.character)] <- lapply(tea[sapply(tea, is.character)],
                                         as.factor)
-tea
 ```
 
 
@@ -534,8 +536,137 @@ tea %>% dplyr::select(-age) %>%
   labs(title = "Frequency of each level of the variables")
   
   
-scale_fill_brewer(palette = "Greys") 
+
 ```
+
+It can be observed that some variables have level(s) with very low frequency. This produces the risk in distorting the analysis. 
+
+### 2.5.5 variable selection 
+
+Variable levels with very low frequency can distort the analysis and should be removed. Here I set an arbitrary cutoff 50, meaning any variable with at least one level below 30 would be removed.
+
+```{r}
+#remove age variable since its information has already been covered by age_Q variable
+tea <- tea %>% dplyr::select(-age)
+```
+
+
+```{r}
+
+matrix.tea
+vector.tea <- NA
+for (i in 1:35){
+  table.tea <- table(tea[i])
+  if (min(table.tea)>=50){
+    vector.tea[i] <- colnames(tea[i])
+  } 
+}
+
+keep.col.names <- vector.tea[complete.cases(vector.tea)]
+```
+
+
+```{r}
+tea <- tea %>% dplyr::select(one_of(keep.col.names))
+```
+
+### 2.5.6 Visualiz after removal 
+
+```{r, fig.width= 14, fig.height= 16}
+tea %>%  
+  pivot_longer(everything()) %>% 
+  ggplot(aes(x = value))+
+  geom_bar(color = "black", fill = "grey")+
+  theme_bw()+
+  facet_wrap(~name, scale ="free")+
+  theme(legend.position = "none")+
+  theme(axis.text.x = element_text(size = 12,
+                                   angle = 45,
+                                   vjust =1,
+                                   hjust =1),
+        strip.text = element_text(size = 10,
+                                  face = "bold",
+                                  color = "black"),
+        strip.background = element_rect(color = "black",
+                                        fill = "lightgrey"),
+        axis.title = element_blank(),
+        plot.title = element_text(size =25))+
+  labs(title = "Frequency of each level of the variables")
+
+```
+
+
+### 2.5.5 Multiple Correspondence Analysis on the data set
+
+```{r}
+mca.tea <- MCA(tea, graph = FALSE)
+```
+
+```{r}
+fviz_mca_var(mca.tea, 
+               repel = TRUE, 
+               ggtheme = theme_test())
+```
+
+```{r}
+fviz_contrib(mca.tea, choice = "var", axes = 1, top = 15)
+```
+```{r}
+fviz_mca_var(mca.tea, choice = "quanti.sup")
+?fviz_mca_var
+```
+
+```{r}
+fviz_mca_var(mca.tea, 
+               repel = TRUE, 
+               ggtheme = theme_test(),
+             select.var = list(contrib = 10))
+```
+
+### 2.5.6 Interpret the results
+
+```{r}
+# summary of the model
+summary(mca.tea)
+mca.tea$var$contrib
+summary(mca.tea)$contrib
+```
+
+```{r}
+fviz_screeplot(mca.tea, addlabels = TRUE)
+```
+
+
+### 2.5.7 Visualization
+
+```{r}
+# visualize MCA
+plot(mca.tea, invisible=c("ind"), habillage = "quali", graph.type = "classic")
+
+```
+
+```{r}
+fviz_mca_var(mca.tea, 
+               repel = TRUE, 
+               ggtheme = theme_test())
+```
+
+
+#### 2.5.7.1 Biplot
+
+#### 2.5.7.2 
+
+
+
+
+
+
+
+
+
+
+
+
 
 ```{r, fig.width= 16}
 install.packages("vcd")
@@ -560,44 +691,6 @@ cor_matrix <- calculate_cramer(empty_m, tea.f)
 cor_matrix
 corrplot(cor_matrix)
 ```
-
-
-### 2.5.5 Multiple Correspondence Analysis on the data set
-
-```{r}
-tea.f <- tea %>% dplyr::select(-age)
-mca.tea <- MCA(tea.f, graph = FALSE)
-?MCA
-# summary of the model
-summary(mca)
-
-# visualize MCA
-plot(mca, invisible=c("ind"), habillage = "quali", graph.type = "classic")
-```
-
-
-### 2.5.6 Interpret the results
-
-
-### 2.5.7 Visualization
-
-#### 2.5.7.1 Biplot
-
-#### 2.5.7.2 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
