@@ -629,8 +629,12 @@ fviz_mca_var(mca.tea,
 # summary of the model
 summary(mca.tea)
 mca.tea$var$contrib
-summary(mca.tea)$contrib
 ```
+
+```{r}
+mca.tea$var$cos2
+```
+
 
 ```{r}
 fviz_screeplot(mca.tea, addlabels = TRUE)

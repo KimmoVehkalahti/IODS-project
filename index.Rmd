@@ -40,3 +40,8 @@ bibliography: citations.bib
 ***
 
 
+```{r child = "chapter4.Rmd", warning = F, message = F}
+# This will include Chapter 3 (that is updated in its own file) in the document.
+```
+
+***
