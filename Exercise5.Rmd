@@ -456,7 +456,7 @@ pivot_longer(tea_time, cols = everything()) %>%
 ```
 
 
-## 5.9 Multiple Correspondence Analysis
+## 5.9 Multiple Correspondence Analysis 
 
 [Multiple Correspondence Analysis](https://en.wikipedia.org/wiki/Multiple_correspondence_analysis) (MCA) is a method to analyze qualitative data and it is an extension of Correspondence analysis (CA). MCA can be used to detect patterns or structure in the data as well as in dimension reduction.
 
