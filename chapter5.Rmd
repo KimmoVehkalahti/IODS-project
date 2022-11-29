@@ -18,7 +18,7 @@ subtitle: Chapter 4
 bibliography: citations.bib
 ---
 
-# **Chapter 4: Dimensionality reduction technique**
+# **Chapter 5: Dimensionality reduction technique**
 
 # 1 Data wrangling
 
