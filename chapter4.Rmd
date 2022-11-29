@@ -1,0 +1,24 @@
+# Week 4: Clustering and Classification
+
+## 4.0 INSTALL THE REQUIRED PACKAGES FIRST!
+
+## 4.1 Datasets inside R
+
+## 4.2 Correlations plot
+
+## 4.3 Scale the whole dataset
+
+## 4.4 Creating a factor variable
+
+## 4.5 Divide and conquer: train and test sets
+
+## 4.6 Linear discriminant analysis
+
+## 4.7 Predict LDA
+
+## 4.8 Towards clustering: distance measures
+
+## 4.9 K-means clustering
+
+## 4.10 K-means: determine the k
+
