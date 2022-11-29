@@ -625,19 +625,46 @@ fviz_mca_var(mca.tea,
 
 ### 2.5.6 Interpret the results
 
+#### 2.5.6.1 Eigenvalues- interpretation with visualization
+
+Eigenvalues measure the proportions of variances retained by the different dimensions. It will be printed to observe how the first several dimensions (components) represent the full data set.
+
 ```{r}
-# summary of the model
-summary(mca.tea)
-mca.tea$var$contrib
+a <- get_eigenvalue(mca.tea)
 ```
 
 ```{r}
-mca.tea$var$cos2
+fviz_screeplot(mca.tea, addlabels = TRUE)+
+  labs(title= "Fig. 2.5.6.1 Variance explained by the top 10 dimensions")
+```
+
+The eigenvalue of the first 3 dimensions are 0.109, 0.072 and 0.069. Since the eigenvalues of all 22 dimensions adds up to 1, an eigenvalue×100% will be the percentage of variance of the data set captured by this very dimension. Altogether, the first 2 dimensions captured 18.83% variability, indicating quite an amount of insights will be missed out using 2-dimension solution to represent the variation between variables. In the 2-dimension plot that I am going to generate in the following sections, highly differentiated variables' leverage in discrimination might be underestimated, and indistinct variables might be highly differentiated on some dimensions other than the first 2. The full results of this MCA should be interpreted on the basis of this knowledge. 
+
+#### 2.5.6.2 COS2 and visualization
+
+COS2 (squared cosine) measures the quality of the representation for variables in factor map(2-dim solution). The higher cos2, the better. Variables with low cos2 should be treated and interpreted with caution.
+
+CO2 values for the top 10 highly-represented variables by 2-dim solution will be printed out to explore how good the variables in our data set can be represented by the first two dimensions.
+
+```{r}
+cos2.dim <- mca.tea$var$cos2 [,1:2]%>% data.frame()
+cos2.dim$variable <- rownames(cos2.dim)
+rownames(cos2.dim) <- NULL
+cos2.dim[order(-cos2.dim[1]),c(3,1)][1:10,]
+```
+
+```{r}
+cos2.dim[order(-cos2.dim[1]),c(3,2)][1:10,]
 ```
 
 
+The printed variables are the top 10 best represented variables by 2-dim solution. Since they need to be interpreted base on relativity, a Variable Plot of MCA with high COS2 is generated.
+
 ```{r}
-fviz_screeplot(mca.tea, addlabels = TRUE)
+fviz_mca_var(mca.tea, 
+               repel = TRUE, 
+               ggtheme = theme_test(),
+             select.var = list(cos2 = 0.3))
 ```
 
 
