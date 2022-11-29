@@ -123,7 +123,7 @@ dim(human.all)
 
 ### 2.1.1 Show a graphical overview of the data
 
-```{r, fig.width =12}
+```{r, fig.width =12, fig.height = 8}
 library(GGally)
 #define a function that allows me for more control over ggpairs
 #this function produces point plot with fitted lines
@@ -185,7 +185,7 @@ ff_glimpse(human.all)$Con %>%
 
 The distribution of variables is shown in the diagonal grids of fig 2.2.1 (see above). For clear presentation, it is visualized singly again. See fig 2.1.2.1 below.
 
-```{r, fig.width=14}
+```{r, fig.width=14, fig.height=8}
 #save clearer names to the lables so that they have better readability in plot
 label.name <- paste(codebook$variable, paste("\n(",codebook$label,")"))
 names(label.name) <- c("Life.Exp",
