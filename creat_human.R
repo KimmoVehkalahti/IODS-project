@@ -19,7 +19,7 @@
 ## gender_inequality.csv
 
 # Meta files
-## https://hdr.undp.org/data-center/human-development-index#/indicies/HDI
+## https://hdr.undp.org/data-center/human-development-index#/indices/HDI
 
 #Technical notes
 ## https://hdr.undp.org/system/files/documents//technical-notes-calculating-human-development-indices.pdf
