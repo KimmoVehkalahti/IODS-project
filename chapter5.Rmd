@@ -86,7 +86,6 @@ human <- human %>% dplyr::select(one_of(keep.var))
 
 human %>% names()
 ```
-
 ## 1.3 Remove rows 
 
 "Remove all rows with missing values (1 point)"
@@ -94,7 +93,6 @@ human %>% names()
 ```{r}
 human.all <- human %>% filter(complete.cases(human))
 ```
-
 
 ## 1.4 Remove observations 
 
@@ -104,9 +102,7 @@ human.all <- human %>% filter(complete.cases(human))
 last <- nrow(human.all) - 7
 # choose everything until the last 7 observations
 human.all <- human.all[1:last, ]
-
 ```
-
 
 ## 1.5 Define row names
 
@@ -129,17 +125,27 @@ dim(human.all)
 
 ```{r, fig.width =12}
 library(GGally)
-my.fun.smooth <- function(data, mapping, method = "lm"){
-  ggplot(data = data, mapping = mapping)+
-           geom_point(size = 0.3, color = "blue")+
-           geom_smooth(method = method, size = 0.3, color = "red")+
-           theme(panel.grid.major = element_blank(), 
+#define a function that allows me for more control over ggpairs
+#this function produces point plot with fitted lines
+my.fun.smooth <- function(data,    #my function needs 3 arguments
+                          mapping,
+                          method = "lm"){
+  ggplot(data = data, #data is passed from ggpairs' arguments
+         mapping = mapping)+#aes is passed from ggpairs' arguments
+           geom_point(size = 0.3,  #draw points
+                      color = "blue")+
+           geom_smooth(method = method,  #fit a linear regression
+                       size = 0.3, 
+                       color = "red")+
+           theme(panel.grid.major = element_blank(), #get rid of the grids
                  panel.grid.minor = element_blank(),
-                 panel.background = element_rect(fill = "#F0E442",
+                 panel.background = element_rect(fill = "#F0E442", #adjust background
                                                  color = "black"))
 } 
 
-my.fun.density <- function(data, mapping, ...) {
+#define a function that allows me for more control over ggpairs
+#this function produces density plot 
+my.fun.density <- function(data, mapping, ...) { #notes are roughly same with above
 
     ggplot(data = data, mapping = mapping) +
        geom_histogram(aes(y=..density..),
@@ -155,20 +161,14 @@ my.fun.density <- function(data, mapping, ...) {
 
 
 
-ggpairs(human.all, 
-        lower = list(continuous = my.fun.smooth),
-        diag = list(continuous = my.fun.density),
-        title = "Fig. 2.1.1 Relationships between variables") +
-  theme (plot.title = element_text(size = 22,
-                                   face = "bold"))
-```
-
-```{r}
-library(corrplot)
-cor(human.all) %>% 
-  round(digits = 2) %>% 
-  datatable(caption = 
-              "Tab. 2.1.1 Correlation Coeeficients bewteen the variables")
+ggpairs(human.all, #data
+        lower = 
+          list(continuous = my.fun.smooth), #lower half show points with fitted line
+        diag =
+          list(continuous = my.fun.density), #diagonal grids show density plots
+        title = "Fig. 2.1.1 Relationships between variables") + #title
+  theme (plot.title = element_text(size = 22,  #adjust title visuals
+                                   face = "bold")) 
 ```
 
 ### 2.1.2 Show summaries of the variables in the data
@@ -183,7 +183,10 @@ ff_glimpse(human.all)$Con %>%
 
 #### 2.1.2.1 Summarising the distributions
 
+The distribution of variables is shown in the diagonal grids of fig 2.2.1 (see above). For clear presentation, it is visualized singly again. See fig 2.1.2.1 below.
+
 ```{r, fig.width=14}
+#save clearer names to the lables so that they have better readability in plot
 label.name <- paste(codebook$variable, paste("\n(",codebook$label,")"))
 names(label.name) <- c("Life.Exp",
                   "Edu.Exp",
@@ -194,38 +197,72 @@ names(label.name) <- c("Life.Exp",
                   "Labo.FM", 
                   "GNI")
 
+#plot it
 human.all %>% 
-  pivot_longer(everything()) %>% 
-  ggplot(aes(x = value)) +
-  geom_histogram(aes(y = ..density..), 
-                 color = "black",
-                 fill = "#9999CC")+
-  geom_density(fill = "pink", alpha = 0.25)+
-  facet_wrap(~name, scales = "free", labeller = labeller(name = label.name)) +
-  theme(panel.grid.major = element_blank(),
+  pivot_longer(everything()) %>%  #longer format
+  ggplot(aes(x = value)) + #x axis used variable "value" (a default of pivot)
+  geom_histogram(aes(y = ..density..), #match ys of density and histogram plots
+                 color = "black", #my favorite border color
+                 fill = "#9999CC")+  # I heard this is a beautiful color
+  geom_density(fill = "pink", 
+               alpha = 0.25)+ #adjust the aesthetics for density plot
+  facet_wrap(~name, scales = "free", #wrap by name variable
+             labeller = labeller(name = label.name)) + #use the label I set above
+  theme(panel.grid.major = element_blank(), #get rid of the ugly grids
         panel.grid.minor = element_blank(),
-        panel.background = element_rect(fill = "white",
+        panel.background = element_rect(fill = "white",#adjust the background
                                         color = "black"),
-        strip.background = element_rect(color = "black",
+        strip.background = element_rect(color = "black",#adjust the strips aes
                                         fill = "steelblue"),
-        strip.text = element_text(size =12, color = "white"),
-        axis.title.x = element_text(size = 20),
-        axis.title.y = element_text(size = 20),
-        plot.title = element_text(size = 26, face = "bold"))+
-  labs(title = "Fig. 2.1.2.1 Distribution of variables",
+        strip.text = element_text(size =12, 
+                                  color = "white"), #adjust the strip text
+        axis.title.x = element_text(size = 20), #adjust the x text
+        axis.title.y = element_text(size = 20), # adjust the y text
+        plot.title = element_text(size = 22, face = "bold"))+ #adjust the title
+  labs(title = "Fig. 2.1.2.1 Distribution of variables", #title it
        )
 ```
 
-
 ### 2.1.3 Describe and interpret the outputs
 
-```{r}
-```
+According to their distribution shapes visualized in fig 2.2.1 (see above), non-normally distributed variables were reported as median (Q1-Q3); roughly normal variables will be reported as mean±sd.
+
+The respondents have a life expectancy at birth (Life.Exp) of 74.2(66.3-77.2) years; an expected years of education (Edu.Exp) of 13.2±2.8 years; a maternal mortality ratio (Mat.Mor) of 49 (11.5-190) per 100,000 births; an adolescent birth rate (Ado.Birth) of 33.6 (12.6 - 72.0) per 1,000 women; a percent representation in parliment (Parli.F) of 20.9±11.5 per 100 women; a ratio of Female and Male populations with secondary education (Edu2.FM) of 0.9 (0.7-1.0); a ratio of labor force participation of females and males	(Labo.FM) of 0.8 (0.6-0.9); a 	Gross National Income (GNI) per Capita(GNI) of $12040.0 (4197.5-24512.0).
 
 ### 2.1.4 Commenting on the distributions of the variables and the relationships between them.
 
+#### 2.1.4.1 Distribution
+
+From the figure above, I found:
+*a.* Adolescent birth rate is skewed to right with the mode being at around 25. This indicates most of the countries have a rate of around 25 births per 1,000 women, while a small number of countries can have birth rate as high as 200 births per 1,000 women. For this indicator, number below zero is impossible, which might the the reason why it goes right-skewed.
+
+*b.* Expected years of education is roughly normally distributed, with the data points centering on around 1~13 years. This makes sense since it is the years taken to finish the education before college for most countries.
+
+*c.* Ratio of Female and Male populations with secondary education is moderately left-skewed with a mode of 0.9. Both a mode less than one and long left tail demonstrates the fact that gender inequality is still presented across the world. However, roughly 1/2 of the data points fall within 0.9 to 1.1, which means in half of the countries it is not that big an issue any longer. 
+
+*d.* Like any indicators related to income, GNI is right-skewed. This makes sense since no one will make negative amount of money while some people can be super rich. The value centers around 10,000 dollars.
+
+*e.* Ratio of labor force participation of females and males have roughly similar distribution with variable "Ratio of Female and Male populations with secondary education". Since they are different indicators trying to capture similar idea(gender inequality), this consistency is legitimate and a sign of their reliability.
+
+*f.* Life expectancy at birth centers around 75 years with long left tail and a shorter right tail stopping abruptly at 100 years. Besides, The distribution has negative kurtosis. These can be well-explained by the fact that thanks to modern medicine people are enjoying longer lifetime but there is always to limit to mankind's longevity.
+
+*g.* Maternal mortality Ratio centers at very small number around 30 per 100,000 births in a positive kurtosis manner with long right skewness. This corresponds to the fact that maternal healthcare has long been a mature social service across many countries (center on small number and has positive kurtosis), and also that some of the extremely under-developed countries are still not providing it properly (long tail to right). Note that there is a small peak around 450 per 100,000 births, which might be the influence of nature's base rate of mortality.
+
+*h.* Percent Presentation in Parliament is roughly normally distributed with slight right skewness. Sorry I have no idea how parliament works and will not comment on this indicator too much. 
+
+#### 2.1.4.2 Relationships
+
+Correlation between variables is visualized by scatter plots in fig 2.2.1. For better readability, I will also print out the correlation matrix down here.
+
 ```{r}
+library(corrplot)
+cor(human.all) %>% 
+  round(digits = 2) %>% 
+  datatable(caption = 
+              "Tab. 2.1.4.2 Correlation Coeeficients bewteen the variables")
 ```
+
+It can be observed that six out of eight variables have a correlation efficient >0.4 with at least one other variable. The remaining two variables are Labo.FM and Parli.F. Their weaker correlation with other variable might be due to a number of pronounced con-founders. For example, women's labor force participation is culturally less welcomed in some Asian cultures for reasons other than gender inequality; it is also influenced by the industrial structure of a country (countries with developed 3rd industry might have more women employed); only 46% of the world population are living under full or flawed democracy, and parliament does not even exist in a number of countries.  
 
 ## 2.2 Requirement 2
 
@@ -233,14 +270,13 @@ Perform principal component analysis (PCA) on the raw (non-standardized) human d
 
 ### 2.2.1 Perform principal component analysis (PCA) on the raw (non-standardized) human data
 
-PCA is performed on unstandardized dataset.
+PCA is performed on un-standardized data set.
 
 ```{r}
 # perform principal component analysis with 
-#results passing into pca.human
-pca.human <- prcomp(human.all)
+# results passing into pca.human
+pca.human <- prcomp(human.all) #PCA
 ```
-
 
 ### 2.2.2 Show the variability captured by the principal components
 
@@ -249,10 +285,10 @@ pca.human <- prcomp(human.all)
 First, I checked the names of the lists of the pca results.
 
 ```{r}
-names(pca.human)
+names(pca.human) #get the names of data set
 ```
 
-By reading the help file, I get the idea that list "sdev" is the eignvalues of the components. Since variability captured by a component _vc_ using eignvalue _ev_ can be formulated as:
+By reading the help file, I get the idea that list "sdev" is the square roots of the eignvalues of the components. Since variability captured by a component _vc_ using eignvalue _ev_ can be formulated as:
 
 $$
 vc =\frac{ev_{i}^{2}}{ \sum_{i=1}^{n}ev_{i}^{2}} 
@@ -262,19 +298,20 @@ The variability captured by each component is hence calculated.
 
 ```{r}
 eig <- pca.human$sdev^2
-for (i in 1:8){
-  a <- eig[i]/sum(eig)
-  b <- paste("PC", i , "captures", a*100, "% of varibility")
-  print(b)
+for (i in 1:8){ # the loop will run through 8 components
+  a <- eig[i]/sum(eig) #use the formula above
+  b <- paste("PC", i , "captures", a*100, "% of varibility") #improve readability
+  print(b) #print it out
 }
 ```
 
 It is found that PC1 explains 99.99% of the variability of the data set. Other components' contribution in totality is less the 0.1%.
 
-Package FactoMineR calculates the variability captured automatically, I will try using it and see if my calculation replicates its. 
+Package FactoMineR calculates the variability captured automatically, I will try using it and see if my calculation replicates its results. 
 
 ```{r}
-library(FactoMineR)#install.packages("FactoMineR")
+library(FactoMineR)#for Multivariate Exploratory Data Analysis and Data Mining
+library(factoextra)#to extract and visualize the output of PCA, CA and MCA
 eig.human <- get_eigenvalue(pca.human)
 eig.human[2]
 ```
@@ -286,7 +323,11 @@ They are same. PC1 explains 99.99% of the variability of the data set
 ```{r}
 #explore the varai
 library(factoextra)#install.packages("factoextra")
-fviz_eig(pca.human)
+fviz_eig(pca.human,
+         barfill = "grey",
+         barcolor = "black")+
+  theme(panel.grid = element_blank()) +
+  labs(title = "Fig. 2.2.2.2 Scree plot for eigenvalues across the components (un-standardized dataset)")
 ```
 
 #### 2.2.2.3 check the loading score numerically
@@ -315,11 +356,9 @@ It is interesting to find out that each variable loads almost exclusively on one
 Quoted from the requirement:
 "Draw a biplot Biplot displaying the observations by the first two principal components, along with arrows representing the original variables."
 
-```{r}
+```{r, fig.cap = "Fig. 2.2.3 Biplot for the first two components (unstandardized data set)"}
 # draw a biplot of the principal component representation and the original variables
-
-biplot(pca.human)
-
+biplot(pca.human)#biplot
 
 ```
 
@@ -327,9 +366,11 @@ In the biplot, red texts stand for variables, while black texts for rows (countr
 
 I visualized another biplot using outside package. The graph will have different visual effect but same idea. 
 
-```{r}
-p1 <- fviz_pca_biplot(pca.human, repel = TRUE, ggtheme = theme_test(),
-               title = "Fig. 2.2.1 a PCA for unstandardized dataset")
+```{r, fig.width= 6, fig.height = 5.5}
+p1 <- fviz_pca_biplot(pca.human, #data used
+                      repel = TRUE,  #avoid overlap
+                      ggtheme = theme_test(), #a theme I like
+                      title = "Fig. 2.2.1 a PCA for unstandardized dataset")
 p1
 ```
 
@@ -342,29 +383,34 @@ Standardize the variables in the human data and repeat the above analysis. Inter
 ### 2.3.1 Standardize the variables 
 
 ```{r}
-human.all.scaled <- scale(human.all)
+human.all.scaled <- scale(human.all) #scale it!
 ```
 
 ### 2.3.2 Repeat the above analysis
 
 #### 2.3.2.1 PCA
 ```{r}
-spca.human <- prcomp(human.all.scaled)
+spca.human <- prcomp(human.all.scaled) #PCA
 ```
 
 #### 2.3.2.1 Check variability captured by each component
 
 ```{r}
-eig <- spca.human$sdev^2
-for (i in 1:8){
-  a <- eig[i]/sum(eig)
-  b <- paste("PC", i , "captures", a*100, "% of varibility")
-  print(b)
+eig <- spca.human$sdev^2 #sdev is the square roots of ev, turn it into ev
+for (i in 1:8){ #this loop will go through 8 components
+  a <- eig[i]/sum(eig) #use the formula I expressed above
+  b <- paste("PC", i , "captures", a*100, "% of varibility") #make it readable
+  print(b) #print it out
 }
 ```
 
 ```{r}
-fviz_screeplot(spca.human, addlabel =T)
+fviz_screeplot(spca.human, 
+               barfill = "grey",
+               barcolor = "black",
+               addlabel =T)+
+  theme(panel.grid = element_blank())+
+  labs(title = "Fig. 2.3.2.1 Scree plot for eigenvalues across each component \n(standardized dataset)")
 ```
 
 Interesting change happens. Thanks to scaling, the "scree" doesn't plummet this time. Comment will be given in section 2.3.3.
@@ -390,17 +436,19 @@ Interesting change happens. The one-variable-to-one-component loading style has 
 
 #### 2.3.2.3 Biplot
 
-```{r}
-biplot(spca.human)
+```{r fig.cap= "Fig 2.3.2.3 Biplot for the first two components (standardized data set)"}
+biplot(spca.human) #biplot
 ```
 
 This time the texts representing both the rows and columns are scattered away from each other and more column text (in red) are visualized. 
 
 I visualized another biplot using outside package. The graph will have different visual effect but same idea. 
 
-```{r}
-p2 <- fviz_pca_biplot(spca.human, repel = TRUE, ggtheme = theme_test(),
-               title = "Fig. 2.2.1 a PCA for unstandardized dataset")
+```{r, fig.width= 6, fig.height = 5.5}
+p2 <- fviz_pca_biplot(spca.human,  #data used
+                      repel = TRUE,  #avoid overlap
+                      ggtheme = theme_test(), #a theme I like
+                      title = "Fig. 2.2.1 a PCA for unstandardized dataset")
 p2
 ```
 
@@ -431,7 +479,7 @@ Possible explanation for this is the different scales of the variables make it d
 Also, co-variance also gives some variable extremely high leverage in our data set. To better deliver the idea, I reproduce the table from 2.1.21 about variable descriptions:
 
 ```{r}
-ff_glimpse(human.all)$Con %>% 
+ff_glimpse(human.all)$Con %>%  #"$Con" calls for the continuous variables
   datatable (caption = "Tab. 2.1.2.1 Discriptive statistics for variables")
 ```
 
@@ -445,8 +493,8 @@ Give your personal interpretations of the first two principal component dimensio
 
 To improve readability, I will visualize the biplot 2.2.1 again and interpret it.
 
-```{r}
-p2
+```{r, fig.width= 6, fig.height = 5.5}
+p2 # print picture p2
 ```
 
 The scattered row names exhibit they are well-represented by the factor map. For example, country Rwanda's profile is better represented by PC2 (Dim2, far away from origin in the direction of y axis), while Niger is better represented by PC1 (Dim1, far away from origin in the direction of x axis). Same idea, variables Labo.FM and Parli.F have strong contribution to positive side of PC2(Dim2), while Mat.Mor and ado.birth made a good amount of contribution to the positive side of PC1(Dim1). The Education related variables, GNI and life.EXp contributes more to the negative side of PC1 (Dim1). 
@@ -471,7 +519,8 @@ Use Multiple Correspondence Analysis (MCA) on the tea data (or on just certain c
 ```{r}
 tea <- read.table("https://raw.githubusercontent.com/KimmoVehkalahti/Helsinki-Open-Data-Science/master/datasets/tea.csv", 
                     sep =",", header = T)
-tea.full <- tea
+tea.full <- tea #this is not actually functional, just keep the original data set
+                # in case I mess up anything.
 ```
 
 
@@ -514,26 +563,25 @@ tea[sapply(tea, is.character)] <- lapply(tea[sapply(tea, is.character)],
 
 ```{r, fig.width= 14, fig.height= 20}
 library(tidyverse)
-tea %>% dplyr::select(-age) %>% 
-  pivot_longer(everything()) %>% 
-  ggplot(aes(x = value, fill = value))+
-  geom_bar(color = "black")+
-  theme_bw()+
-  facet_wrap(~name, scale ="free")+
-  theme(legend.position = "none")+
-  scale_fill_manual(values = rep("grey", 89))+
-  theme(axis.text.x = element_text(size = 12,
+tea %>% dplyr::select(-age) %>%  #age is continuous, remove it
+  pivot_longer(everything()) %>%  # I need long format
+  ggplot(aes(x = value, fill = value))+ # "Value" is assigned by piovt_longer
+  geom_bar(color = "black", fill ="grey")+ #I like black border for the bars
+  theme_bw()+ # a cool theme
+  facet_wrap(~name, scale ="free")+ #wraps the value by variable "name"
+  theme(legend.position = "none")+ # legend not necessary here
+  theme(axis.text.x = element_text(size = 12, #x axis text settings
                                    angle = 45,
                                    vjust =1,
                                    hjust =1),
-        strip.text = element_text(size = 10,
+        strip.text = element_text(size = 10, #adjust the strips 
                                   face = "bold",
                                   color = "black"),
-        strip.background = element_rect(color = "black",
+        strip.background = element_rect(color = "black", #adjust the background
                                         fill = "lightgrey"),
-        axis.title = element_blank(),
-        plot.title = element_text(size =25))+
-  labs(title = "Frequency of each level of the variables")
+        axis.title = element_blank(), #remove axis titles
+        plot.title = element_text(size =25))+ #make title bigger
+  labs(title = "Frequency of each level of the variables") #name it
   
   
 
@@ -552,13 +600,11 @@ tea <- tea %>% dplyr::select(-age)
 
 
 ```{r}
-
-matrix.tea
-vector.tea <- NA
-for (i in 1:35){
-  table.tea <- table(tea[i])
-  if (min(table.tea)>=50){
-    vector.tea[i] <- colnames(tea[i])
+vector.tea <- NA  #start a NULL vector 
+for (i in 1:35){  #my loop will go through 35 columns
+  table.tea <- table(tea[i]) #save the level frequency for each var into table.tea
+  if (min(table.tea)>=50){ #if the smaller frequency is larger than 50
+    vector.tea[i] <- colnames(tea[i]) #then save its nave ito vector.tea
   } 
 }
 
@@ -567,31 +613,32 @@ keep.col.names <- vector.tea[complete.cases(vector.tea)]
 
 
 ```{r}
-tea <- tea %>% dplyr::select(one_of(keep.col.names))
+tea <- tea %>% 
+  dplyr::select(one_of(keep.col.names))#remove variable with small category
 ```
 
 ### 2.5.6 Visualiz after removal 
 
 ```{r, fig.width= 14, fig.height= 16}
 tea %>%  
-  pivot_longer(everything()) %>% 
-  ggplot(aes(x = value))+
-  geom_bar(color = "black", fill = "grey")+
-  theme_bw()+
-  facet_wrap(~name, scale ="free")+
-  theme(legend.position = "none")+
-  theme(axis.text.x = element_text(size = 12,
-                                   angle = 45,
-                                   vjust =1,
-                                   hjust =1),
+  pivot_longer(everything()) %>%  #long format of data make "wrap" possible
+  ggplot(aes(x = value))+   #define x axis variable. "Value" is assigned by pivot
+  geom_bar(color = "black", fill = "grey")+ #I like grey bars with black border
+  theme_bw()+ #a cool theme that I like
+  facet_wrap(~name, scale ="free")+ # wrap the value by variable names
+  theme(legend.position = "none")+ #legend is not functional here, remove it
+  theme(axis.text.x = element_text(size = 12,  
+                                   angle = 45,  #adjust angle
+                                   vjust =1,  #adjust vertical position
+                                   hjust =1), #adjust horizontal position
         strip.text = element_text(size = 10,
-                                  face = "bold",
+                                  face = "bold", # make title more visible
                                   color = "black"),
-        strip.background = element_rect(color = "black",
-                                        fill = "lightgrey"),
-        axis.title = element_blank(),
-        plot.title = element_text(size =25))+
-  labs(title = "Frequency of each level of the variables")
+        strip.background = element_rect(color = "black", #I want the strip consistent
+                                        fill = "lightgrey"), # with the bar
+        axis.title = element_blank(), # remove x axis text. 
+        plot.title = element_text(size =25))+ #adjust title size
+  labs(title = "Frequency of each level of the variables") #name it!
 
 ```
 
@@ -599,28 +646,7 @@ tea %>%
 ### 2.5.5 Multiple Correspondence Analysis on the data set
 
 ```{r}
-mca.tea <- MCA(tea, graph = FALSE)
-```
-
-```{r}
-fviz_mca_var(mca.tea, 
-               repel = TRUE, 
-               ggtheme = theme_test())
-```
-
-```{r}
-fviz_contrib(mca.tea, choice = "var", axes = 1, top = 15)
-```
-```{r}
-fviz_mca_var(mca.tea, choice = "quanti.sup")
-?fviz_mca_var
-```
-
-```{r}
-fviz_mca_var(mca.tea, 
-               repel = TRUE, 
-               ggtheme = theme_test(),
-             select.var = list(contrib = 10))
+mca.tea <- MCA(tea, graph = FALSE) #Multiple correspondence analysis done
 ```
 
 ### 2.5.6 Interpret the results
@@ -630,105 +656,159 @@ fviz_mca_var(mca.tea,
 Eigenvalues measure the proportions of variances retained by the different dimensions. It will be printed to observe how the first several dimensions (components) represent the full data set.
 
 ```{r}
-a <- get_eigenvalue(mca.tea)
+a <- get_eigenvalue(mca.tea) #obtain the eigenvalue of the mca results
 ```
 
 ```{r}
-fviz_screeplot(mca.tea, addlabels = TRUE)+
-  labs(title= "Fig. 2.5.6.1 Variance explained by the top 10 dimensions")
+fviz_screeplot(mca.tea,
+               barfill = "grey",
+               barcolor = "black",
+               addlabels = TRUE)+ #screeplot with labels
+  labs(title= "Fig. 2.5.6.1 Variance explained by the top 10 dimensions")+
+  theme(panel.grid = element_blank())#label
 ```
-
 The eigenvalue of the first 3 dimensions are 0.109, 0.072 and 0.069. Since the eigenvalues of all 22 dimensions adds up to 1, an eigenvalue×100% will be the percentage of variance of the data set captured by this very dimension. Altogether, the first 2 dimensions captured 18.83% variability, indicating quite an amount of insights will be missed out using 2-dimension solution to represent the variation between variables. In the 2-dimension plot that I am going to generate in the following sections, highly differentiated variables' leverage in discrimination might be underestimated, and indistinct variables might be highly differentiated on some dimensions other than the first 2. The full results of this MCA should be interpreted on the basis of this knowledge. 
 
 #### 2.5.6.2 COS2 and visualization
 
-COS2 (squared cosine) measures the quality of the representation for variables in factor map(2-dim solution). The higher cos2, the better. Variables with low cos2 should be treated and interpreted with caution.
+COS2 (squared cosine) measures the quality of the representation for variables in factor map(2-dim solution). The higher cos2, the better. Variables with low cos2 should be treated and interpreted with caution. If a variable category is well represented by two dimensions, the sum of the cos2 is closed to one. 
 
-CO2 values for the top 10 highly-represented variables by 2-dim solution will be printed out to explore how good the variables in our data set can be represented by the first two dimensions.
+CO2 values for first 2 dimensions across each variable will be printed out and added up by each variable. This is to explore how good the variables in our data set can be represented by the first two dimensions.
 
 ```{r}
-cos2.dim <- mca.tea$var$cos2 [,1:2]%>% data.frame()
+#extract cos2 values for the 1st 2 dimensions
+cos2.dim <- mca.tea$var$cos2 [,1:2]%>% data.frame() #save as data frame 
+#save row names as a variable, so that ordering by column is possible
 cos2.dim$variable <- rownames(cos2.dim)
+#delete the row names since we already saved them into a new variable
 rownames(cos2.dim) <- NULL
-cos2.dim[order(-cos2.dim[1]),c(3,1)][1:10,]
+#calculate the addition of each row
+cos2.dim <- cos2.dim %>% mutate(Dim.both = Dim.1 + Dim.2)
+#show the top 10 largest results by descending order 
+cos2.dim[order(-cos2.dim$Dim.both), c(3,4)][1:10,]
 ```
 
-```{r}
-cos2.dim[order(-cos2.dim[1]),c(3,2)][1:10,]
+As discussed above, the more the sum of the cos2 for a variable is closed to one, the better it is represented by the two dimensions.Reviewing the results, it is found that no added cos2 values is larger than 0.5. Only 4 variables have cos2 values (addition of the first two dimensions) larger than 0.4. These indicate only a limited number of variables were roughly represented by the first two dimensions, and the strength of variable relationship could be heavily under-estimated by by plots generated in the next sections. 
+
+For better understanding, a Variable Plot of MCA with high COS2 is generated (fig. 2.5.6.2). The results correspond to the finding from values of cos2. Note that variable categories such as tearoom andfeminine are relatively well-represented by both dimensions since they are far away from the origin in both x and y axes. Variable categories such as evening are well-represented by one dimension instead of the other since they are far away from the origin in either x or y axis (for evening, it is y). Variable categories such as friends are relatively well-represented by none of the dimensions since they are closed to origin from both directions. 
+
+```{r, fig.width= 6, fig.height = 5.5}
+p1 <- fviz_mca_var(mca.tea, 
+                   col.var = "cos2", 
+                   repel = TRUE, # avoid overlap
+                   ggtheme = theme_test(), #theme that I like
+                   gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+                   select.var = list(cos2 = 10))+ # limited the number of visualized
+  labs(title = "Fig 2.5.6.2 Quality of representation for variables \n(top 10 highly represented variables)")
+                                            #variables to 10 (largest cos2)
+                                         
+p1
 ```
 
+#### 2.5.6.3 Contribution and visualization
 
-The printed variables are the top 10 best represented variables by 2-dim solution. Since they need to be interpreted base on relativity, a Variable Plot of MCA with high COS2 is generated.
+Contr measures the percentage contributions of the each variable to the definition (inertia) of the dimensions. The contr of the first two dimensions will be displayed below. The sum of contr for each dimension will be 1. Larger Contr means the variable captures larger inertia of the dimension. Contr has similar functions as factor loading scores as that in principal component analysis, hence by reviewing the variable categories having strong contribution to a dimension, it is possible to assume a construct reflected underneath. Unfortunately, I did not find a clear explanation of variable categories of tea data set, this is not possible here. 
 
 ```{r}
+#extract contr values for the 1st 2 dimensions
+tea.contr <- mca.tea$var$contrib[,1:2] %>% data.frame()
+#save row names to a new variable
+tea.contr$variable <- rownames(tea.contr)
+#delete old row names.
+rownames(tea.contr) <- NULL
+#order by Dim.1, showing the top 10
+tea.contr[order(-tea.contr$Dim.1), c(1,3)][1:10,]
+```
+
+Variable categories tearoom and not.friendliness, each contributed more than 10% to the inertia of dimension one. Reviewing the important contributors to this dimension, I get the idea that the dimension tries to capture the social side of tea-drinking. However, since no original survey questions is available, no explicit conclusion can be drawn here.
+
+```{r}
+#order by Dim.2 showing the top 10
+tea.contr[order(-tea.contr$Dim.2), c(2,3)][1:10,]
+```
+
+Variable category evening contributed more than 10% to the inertia of dimension two. Reviewing the important contributors to this dimension, I get the idea that the dimension tries to capture the leisure side of tea-drinking. However, since no original survey questions is available, no explicit conclusion can be drawn here.
+
+Below is a plot about the contributions of top 15 variables to dimension one (Fig 2.5.6.3). It demonstrates similar insights with the numeric results, except for more variables is included here.
+
+```{r}
+#bar plot of the top 15 most contributed variable levels
+fviz_contrib(mca.tea, 
+             fill = "grey", 
+             color = "black", 
+             choice = "var", 
+             axes = 1, 
+             top = 15)+
+  labs(title = "Fig 2.5.6.3 a :top 15 most contributed variable levels to dimension one")+
+  theme(panel.grid = element_blank())
+```
+
+Below is a plot about the contributions of top 15 variables to dimension two. It carries similar information with the numeric results, except for more variables is included here.
+
+```{r}
+#bar plot of the top 15 most contributed variable levels
+fviz_contrib(mca.tea,
+             fill = "grey", 
+             color = "black", 
+             choice = "var", 
+             axes = 2, 
+             top = 15)+
+  labs(title = "Fig 2.5.6.3 b :top 15 most contributed variable levels to dimension two")+
+  theme(panel.grid = element_blank())
+```
+
+Below is a plot about the contributions of top 10 variables to both dimension one&two (fig 2.5.6.3). It carries similar information with the numeric results. Note that variables contribute highly to dimension one tend to show up in the far end in the direction of x axis while those contribute highly to dimension two will show up in the far end in the direction of y axis. The levels of contribution are also reflected by color gradients using the addition of the contr of both dimensions. Note that variable category "evening" contributes highly to dimension 2 but only has a color indicating moderate contribution. This is because its low contribution to dimension one drags its importance down. 
+
+
+```{r, fig.width= 6, fig.height = 5.5}
+#visualize the variable plot (row names are kept out of the plot)
+p2 <- fviz_mca_var(mca.tea, col.var = "contrib",  
+            repel = TRUE,  #avoid overlap
+            ggtheme = theme_test(), #theme that I like
+            gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             select.var = list(contrib = 10))+# variables with top 10 largest 
+  labs(title = "Fig 2.5.6.3 c: Contribution of variables to first two dimensions \n(10 most important contributing variables) " )
+                                              #contribution  are shown
+p2
+```
+
+Below I display plots 2.5.6.2 and 2.5.6.3c in one graph so that cos2 (contribution of dimensions to variable) and contr (contribution of variables to dimensions) can be compared. Most variable categories have consistent strength of cos2 and contr such as evening, tearoom, Male, Not.friends. Some, such as friends, have moderate strength in cos2 but not in contr, indicating it might be well-represented by the dimensions but its contribution to the dimensions either is explained by other variables or its contribution distributes across the dimension with neither one pronounced.
+
+```{r, fig.width= 12, fig.height = 5.5}
+library(patchwork)
+p1+p2
+```
+
+#### 2.5.6.4 correlation between variables and principal dimensions
+
+The correlation between variables and first two dimensions are visualized here. 
+
+```{r, fig.width= 6, fig.height = 5.5}
+fviz_mca_var(mca.tea, choice = "mca.cor", 
+            repel = TRUE, 
+            ggtheme = theme_minimal())+
+  theme(panel.grid = element_blank(),
+          panel.background  = element_rect(color = "black"))
+```
+
+No variable is highly correlated with any dimension. Variables such as sex, tearoom, friendliness and tea.time are moderately correlated with dimension one; variables such as evening are moderately correlated with the second dimension; variables such as feminine and resto are moderately correlated with both dimensions. Variables clustered closely to the origin are not noticeably correlated with any dimensions.
+
+#### 2.5.6.5 classic variable plot
+
+The classic variable plot is actually the cos2 plot. However, I visualize it again without excluding poorly represented variables, and will try to give a more thorough interpretation.
+
+```{r, fig.width= 6, fig.height = 5.5}
 fviz_mca_var(mca.tea, 
-               repel = TRUE, 
-               ggtheme = theme_test(),
-             select.var = list(cos2 = 0.3))
+             repel = TRUE,
+             ggtheme = theme_test(),
+             title = "Fig 2.5.6.5 Classic variable plot for the first two dimensions")# theme that I like
 ```
 
+Before interpreting the plot, I emphasize the fact we have found that the first two dimensions only explain 19% of the total inertia contained in the data, indicating not all the points are equally well displayed in the two dimensions. Categories that do not differentiate well in the plot might still very possibly to be distinct in terms of other dimensions outside the first two. 
 
-### 2.5.7 Visualization
+Variable categories clustered closely around the origin such as health, not.breakfast, not.pub, sportsman and not.spirituality might have weak to none association. Some points that are further from the origin, such as evening, resto, pub, tearoom, not.friends, no.relaxing, feminine, not.sportsman and not friendliness, are quite discriminating. Among them, tearoom and pub are well represented by the first dimension and have strong positive correlation. Not.friendliness is also well-represented by dimension one, while it is negatively correlated with tearoom and pub since it positions in the opposed quadrant with them.
 
-```{r}
-# visualize MCA
-plot(mca.tea, invisible=c("ind"), habillage = "quali", graph.type = "classic")
-
-```
-
-```{r}
-fviz_mca_var(mca.tea, 
-               repel = TRUE, 
-               ggtheme = theme_test())
-```
-
-
-#### 2.5.7.1 Biplot
-
-#### 2.5.7.2 
-
-
-
-
-
-
-
-
-
-
-
-
-
-```{r, fig.width= 16}
-install.packages("vcd")
-library(vcd)
-
-# Initialize empty matrix to store coefficients
-empty_m <- matrix(ncol = length(df),
-            nrow = length(df),
-            dimnames = list(names(df), 
-                            names(df)))
-# Function that accepts matrix for coefficients and data and returns a correlation matrix
-calculate_cramer <- function(m, df) {
- for (r in seq(nrow(m))){
-   for (c in seq(ncol(m))){
-     m[[r, c]] <- assocstats(table(df[[r]], df[[c]]))$cramer
-   }
- }
-    return(m)
-}
-empty_m <- matrix(ncol = 35, nrow = 35)
-cor_matrix <- calculate_cramer(empty_m, tea.f)
-cor_matrix
-corrplot(cor_matrix)
-```
-
-
-
-
-
-
-
+evening and resto are well represented by the 2nd dimension and have strong positive correlation. No.relaxing, non.sportsman and feminine are also well-represented by dimension 2, while they are negatively correlated with evening and resto since they position in the opposed quadrant. 
 
 
 
