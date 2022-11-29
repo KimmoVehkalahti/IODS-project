@@ -12,7 +12,6 @@ output:
     number_section: false
 ---
 
-
 This set consists of a few numbered exercises.
 Go to each exercise in turn and do as follows:
 
