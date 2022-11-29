@@ -499,7 +499,7 @@ p2 # print picture p2
 
 The scattered row names exhibit they are well-represented by the factor map. For example, country Rwanda's profile is better represented by PC2 (Dim2, far away from origin in the direction of y axis), while Niger is better represented by PC1 (Dim1, far away from origin in the direction of x axis). Same idea, variables Labo.FM and Parli.F have strong contribution to positive side of PC2(Dim2), while Mat.Mor and ado.birth made a good amount of contribution to the positive side of PC1(Dim1). The Education related variables, GNI and life.EXp contributes more to the negative side of PC1 (Dim1). 
 
-## 2.5 Assignment 5
+## 2.5 Requirement 5
 
 Quoted from the assignment :
 
