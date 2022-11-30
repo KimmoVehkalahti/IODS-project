@@ -74,28 +74,6 @@ gii2 <- gii %>% rename('GIR'= 'GII Rank',
 
 gii2 <- mutate(gii2, SeEdu_FM = SeEdu_F / SeEdu_M, LFR_FM = LFR_F / LFR_M)
 
-hd2 <- hd %>% rename(
-  'HDI_rank' = 'HDI Rank',
-  'HDI' = 'Human Development Index (HDI)',
-  'Life.Exp' = 'Life Expectancy at Birth',
-  'Edu.Exp' = 'Expected Years of Education',
-  'Edu.Mean' = 'Mean Years of Education',
-  'GNI' = 'Gross National Income (GNI) per Capita',
-  'GNI.minus.HDI_rank' = 'GNI per Capita Rank Minus HDI Rank'
-)
-
-gii2 <- gii %>% rename(
-  'GII_rank'= 'GII Rank',
-  'GII' = 'Gender Inequality Index (GII)',
-  'Mat.Mor' = 'Maternal Mortality Ratio',
-  'Ado.Birth' = 'Adolescent Birth Rate',
-  'Parli.F' = 'Percent Representation in Parliament',
-  'Edu2.F' = 'Population with Secondary Education (Female)',
-  'Edu2.M' = 'Population with Secondary Education (Male)',
-  'Labo.F' = 'Labour Force Participation Rate (Female)',
-  'Labo.M' = 'Labour Force Participation Rate (Male)'
-)
-
 # Step 5
 #Joining the dataset
 human <- inner_join(hd2, gii2, by='Country') 
