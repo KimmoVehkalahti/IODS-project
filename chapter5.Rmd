@@ -831,7 +831,7 @@ b. MCA is built upon PCA. The former is for nominal data, while the later for co
 
 c. PCA is better done with scaled/standardized data, especially when the variables having disparate scales. 
 
-d. The reduced dimensions are called components or dimensions. When we only want two of them or two is a sufficient number to wrap most information of the data, we can visualize the relationships between component and variables and between variables into a 2-dimension plot. When visualizing in PCA, these relationship can be measured by loading scores (the proportion of each variable's contribution to each components ). When visualizing, these relationship can be measured by either how much the components explain the each variable (cos2) or how much the variables contribute to each component (contra). The math behind these gauges is  eigenvalues and eigen-vectors, which I have not yet dug into. 
+d. The reduced dimensions are called components or dimensions. When we only want two of them or two is a sufficient number to wrap most information of the data, we can visualize the relationships between eac component and each variable and between variables into a 2-dimension plot. When visualizing in PCA, these relationship can be measured by loading scores (the proportion of each variable's contribution to each components ). When visualizing in MCA, these relationship can be measured by either how much the components explain the each variable (cos2) or how much the variables contribute to each component (contra). The math behind these gauges is  eigenvalues and eigen-vectors, which I have not yet dug into. 
 
 
 
