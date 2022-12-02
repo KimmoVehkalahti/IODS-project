@@ -471,11 +471,11 @@ Some interesting findings by looking at both analyses are:
 
 *a. Variability explained* 
 
-With un-standardized data set, PCA produced result showing PC1 explains 99.99% of the variability of the data set; other components' contribution in totality is less the 0.1%. With standardized data set, PC1 and PC2 together explains 69.8% of the variability of the data set, with the amount of variability explained falling gradually for the components following. 
+With un-standardized data set, PCA produced results showing PC1 explains 99.99% of the variability of the data set; other components' contribution is less the 0.1%, in totality . With standardized data set, PC1 and PC2 together explains 69.8% of the variability of the data set, with the amount of variability explained falling gradually for the components following. 
 
 *b. Factor loading* 
 
-With un-standardized data set, PCA produced result showing each variable loads almost exclusively on one components (Six out of 8 variables have loading score on one unique component larger than 0.99). While this one-variable-to-one-component loading style has disappeared in results from standardized data set.
+With un-standardized data set, PCA produced results showing each variable loads almost exclusively on one components (Six out of 8 variables have loading score on one unique component larger than 0.99). While this one-variable-to-one-component loading style has disappeared in results from standardized data set.
 
 *b. Biplot* 
 
@@ -483,24 +483,26 @@ With un-standardized data set, most of the countries clustered tightly around th
 
 #### 2.3.3.2 Possible explanation for the difference
 
-Base on finding above, it is not hard to draw the conclusion that PCA with standardized data set produces results better for analysis. 
+Base on finding above, it is not hard to draw the conclusion that PCA using standardized data set produces results better for analysis. 
 
-Possible explanation for this is the different scales of the variables make it difficult to compare each pair of features. PCA is calculated based on co-variance. Unlike correlation, which is dimensionless, covariance is in units obtained by multiplying the units of the two variables. When data set is not scaled, this makes each variable not easily comparable with others (since they all have their own value ranges). Further, each variable loads almost exclusively on one components because they can hardly find another variable with comparable value range. This assumption is further consolidated by the fact that the only two variables with smaller loading scores are Edu2.FM and Labo.FM, both of which happen to have similar value range from 0 to 1. 
+Possible explanation for this is the different scales of the variables make comparision between pairs of features difficult. PCA is calculated based on co-variance. Unlike correlation, which is dimensionless, covariance is in units obtained by multiplying the units of the two variables. When data set is not scaled, this makes each variable not easily comparable with others (since they all have their own value ranges). Further, each variable loads almost exclusively on one components because they can hardly find another variable with comparable value range. This assumption is further consolidated by the fact that the only two variables with smaller loading scores are Edu2.FM and Labo.FM, both of which happen to have similar value range from 0 to 1. 
 
-Also, co-variance also gives some variable extremely high leverage in our data set. To better deliver the idea, I reproduce the table from 2.1.21 about variable descriptions:
+Also, co-variance also gives some variable extremely high leverage in our data set. To better deliver the idea, here I reproduce the table from 2.1.2.1 about variable descriptions (see more description below):
 
 ```{r}
 ff_glimpse(human.all)$Con %>%  #"$Con" calls for the continuous variables
   datatable (caption = "Tab. 2.1.2.1 Discriptive statistics for variables")
 ```
 
-The table (see the column "mean") has shown GNI has a scale tremendously larger than other variables. This might lead to its large co-variances with any other variable, and further results in its over-contribution to the factor solution. 
+The table (see the column "mean") has shown veraible "GNI" has a scale tremendously larger than other variables. This might lead to its large co-variances with any other variable, and further results in its over-contribution to the factor solution. 
 
-All of these mis-representation of data would cause the poor quality of contribution, and hence the biplot shows most of the countries clustered tightly together, indicating the PCA has not produced a factor map with acceptable dissimilarity between rows. Also, the over-contribution of GNI to the factor solution leads to a graph with only one variable GNI showing in visible range. 
+All of these mis-representation of data would end up the poor quality of contribution, and hence the biplot shows most of the countries clustered tightly together, indicating the PCA has not produced a factor map with acceptable dissimilarity among rows. Also, the over-contribution of GNI to the factor solution leads to a graph with only one variable--GNI--showing in a visible distance (others overlap heavily around the center). 
 
 ## 2.4 Requirement 4
 
-Give your personal interpretations of the first two principal component dimensions based on the biplot drawn after PCA on the standardized human data
+Quoted:
+
+_"Give your personal interpretations of the first two principal component dimensions based on the biplot drawn after PCA on the standardized human data"_
 
 To improve readability, I will visualize the biplot 2.2.1 again and interpret it.
 
@@ -508,7 +510,13 @@ To improve readability, I will visualize the biplot 2.2.1 again and interpret it
 p2 # print picture p2
 ```
 
-The scattered row names exhibit they are well-represented by the factor map. For example, country Rwanda's profile is better represented by PC2 (Dim2, far away from origin in the direction of y axis), while Niger is better represented by PC1 (Dim1, far away from origin in the direction of x axis). Same idea, variables Labo.FM and Parli.F have strong contribution to positive side of PC2(Dim2), while Mat.Mor and ado.birth made a good amount of contribution to the positive side of PC1(Dim1). The Education related variables, GNI and life.EXp contributes more to the negative side of PC1 (Dim1). 
+The scattered row names exhibit they are well-represented by the factor map. For example, country Rwanda's profile (top, 1st quadrant) is better represented by PC2 (Dim2, far away from origin in the direction of y axis), while Niger  (right end in the middle, 4th quadrant)  is better represented by PC1 (Dim1, far away from origin in the direction of x axis). Same idea, variables Labo.FM (top, 1st quadrant, in blue) and Parli.F (top, 2nd quadrant, in blue) have strong contribution to positive side of PC2(Dim2), while Mat.Mor (middle right, 1st quadrant, in blue) and ado.birth (top, 2nd quadrant) have strong contribution to positive side of PC2(Dim2), while Mat.Mor (middle right, 1st quadrant, in blue) made a good amount of contribution to the positive side of PC1(Dim1). The Education related variables, GNI (left, 2nd quadrnat, in blue) and life.EXp (left, 3rd quadrnat, in blue)  contributes more to the negative side of PC1 (Dim1). 
+
+By observing the variables contributing to each principal components, I get the idea that:
+
+Component 1: explains the gender equality in terms of enjoying basic social welfare (e.g. education, healthcare)
+
+Component 1: explains the gender equality in terms of being a productive member of the society (labor involvement, parliament involvement)
 
 ## 2.5 Requirement 5
 
@@ -544,7 +552,8 @@ All the variables are of character type, excpet for age, which is integer.
 ```{r}
 dim(tea)
 ```
-The data set records information of 300 obs. on 36 variable
+
+The dataset records information of 300 obs. on 36 variable
 
 #### 2.5.2.3 Browse content
 
@@ -590,7 +599,7 @@ tea %>% dplyr::select(-age) %>%  #age is continuous, remove it
 
 ```
 
-It can be observed that some variables have level(s) with very low frequency. This produces the risk in distorting the analysis. 
+It can be observed that some variables have level(s) with very low frequency. This produces the risk in distorting the analysis. I will address it in this section.
 
 ### 2.5.5 variable selection 
 
@@ -670,7 +679,8 @@ fviz_screeplot(mca.tea,
   labs(title= "Fig. 2.5.6.1 Variance explained by the top 10 dimensions")+
   theme(panel.grid = element_blank())#label
 ```
-The eigenvalue of the first 3 dimensions are 0.109, 0.072 and 0.069. Since the eigenvalues of all 22 dimensions adds up to 1, an eigenvalue×100% will be the percentage of variance of the data set captured by this very dimension. Altogether, the first 2 dimensions captured 18.83% variability, indicating quite an amount of insights will be missed out using 2-dimension solution to represent the variation between variables. In the 2-dimension plot that I am going to generate in the following sections, highly differentiated variables' leverage in discrimination might be underestimated, and indistinct variables might be highly differentiated on some dimensions other than the first 2. The full results of this MCA should be interpreted on the basis of this knowledge. 
+
+The eigenvalue of the first 3 dimensions are 0.109, 0.072 and 0.069. Since the eigenvalues of all 22 dimensions adds up to 1, an eigenvalue×100% will be the percentage of variance of the data set captured by this very dimension. Altogether, the first 2 dimensions captured 18.83% variability, indicating quite an amount of insights will be missed out using 2-dimension solution to represent the variation between variables. In the 2-dimension plot that I am going to generate in the following sections, some highly differentiated variables' leverage in discrimination might be underestimated, and indistinct variables might be highly differentiated on some dimensions other than the first 2. The full results of this MCA should be interpreted on the basis of this knowledge. 
 
 #### 2.5.6.2 COS2 and visualization
 
@@ -691,9 +701,9 @@ cos2.dim <- cos2.dim %>% mutate(Dim.both = Dim.1 + Dim.2)
 cos2.dim[order(-cos2.dim$Dim.both), c(3,4)][1:10,]
 ```
 
-As discussed above, the more the sum of the cos2 for a variable is closed to one, the better it is represented by the two dimensions.Reviewing the results, it is found that no added cos2 values is larger than 0.5. Only 4 variables have cos2 values (addition of the first two dimensions) larger than 0.4. These indicate only a limited number of variables were roughly represented by the first two dimensions, and the strength of variable relationship could be heavily under-estimated by by plots generated in the next sections. 
+As discussed above, the more the sum of the cos2 for a variable is closed to one, the better it is represented by the two dimensions. Reviewing the results, it is found that no added cos2 values is larger than 0.5. Only 4 variables have cos2 values (addition of the first two dimensions) larger than 0.4. These indicate only a limited number of variables were roughly represented by the first two dimensions, and the strength of variable relationship could be heavily under-estimated by by plots generated in the following sections of this analysis. 
 
-For better understanding, a Variable Plot of MCA with high COS2 is generated (fig. 2.5.6.2). The results correspond to the finding from values of cos2. Note that variable categories such as tearoom andfeminine are relatively well-represented by both dimensions since they are far away from the origin in both x and y axes. Variable categories such as evening are well-represented by one dimension instead of the other since they are far away from the origin in either x or y axis (for evening, it is y). Variable categories such as friends are relatively well-represented by none of the dimensions since they are closed to origin from both directions. 
+For facilitating interpretability, a Variable Plot of MCA with high COS2 is generated (fig. 2.5.6.2). The results correspond to the finding from values of cos2. Note that variable categories such as tearoom  and feminine are relatively well-represented by both dimensions since they are far away from the origin in both x and y axes. Variable categories such as evening are well-represented by one dimension instead of the other since they are far away from the origin in either x or y axis (for evening, it is y). Variable categories such as friends are relatively well-represented by none of the dimensions since they are closed to origin from both directions. 
 
 ```{r, fig.width= 6, fig.height = 5.5}
 p1 <- fviz_mca_var(mca.tea, 
@@ -710,7 +720,7 @@ p1
 
 #### 2.5.6.3 Contribution and visualization
 
-Contr measures the percentage contributions of the each variable to the definition (inertia) of the dimensions. The contr of the first two dimensions will be displayed below. The sum of contr for each dimension will be 1. Larger Contr means the variable captures larger inertia of the dimension. Contr has similar functions as factor loading scores as that in principal component analysis, hence by reviewing the variable categories having strong contribution to a dimension, it is possible to assume a construct reflected underneath. Unfortunately, I did not find a clear explanation of variable categories of tea data set, this is not possible here. 
+Contr measures the percentage contributions of the each variable to the definition (inertia) of the dimensions. The contr of the first two dimensions will be displayed below. The sum of contr for each dimension will be 1. Larger Contr means the variable captures larger inertia of the dimension. Contr has similar functions as factor loading scores as that in principal component analysis, hence by reviewing the variable categories having strong contribution to a dimension, it is possible to assume a construct reflected underneath. Unfortunately, I did not find a clear explanation of variable categories of tea data set, this is not possible here. ("Inertia" in a MCA is analogous to the variance.)
 
 ```{r}
 #extract contr values for the 1st 2 dimensions
@@ -775,7 +785,7 @@ p2 <- fviz_mca_var(mca.tea, col.var = "contrib",
 p2
 ```
 
-Below I display plots 2.5.6.2 and 2.5.6.3c in one graph so that cos2 (contribution of dimensions to variable) and contr (contribution of variables to dimensions) can be compared. Most variable categories have consistent strength of cos2 and contr such as evening (on top, both), tearoom (right end), both), Male (M, to the left in the second quadrant, both), Not.friends (lower left). Some, such as friends (near the origin, first quadrant, left plot), have moderate strength in cos2 but not in contr, indicating it might be well-represented by the dimensions but its contribution to the dimensions either is explained by other variables or its contribution distributes across the dimension with neither one pronounced.
+Below I display plots 2.5.6.2 and 2.5.6.3c in one graph so that cos2 (contribution of dimensions to variable) and contr (contribution of variables to dimensions) can be compared. Most variable categories have consistent strength of cos2 and contr such as evening (on top, both), tearoom (right end, both), Male (M, to the left in the second quadrant, both), Not.friends (lower left). Some, such as friends (near the origin, first quadrant, left plot), have moderate strength in cos2 but not in contr, indicating it might be well-represented by the dimensions but its contribution to the dimensions either is explained by other variables or its contribution distributes across the dimension with neither one pronounced.
 
 ```{r, fig.width= 12, fig.height = 5.5}
 library(patchwork)
@@ -794,7 +804,7 @@ fviz_mca_var(mca.tea, choice = "mca.cor",
           panel.background  = element_rect(color = "black"))
 ```
 
-No variable is highly correlated with any dimension. Variables such as sex (right end), tearoom (lower right corner), friendliness (lower right corner) and tea.time(lower right) are moderately correlated with dimension one; variables such as evening (on top) are moderately correlated with the second dimension; variables such as feminine (upper right) and resto (roughly in the middle of the plot) are moderately correlated with both dimensions. Variables clustered closely to the origin are not noticeably correlated with any dimensions.
+No variable is highly correlated with any dimension in terms of absolute correlation coefficients(see the scale ranges of x and y axes). Variables such as sex (right end), tearoom (lower right corner), friendliness (lower right corner) and tea.time(lower right) are moderately correlated with dimension one; variables such as evening (on top) are moderately correlated with the second dimension; variables such as feminine (upper right) and resto (roughly in the middle of the plot) are moderately correlated with both dimensions. Variables clustered closely to the origin are not noticeably correlated with any dimensions.
 
 #### 2.5.6.5 classic variable plot
 
@@ -807,11 +817,63 @@ fviz_mca_var(mca.tea,
              title = "Fig 2.5.6.5 Classic variable plot for the first two dimensions")# theme that I like
 ```
 
-Before interpreting the plot, I emphasize the fact we have found that the first two dimensions only explain 19% of the total inertia contained in the data, indicating not all the points are equally well displayed in the two dimensions. Categories that do not differentiate well in the plot might still very possibly to be distinct in terms of other dimensions outside the first two. 
+Before interpreting the plot, I emphasize the fact that the first two dimensions only explain 19% of the total inertia contained in the data, indicating not all the points are equally well displayed in the two dimensions. Categories that do not differentiate well in the plot might still very possibly to be distinct in terms of other dimensions outside the first two. 
 
 Variable categories clustered closely around the origin such as health, not.breakfast, not.pub, sportsman and not.spirituality might have weak to none association. Some points that are further from the origin, such as evening (top), resto(upper right), pub(middle upper right), tearoom (right), not.friends (lower left), no.relaxing (bottom, 3rd quadrant), feminine (bottom, 4th quadrant), not.sportsman (bottom, 4th quadrant) and not friendliness (left), are quite discriminating. Among them, tearoom and pub are well represented by the first dimension and have strong positive correlation. Not.friendliness is also well-represented by dimension one, while it is negatively correlated with tearoom and pub since it positions in the opposed quadrant with them.
 
 Evening and resto are well represented by the 2nd dimension and have strong positive correlation. No.relaxing, non.sportsman and feminine are also well-represented by dimension 2, while they are negatively correlated with evening and resto since they position in the opposed quadrant. 
+
+*Summary*
+
+a. In this assignment I practiced PCA and MCA. Both are method that aims at condensing data with a variety of dimensions(variables) into one with small number of dimensions (most preferably two, but more is possible). 
+
+b. MCA is built upon PCA. The former is for nominal data, while the later for continuous data.
+
+c. PCA is better done with scaled/standardized data, especially when the variables having disparate scales. 
+
+d. The reduced dimensions are called components or dimensions. When we only want two of them or two is a sufficient number to wrap most information of the data, we can visualize the relationships between component and variables and between variables into a 2-dimension plot. When visualizing in PCA, these relationship can be measured by loading scores (the proportion of each variable's contribution to each components ). When visualizing, these relationship can be measured by either how much the components explain the each variable (cos2) or how much the variables contribute to each component (contra). The math behind these gauges is  eigenvalues and eigen-vectors, which I have not yet dug into. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
