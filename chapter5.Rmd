@@ -27,6 +27,7 @@ library(corrplot)
 library(stringr)
 library(psych) 
 library(FactoMineR)
+library(tidyr)
 ```
 
 ## 5.2 Loading the data set from wrangling exercise
@@ -152,3 +153,48 @@ str(tea);dim(tea)
 colnames(tea)
 summary(tea)
 ```
+
+
+```{r}
+# lets work with some variables 
+keep_columns <- c("Tea", "How", "how", "sugar", "where", "lunch")
+
+
+# select the 'keep_columns' to create a new data set
+tea_time <- dplyr::select(tea, all_of(keep_columns))
+
+# look at the summaries and structure of the data
+summary(tea_time)
+
+# visualize the data set
+pivot_longer(tea_time, cols = everything()) %>% 
+  ggplot(aes(value)) + facet_wrap("name", scales = "free", ncol=6) +
+  geom_bar() + theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8))
+
+
+```
+
+## 5.7 Multiple Correspondence Analysis (MCA) with "tea" data set
+
+```{r}
+# multiple correspondence analysis
+#library(FactoMineR), package is loaded above already, this just as note !! 
+
+mca <- MCA(tea_time, graph = FALSE)
+
+# summary of the model
+summary(mca)
+
+# visualize MCA
+plot(mca, invisible=c("ind"), graph.type = "classic", habillage = "quali")
+mca
+```
+```{r}
+plotellipses(mca)
+```
+I have only chosen selected variables here. From the selected categories, in category where , chain store and tea shop seem to be favored. Likewise in category how, milk tea, alone and other (undefined) seemed preferred. Also how, tea bag, un-packaged seem to be preferred. 
+
+
+
+
+
