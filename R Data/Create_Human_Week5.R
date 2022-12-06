@@ -45,7 +45,7 @@ print(human$GNI)
 
 library(dplyr)
 # columns to keep
-keep <- c("Country", "SeEdu_FM", "LFR_FM", "Life_Exp", "Exp_Edu", "GNI", "MMR", "ABR", "%PR")
+keep <- c("SeEdu_FM", "LFR_FM", "Life_Exp", "Exp_Edu", "GNI", "MMR", "ABR", "%PR")
 human <- select(human, one_of(keep))
 include <- complete.cases(human)
 
@@ -74,7 +74,7 @@ human_
 human_$GNI <- gsub(",", "", human_$GNI) %>% as.numeric
 str(human_);dim(human_)
 
-#155 observations and 7 variables, great !! 
+#155 observations and 8 variables, great !! 
 
 ##Step 7## Save the file
 #save new data set to project folder
