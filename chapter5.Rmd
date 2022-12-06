@@ -151,12 +151,9 @@ view(tea)
 str(tea);dim(tea)
 colnames(tea)
 summary(tea)
-```
 
-
-```{r}
 #Lets look at some variables 
-# column names to keep in the dataset
+
 keep_columns <- c("Tea", "How", "how", "sugar", "where", "lunch")
 
 # select the 'keep_columns' to create a new dataset
@@ -170,6 +167,7 @@ pivot_longer(tea_time, cols = everything()) %>%
   ggplot(aes(value)) + facet_wrap("name", scales = "free", ncol=6) +
   geom_bar() + theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8))
 ```
+
 
 ## 5.7 Multiple Correspondence Analysis (MCA) with "tea" data set
 
