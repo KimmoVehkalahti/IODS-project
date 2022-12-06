@@ -1,30 +1,197 @@
----
-title: "chapter5"
-author: "Subam Kathet"
-date: "2022-12-05"
-output: html_document
----
+# Week 5: Dimensionality reduction techniques
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+Actually, a fairly large selection of statistical methods can be listed under the title "dimensionality reduction techniques". Most often (nearly always, that is!) the real-world phenomena are multidimensional: they may consist of not just two or three but 5 or 10 or 20 or 50 (or more) dimensions. Of course, we are living only in a three-dimensional (3D) world, so those multiple dimensions may really challenge our imagination. It would be easier to reduce the number of dimensions in one way or another.
+
+We shall now learn the basics of two data science based ways of reducing the dimensions. The principal method here is principal component analysis (PCA), which reduces any number of measured (continuous) and correlated variables into a few uncorrelated components that collect together as much variance as possible from the original variables. The most important components can be then used for various purposes, e.g., drawing scatterplots and other fancy graphs that would be quite impossible to achieve with the original variables and too many dimensions.
+
+Multiple correspondence analysis (MCA) and other variations of CA bring us similar possibilities in the world of discrete variables, even nominal scale (classified) variables, by finding a suitable transformation into continuous scales and then reducing the dimensions quite analogously with the PCA. The typical graphs show the original classes of the discrete variables on the same "map", making it possible to reveal connections (correspondences) between different things that would be quite impossible to see from the corresponding cross tables (too many numbers!).
+
+Briefly stated, these methods help to visualize and understand multidimensional phenomena by reducing their dimensionality that may first feel impossible to handle at all.
+
+```{r}
+date()
 ```
 
-## R Markdown
+Lets start !!
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+## 5.1 Packages required
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+```{r}
+#load the packages 
 
-```{r cars}
-summary(cars)
+library(tidyverse)
+library(GGally)
+library(dplyr)
+library(ggplot2)
+library(corrplot)
+library(stringr)
+library(psych) 
+library(FactoMineR)
 ```
 
-## Including Plots
+## 5.2 Loading the data set from wrangling exercise
 
-You can also embed plots, for example:
+```{r}
+#loading from project folder 
+human_ <- read.csv('human_.csv', row.names = 1)
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+#Alternatively url is given in the instruction page, so we can also use that !! 
+# human <- read.csv("https://raw.githubusercontent.com/KimmoVehkalahti/Helsinki-Open-Data-Science/master/datasets/human2.txt", row.names = 1)
+
+#lets check how the data looks
+str(human_);dim(human_)
+colnames(human_)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## 5.3 Graphical overview
+
+```{r}
+summary(human_)
+```
+```{r}
+Plot1 <- p1 <- ggpairs(human_, mapping = aes(alpha=0.5), title="summary plot",lower = list(combo = wrap("facethist", bins = 25)))
+Plot1
+```
+```{r}
+#Lets see the correlation matrix with corrplot, I have used same method as last week's exercise with some changes
+Plot2 <- cor(human_, method='spearman')
+Plot2
+corrplot.mixed(Plot2, lower = 'number', upper = 'ellipse',tl.pos ="lt", tl.col='black', tl.cex=0.8, number.cex = 0.7)
+```
+In above, correlation plot, I have used ellipse method to visualize the relationship between different variables. The correlation is stronger when the ellipse are narrower and two color spectrum blue and red represents positive and negative correlation respectively.  
+
+Statistically significant strong positive correlation from two plots are between variables
+
+  - Life expectancy (Life_Exp) and Expected years of schooling (Exp_Edu)
+  - Life expectancy (Life_Exp) and Gross National Income per capita (GNI)
+  - Expected years of schooling (Exp_Edu) and Gross National Income per capita (GNI)
+  - Maternal Mortality Rates (MMR) and Adolescent Birth Rate (ABR) 
+  
+Statistically significant strong negative correlation from two plots are between variables
+
+  - Life expectancy (Life_Exp) and Maternal Mortality Rate (MMR)
+  - Expected years of schooling (Exp_Edu) and Maternal Mortality Rate (MMR)
+  - Gross National Income (GNI) and Maternal Mortality Rate (MMR)
+
+Two variables; labor Force Mortality of male and female combined (LFR_FM) and percentage of female representatives in the parliament (%PR) doesn't show any correlation and therefore are not associated with any other variables. Like wise secondary education of male and female combines (SeEdu_FM) isn't associated strongly with any other variables.
+
+## 5.4 Principal component analysis (PCA)
+
+[Principal Component Analysis](https://en.wikipedia.org/wiki/Principal_component_analysis) (PCA) can be performed by two sightly different matrix decomposition methods from linear algebra: the [Eigenvalue Decomposition](https://en.wikipedia.org/wiki/Eigendecomposition_of_a_matrix) and the [Singular Value Decomposition](https://en.wikipedia.org/wiki/Singular_value_decomposition) (SVD). 
+
+There are two functions in the default package distribution of R that can be used to perform PCA: `princomp()` and `prcomp()`. The `prcomp()` function uses the SVD and is the preferred, more numerically accurate method.
+Both methods quite literally *decompose* a data matrix into a product of smaller matrices, which let's us extract the underlying **principal components**. This makes it possible to approximate a lower dimensional representation of the data by choosing only a few principal components.
+
+Lets follow the instruction from course material and 
+
+```{r}
+
+# lets create `human_std` by standardizing the variables in `human`
+human_std <- scale(human_)
+
+# print out summaries of the standardized variables
+summary(human_std)
+
+# perform principal component analysis (with the SVD method)
+pca_human <- prcomp(human_std)
+pca_human
+summary(pca_human)
+
+# draw a biplot of the principal component representation and the original variables
+biplot(pca_human, choices = 1:2, cex = c(0.8, 1), col = c("darkred", "darkgreen"))
+```
+From the plot we can see the variability captured by the principal components which seems to have a realistic distribution between the principal components. 
+
+Summary of the result
+
+From the plot (rounded with %) 
+
+PC1 = 53.61 % variance
+PC2 = 16.24 % variance
+PC3 = 9.57 % variance
+PC4 = 7.58 % variance
+PC5 = 5.47 % variance
+PC6 = 3.59 % variance
+PC7 = 2.63 % variance
+PC8 = 1.29 % variance
+
+And the standard deviation (SD)
+
+                         PC1    PC2     PC3     PC4     PC5     PC6     PC7     PC8
+Standard deviation     2.0708 1.1397 0.87505 0.77886 0.66196 0.53631 0.45900 0.32224
+
+## 5.5 Intrepretation of the analysis
+
+Summary of PC1-PC8 rounded with percentage (2 Decimal points only) is elaborated above
+
+PC1 gives the most (53,61%) and PC8 gives the least (1.29%) of the variability in the data set
+
+The variables affect mostly based PC1-PC8 are (explained as an example from table in the summary)
+
+Exp_Edu (positive effect)
+GNI (positive effect)
+Life_exp (positive effect)
+SeEdu_FM (positive effect)
+MMR (negative effect)
+ABR (negative effect)
+
+## 5.6 Lets see the "tea" data set
+
+The tea data comes from the FactoMineR package and it is measured with a questionnaire on tea: 300 individuals were asked how they drink tea (18 questions) and what are their product's perception (12 questions). In addition, some personal details were asked (4 questions).
+
+The [Factominer](https://cran.r-project.org/web/packages/FactoMineR/index.html) package contains functions dedicated to multivariate explanatory data analysis. It contains for example methods *(Multiple) Correspondence analysis* , *Multiple Factor analysis* as well as PCA.
+
+In the next exercises we are going to use the `tea` dataset. The dataset contains the answers of a questionnaire on tea consumption. 
+
+Let's dwell in teas for a bit!
+
+```{r}
+tea <- read.csv("https://raw.githubusercontent.com/KimmoVehkalahti/Helsinki-Open-Data-Science/master/datasets/tea.csv", stringsAsFactors = TRUE)
+view(tea)
+str(tea);dim(tea)
+colnames(tea)
+summary(tea)
+```
+
+
+```{r}
+#Lets look at some variables 
+# column names to keep in the dataset
+keep_columns <- c("Tea", "How", "how", "sugar", "where", "lunch")
+
+# select the 'keep_columns' to create a new dataset
+tea_time <- select(tea, all_of(keep_columns))
+
+# look at the summaries and structure of the data
+summary(tea_time)
+
+# visualize the dataset
+pivot_longer(tea_time, cols = everything()) %>% 
+  ggplot(aes(value)) + facet_wrap("name", scales = "free", ncol=6) +
+  geom_bar() + theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8))
+```
+
+## 5.7 Multiple Correspondence Analysis (MCA) with "tea" data set
+
+```{r}
+# multiple correspondence analysis
+#library(FactoMineR), package is loaded above already, this just as note !! 
+
+mca <- MCA(tea_time, graph = FALSE)
+
+# summary of the model
+summary(mca)
+
+# visualize MCA
+plot(mca, invisible=c("ind"), graph.type = "classic", habillage = "quali")
+mca
+```
+```{r}
+plotellipses(mca)
+```
+I have only chosen selected variables here. From the selected categories, in category where , chain store and tea shop seem to be favored. Likewise in category how, milk tea, alone and other (undefined) seemed preferred. Also how, tea bag, un-packaged seem to be preferred. 
+
+
+
+
+
