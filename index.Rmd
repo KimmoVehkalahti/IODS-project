@@ -47,14 +47,11 @@ date()
 
 ***
 
-
 ```{r child = "chapter5.Rmd"}
 #This weeks exercises includes tasks from exercise 4, Clustering and classification
 ```
 
 ***
-
-
 
 
 
