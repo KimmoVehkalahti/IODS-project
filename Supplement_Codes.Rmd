@@ -95,4 +95,151 @@ The new model with influential cases removed showed significant coefficient esti
 #                            cut(breaks =c(0,19,22,25,27,34,100)))
 ```
 
+------
+
+
+
+#simlating random coefficient model
+
+```{r}
+set.seed(1234)  # this will allow you to exactly duplicate your result
+Ngroups <-  100
+NperGroup <-  10
+N <-  Ngroups * NperGroup
+groups <-  factor(rep(1:Ngroups, each = NperGroup))
+u <-  rnorm(Ngroups, sd = .5)
+e <-  rnorm(N, sd = .25)
+x <-  rnorm(N)
+y <-  2 + .5 * x + u[groups] + e
+
+d <-  data.frame(x, y, groups)
+d
+```
+
+
+```{r}
+library(lme4)
+library(ggplot2)
+model <-  lmer(y ~ x + (1|groups), data=d)
+
+summary(model)
+
+confint(model)
+
+
+library(ggplot2)
+
+ggplot(aes(x, y), data=d) +
+  geom_point()
+```
+
+
+```{r}
+re <-  ranef(model)$groups
+
+qplot(x = `(Intercept)`, geom = 'density', xlim = c(-3, 3), data = re)
+names(re)
+```
+
+
+
+
+```{r}
+coef(model)$groups
+```
+
+
+```{r}
+ranef(model)$groups
+aa <- ranef(model)
+```
+
+
+```{r}
+install.packages("merTools")
+library(merTools)
+predictInterval(model)
+```
+
+```{r}
+REsim(model)
+```
+
+```{r}
+plotREsim(REsim(model))
+```
+
+
+
+
+```{r}
+model2 <-  lmer(y ~ x + (1+ x|groups), data=d)
+summary(model2)
+```
+
+
+
+```{r}
+re <-  ranef(model2)$groups
+
+qplot(x = `(Intercept)`, geom = 'density', xlim = c(-3, 3), data = re)
+
+lr <- lm(y~x)
+
+```
+
+
+
+
+```{r}
+fixef(model)
+ranef(model)$groups
+```
+
+```{r}
+as.data.frame(t(apply(ranef(model)$groups, 1,function(x) fixef(model) + x)))
+```
+
+```{r}
+apply(ranef(model)$groups, 1,function(x) fixef(model) + x)
+```
+
+```{r}
+summary(model2)
+```
+
+
+```{r}
+fixef(model2) + ranef(model2)$groups[1,]
+```
+
+```{r}
+ranef(model2)$groups[1,]
+```
+
+```{r}
+fixef(model2)
+```
+
+
+
+```{r}
+t(apply(ranef(model2)$groups, 1,function(x) fixef(model2) + x))
+df <- as.data.frame(t(apply(ranef(model2)$groups, 1,function(x) fixef(model2) + x)))
+df
+```
+
+
+```{r}
+pred_model2 <- melt(apply(df,1,function(x) x[1] + x[2]*0:10), value.name = "Reaction")
+```
+```{r}
+df[2]*0:9
+```
+
+
+```{r}
+apply(df,1,function(x) x[1] + x[2]*0:9)
+```
+
 
