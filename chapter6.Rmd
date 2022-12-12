@@ -1,14 +1,81 @@
 # Week 6: Analysis of longitudinal data
-longitudinal 
 
 After working hard with multivariate, mostly exploratory, even heuristic techniques that are common in data science, the last topic of IODS course will take us back in the task of building statistical models.
 
 The new challenge is that the data will include two types of dependencies simultaneously: In addition to the correlated variables that we have faced with all models and methods so far, the observations of the data will also be correlated with each other.
 
-Usually, we can assume that the observations are not correlated - instead, they are assumed to be independent of each other. However, in longitudinal settings this assumption seldom holds, because we have multiple observations or measurements of the same individuals. The concept of repeated measures highlights this phenomenon that is actually quite typical in many applications. Both types of dependencies (variables and observations) must be taken into account; otherwise the models will be biased.
+**Lets start this weeks session**
+
+Usually, we can assume that the observations are not correlated - instead, they are assumed to be independent of each other. However, in **longitudinal settings** this assumption seldom holds, because we have multiple observations or measurements of the same individuals. The concept of repeated measures highlights this phenomenon that is actually quite typical in many applications. Both types of dependencies (variables and observations) must be taken into account; otherwise the models will be biased.
+
+```{r echo=FALSE, out.width= "50%"}
+knitr::include_graphics("long2.jpg", error = FALSE)
+```
 
 To analyze this kind of data sets, we will focus on a single class of methods, called **linear mixed effects models** that can cope quite nicely with the setting described above.
 
 Before we consider two examples of mixed models, namely the random intercept model and the random intercept and slope model, we will learn how to wrangle longitudinal data in wide form and long form, take a look at some graphical displays of longitudinal data, and try a simple summary measure approach that may sometimes provide a useful first step in these challenges. In passing, we “violently” apply the usual “fixed” models (although we know that they are not the right choice here) in order to compare the results and see the consequences of making invalid assumptions.
+
+**Load the packages first !! **
+
+## 6.1 Packages for Week 6 !!
+
+```{r}
+#load required packages
+library(ggplot2)
+library(corrplot)
+library(tidyverse)
+library(GGally)
+library(dplyr)
+library(stringr)
+library(psych) 
+library(FactoMineR)
+library(lme4)
+```
+
+That's a lot of packages !!!
+
+```{r echo=FALSE, out.width= "40%"}
+knitr::include_graphics("long1.jpg", error = FALSE)
+```
+
+## Analysis of RATS data 
+
+Lets implement the analyses of Chapter 8 of MABS, using the R codes of Exercise Set 6: Meet and Repeat: PART I but using the RATS data (from Chapter 9 and Meet and Repeat: PART II) as instructed in the Moodle. 
+
+### 6.2 Loading the data 
+
+```{r}
+
+```
+
+## Analysis of BPRS data 
+
+Lets implement Implement the analyses of Chapter 9 of MABS, using the R codes of Exercise Set 6: Meet and Repeat: PART II, but using the BPRS data (from Chapter 8 and Meet and Repeat: PART I) as instructed in the Moodle. 
+
+### 6.11 Loading the data 
+
+```{r}
+
+```
+
+**DONE AND DUSTED** $\large \surd$ !!! 
+
+```{r echo=FALSE, out.width= "20%"}
+knitr::include_graphics("santa.jpg", error = FALSE)
+```
+
+
+**Well not really !!** There is so much more to learn. This course was however a great "push"
+I have truly enjoyed the exercise sessions, the course material and the review exercises. I have learned so much and I am looking forward to learning more !! 
+
+**Merry Christmas and a Happy New Year Everyone !!**
+
+```{r echo=FALSE, out.width= "100%"}
+knitr::include_graphics("newyear.jpg", error = FALSE)
+```
+
+
+
 
 
