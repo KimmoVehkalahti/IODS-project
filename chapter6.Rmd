@@ -46,8 +46,92 @@ Lets implement the analyses of Chapter 8 of MABS, using the R codes of Exercise 
 ### 6.2 Loading the data 
 
 ```{r}
+# read long format data of rats
+RATSL <- read.csv('RATSL.csv')
 
+# glimpse and dimensions
+head(RATSL);dim(RATSL)
+str(RATSL)
+summary(RATSL)
 ```
+The data set contains observation from 6 rats and 11 observation of change in weight by Time. They are divided into 3 groups based on treatment. Weight in this case is the outcome variable in this longitudinal study. The idea is to analyse the weight difference in three group over time. 
+
+### 6.3 Plotting the data
+
+```{r}
+
+# Lets convert categorical data to factors first 
+## WE have ID and Group (Just like wrangling exercise)
+RATSL$ID <- factor(RATSL$ID)
+RATSL$Group <- factor(RATSL$Group)
+
+# Draw the plot ##We plot the Weights of each rat by time and groups
+# Rats are divided into three groups
+ggplot(RATSL, aes(x = Time, y = Weight, linetype = ID)) +
+  geom_line() +
+  scale_linetype_manual(values = rep(1:10, times=4)) +
+  facet_grid(. ~ Group, labeller = label_both) +
+  theme(legend.position = "none") + 
+  scale_y_continuous(limits = c(min(RATSL$Weight), max(RATSL$Weight)))
+```
+From the plot we can see that Group 1 has the most rats with lowest weight even at starting point (time of recruitment). Group 2 the most incremental weight outcome compare to baseline but has only 4 rats. Group 3 has also 4 rats with almost same weight range as Group 2, however the weight doesn't seem to increase significantly as group 2. 
+
+### 6.4 Standardizing for tracking
+
+Higher baseline values means higher values throughout the study.This phenomenon is generally referred to as tracking.
+
+The tracking phenomenon can be seen more clearly in a plot of the standardized values of each
+observation, i.e.,
+
+$$standardised(x) = \frac{x - mean(x)}{ sd(x)}$$
+
+```{r}
+
+# Standardize the variable weight by groups
+RATSL <- RATSL %>%
+  group_by(Time) %>%
+  mutate(Weight_std= (scale(Weight))) %>%
+  ungroup()
+
+# Glimpse the data
+glimpse(RATSL)
+
+# Plot again with the standardized weight in RATSL 
+ggplot(RATSL, aes(x = Time, y = Weight_std, linetype = ID)) +
+  geom_line() +
+  scale_linetype_manual(values = rep(1:10, times=4)) +
+  facet_grid(. ~ Group, labeller = label_both) +
+  theme(legend.position = "none")
+  scale_y_continuous(name = "standardized Weignt")
+```
+After the standardization, the weight difference looks similar. 
+
+### 6.5 Summary graphs
+
+With large numbers of observations, graphical displays of individual response profiles are of little use and investigators then commonly produce graphs showing average (mean) profiles for each treatment group along with some indication of the variation of the observations at each time point, in this case the standard error of mean
+
+$$se = \frac{sd(x)}{\sqrt{n}}$$
+```{r}
+# Summary data with mean and standard error of RATSl by treatment and week 
+RATSL <- RATSL %>%
+  group_by(Group, Time) %>%
+  summarise(mean = mean(Weight), se = (sd(Weight)/sqrt(length(Weight))) ) %>% #using formula above;
+  ungroup()
+
+# Glimpse the data
+glimpse(RATSL)
+
+# Plot the mean profiles
+ggplot(RATSL, aes(x = Time, y = mean,  linetype = Group, shape = Group)) +
+  geom_line() +
+  scale_linetype_manual(values = c(1,2,3)) +
+  geom_point(size=3) +
+  scale_shape_manual(values = c(1,2,3)) +
+  geom_errorbar(aes(ymin=mean-se, ymax=mean+se, linetype="1"), width=0.3) +
+  theme(legend.position = c(0.8,0.8)) +
+  scale_y_continuous(name = "mean(Weight) +/- se(Weight)")
+```
+
 
 ## Analysis of BPRS data 
 
@@ -58,6 +142,21 @@ Lets implement Implement the analyses of Chapter 9 of MABS, using the R codes of
 ```{r}
 
 ```
+
+
+### 6.3 Individuals on the plot
+
+
+
+
+
+
+
+
+
+
+
+
 
 **DONE AND DUSTED** $\large \surd$ !!! 
 
