@@ -24,6 +24,7 @@
 
 library(dplyr)
 library(tidyr)
+library(readr)
 
 ###**STEP 1**### Loading the data set
 
@@ -109,9 +110,6 @@ read_csv("RATSL.csv")
 ###All done !!!! 
 
 ###DATA WRANGLING COMPLETE !!!! 
-
-
-
 
 
 
