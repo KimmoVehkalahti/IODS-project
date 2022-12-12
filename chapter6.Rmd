@@ -1,0 +1,11 @@
+# Week 6: Analysis of longitudional data
+
+After working hard with multivariate, mostly explorative, even heuristic techniques that are common in data science, the last topic of the course will take us back in the task of building statistical models.
+
+The new challenge is that the data will include two types of dependencies simultaneously: In addition to the correlated variables that we have faced with all models and methods so far, the observations of the data will also be correlated with each other.
+
+Usually, we can assume that the observations are not correlated - instead, they are assumed to be independent of each other. However, in longitudinal settings this assumption seldom holds, because we have multiple observations or measurements of the same individuals. The concept of repeated measures highlights this phenomenon that is actually quite typical in many applications. Both types of dependencies (variables and observations) must be taken into account; otherwise the models will be biased.
+
+To analyze this kind of data sets, we will focus on a single class of methods, called linear mixed effects models that can cope quite nicely with the setting described above.
+
+Before we consider two examples of mixed models, namely the random intercept model and the random intercept and slope model, we will learn how to wrangle longitudinal data in wide form and long form, take a look at some graphical displays of longitudinal data, and try a simple summary measure approach that may sometimes provide a useful first step in these challenges. In passing, we “violently” apply the usual “fixed” models (although we know that they are not the right choice here) in order to compare the results and see the consequences of making invalid assumptions.

@@ -53,6 +53,12 @@ date()
 
 ***
 
+```{r child = "chapter6.Rmd"}
+#This weeks exercises includes tasks from exercise 5, Dimensionality reduction techniques
+```
+
+***
+
 
 
 
