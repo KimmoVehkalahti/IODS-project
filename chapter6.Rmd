@@ -1,4 +1,5 @@
-# Week 6: Analysis of longitudional data
+# Week 6: Analysis of longitudinal data
+longitudinal 
 
 After working hard with multivariate, mostly exploratory, even heuristic techniques that are common in data science, the last topic of IODS course will take us back in the task of building statistical models.
 
