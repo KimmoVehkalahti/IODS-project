@@ -355,7 +355,7 @@ ggplot(BPRSL, aes(x = week, y = bprs_fitted_values_BPRSL_ref1, group = subject, 
 ```
 From the plot, we can see random intercept model differs from random intercept and slope model. Adding a slope intercept didn't change the outcomes however. We can also see the final plot random intercept and slope with interaction model also different from all three model above. In conclusion we can say that random intercept model doesn't highlight the individual's effect on bprs over time and also the outcomes didn't change with subsequent model. 
 
-************************************************************************* END *************************************************************************
+******************************************************************* END ******************************************************************
 
 **DONE AND DUSTED** $\large \surd$ !!! 
 
