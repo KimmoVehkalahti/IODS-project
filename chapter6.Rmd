@@ -41,12 +41,9 @@ ratsl <- ratsl[-1]
 
 R does not recognize categorical variables automatically as factors. I will do manually that here.
 
-```{r}
-ratslf
-```
-
 
 ```{r}
+library(tidyverse)
 #for wide format dataset
 ratsf <- rats %>% mutate(ID = factor(ID), 
                         Group = factor(Group))

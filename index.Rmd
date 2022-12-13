@@ -51,3 +51,9 @@ bibliography: citations.bib
 ```
 
 ***
+
+```{r child = "chapter6.Rmd", warning = F, message = F}
+# This will include Chapter 6 (that is updated in its own file) in the document.
+```
+
+***
