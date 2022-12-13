@@ -786,7 +786,7 @@ The random effect part of the summary above shows, on average, BPRS rating bounc
 
 Although the effect of treatment types is still insignificant, with random intercept model, I get more variations of participants' ratings explained by individual difference, and this difference is even larger than the effect of time, another significant predictor (coefficient -2.27, 95%CI: -2.56 to -1.97).
 
-#### 2.3.1 Random intercept and slope model
+#### 2.3.2 Random intercept and slope model
 
 Herein I model the BPRS rating as a function of treatment and time, knowing (including into model the consideration) that people (subjects) have different rating baselines (random intercept) and also that treatment types and different baseline have a correlation (randome slope).
 
@@ -811,6 +811,28 @@ To summarize, even after making a prediction based on time point and treatment, 
 
 Although the effect of treatment types is still insignificant, with random intercept and slope model, I get more variations of participants' ratings explained by individual difference at baseline and individual difference in reacting to the treatment, and these differences are even larger than the effect of time, another significant predictor (coefficient -2.27, 95%CI: -2.57 to -1.97).
 
+#### 2.3.3 Random intercept and slope model with more random effect item
+
+```{r}
+#fit it
+bprs_both_more <- lmer(rating ~ week + treatment + (treatment | subject) + (0 + week | subject), 
+                  data = bprslf, 
+                  REML = FALSE)
+summary(bprs_both_more)
+```
+
+
+#### 2.3.3 Random intercept and slope model with interaction
+
+```{r}
+#fit it
+bprs_interaction <- lmer(rating ~ week*treatment + (treatment | subject), 
+                  data = bprslf, 
+                  REML = FALSE)
+summary(bprs_interaction)
+
+```
+
 ## 3 Summary
 
 a. In this exercise, I tested the hypothesis that different treatment would lead to different BPRS ratings.
@@ -822,6 +844,114 @@ c. Both the approaches reported same coefficients (as we would expect) and signi
 d. It is worth noting that the mixed-effect approach does provide more information and more extrpolative results. for example, via this approach I get the idea that individual patient's BPRS rating at baseline would influence the rating change greatly, and that individual patient's BPRS rating at baseline would lead to tremendously different reaction to treatment.
 
 e. Random intercept and slope model is more informative than random intercept only model in the context of this data in a way that it tells us although the insignificant effect of treatment types, some patients might react more responsively to the treatment. It might be meaningful to identify that subgroup of patients. 
+
+
+
+
+```{r}
+anova(bprs_intercept, bprs_both)
+```
+
+
+
+
+```{r}
+#fit it
+bprs_interaction <- lmer(rating ~   week*treatment + (treatment | subject), 
+                  data = bprslf, 
+                  REML = FALSE)
+summary(bprs_interaction)
+confint(bprs_interaction)
+```
+
+```{r}
+severe <- bprslf %>% filter(week == 0& rating > 50) %>% pull(var = subject)
+bprslf.severe <- bprslf %>% filter(subject %in% severe)
+
+bprs_severe_both <- lmer(rating ~  week + treatment + (treatment | subject), 
+                  data = bprslf.severe, 
+                  REML = FALSE)
+summary(bprs_severe_both)
+confint.merMod(bprs_severe_both, devtol = 1e-6)
+```
+
+```{r}
+mild <- bprslf %>% filter(week == 0& rating < 50) %>% pull(var = subject)
+bprslf.mild <- bprslf %>% filter(subject %in% mild)
+
+bprs_mild_both <- lmer(rating ~  week + treatment + (treatment | subject), 
+                  data = bprslf.mild, 
+                  REML = FALSE)
+summary(bprs_mild_both)
+confint.merMod(bprs_mild_both, devtol = 1e-6)
+summarize_model
+```
+
+```{r}
+bprs_interaction_random <- lmer(rating ~ treatment + (1|subject:treatment), bprslf)
+summary(bprs_interaction_random)
+confint(bprs_interaction_random)
+```
+
+```{r}
+bprs_interaction_random_com <- lmer(rating ~ treatment + (1|subject:treatment) + (1|subject), bprslf)
+summary(bprs_interaction_random_com)
+confint(bprs_interaction_random_com)
+```
+```{r}
+anova(bprs_interaction, bprs_intercept)
+fixef(bprs_interaction)[1]+fixef(bprs_interaction)[2]+ranef(bprs_interaction)$subject
+fixef(bprs_interaction)[1]
+fixef(bprs_interaction)[2]
+ranef(bprs_interaction)$subject
+coef(bprs_interaction)
+47.88556 +3.83187436	
+-0.177140664	-2.628333 
+-2.628333 -0.177140664	
+```
+
+```{r}
+
+intercept <- matrix(nrow= 40, ncol = 1)
+
+for (i in 1:40){
+  data <- bprslf %>% filter(subject == i)
+  fit <- lm(rating ~ week, data)
+  intercept[i,] <- coef(fit)[1]
+}
+
+a <- c(intercept)
+df <- data.frame(value = a)
+df
+```
+
+
+
+```{r}
+#get the by-individual intercepts and pass into an object "re"
+re <-  ranef(bprs_interaction)$subject + fixef(bprs_interaction)[1]
+#generate density plot
+qplot(x = `(Intercept)`, geom = 'density',  data = re)
+qplot(x = value, geom = 'density',  data = df)
+
+df.intercept1<- re[1]
+names(df.intercept1) <- "value"
+
+df.intercept1 <- df.intercept1 %>% mutate(label = "random")
+
+df.intercept2 <- df %>% mutate(label = "fixed")
+
+df.intercept1 
+df <- rbind(df.intercept1, df.intercept2)
+
+df %>% ggplot(aes(x = value, color = label, fill = label))+
+  geom_density(alpha = 0.3)
+```
+
+```{r}
+re <-  ranef(bprs_interaction)$subject
+qplot(x = `(Intercept)`, geom = 'density',  data = re)
+```
 
 
 
