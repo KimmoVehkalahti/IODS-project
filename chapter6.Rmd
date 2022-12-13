@@ -20,7 +20,7 @@ bibliography: citations.bib
 
 # **Chapter 6: Analysis of longitudinal data**
 
-# Implement the analyses of Chapter 8 of MABS using RATS data
+# Part I: Implement the analyses of Chapter 8 of MABS using RATS data
 
 ## 1 Preparation
 
@@ -469,7 +469,7 @@ f. Random slope is not included in the model since I do not find evidence that d
 g. One of the assumptions for mixed-model that the intercept should normally distribute around a mean of 0 is violated. We should as such interpret the results with caution. 
 
 
-# Implement the analyses of Chapter 9 of MABS using BPRS data
+# Part II: Implement the analyses of Chapter 9 of MABS using BPRS data
 
 ## 1 Preparation
 
