@@ -220,24 +220,142 @@ BPRS data includes data pertaining to a brief psychiatric rating scale (BPRS) sc
 
 ### 6.8 Loading the data 
 
-```{r}
+Lets load and explore the data first
 
+```{r}
+BPRSL <- read.table("BPRSL.csv", header = T, sep=",")
+
+# Factor treatment & subject
+BPRSL$treatment <- factor(BPRSL$treatment)
+BPRSL$subject <- factor(BPRSL$subject)
+
+
+# Glimpse the data
+
+glimpse(BPRSL)
+
+
+str(BPRSL)
+summary(BPRSL)
+glimpse(BPRSL)
+```
+BPRSL data set has 360 observations and 6 variable. From the glimpse function, we can see the 6 columns, in which two treatment arms are coded 1 and 2 for treatment 1 and treatment 2. Subjects are coded from 1 to 20 however the repetition of same code in subjects suggests that participants were randomized to Treatment 1 or 2. 
+
+```{r}
+#Lets plot the data 
+ggplot(BPRSL, aes(x = week, y = bprs, linetype = subject)) +
+  geom_line() +
+  scale_linetype_manual(values = rep(1:10, times=4)) +
+  facet_grid(. ~ treatment, labeller = label_both) +
+  theme(legend.position = "none") + 
+  scale_y_continuous(limits = c(min(BPRSL$bprs), max(BPRSL$bprs)))
+```
+From the plot, it appears that BPRS seems to decrease during the treatment period in both treatment arms. A clear diffrerence cannot be validated however between groups from the plots.
+
+### 6.9 Linear Mixed Effects Models 
+
+```{r}
+# lets create a regression model for BPRSL
+BPRS_reg <-  lm(bprs ~ week + treatment, data = BPRSL)
+
+# print summary of the model 
+summary(BPRS_reg)
+```
+We have BPRS score as our target variable and time (weeks) and treatment 1 and 2 as our explanatory variable. From the summary model, week variable seem to be statistically significant with BPRS but treatment variable doesn't (p = 0.661). No significant difference can be seen in the difference in BPRS based on treatments
+However this analyses assumes independence of observations, i.e., the observation or outcome is not affected by any other confounder and is completely influenced by the explanatory variable which is not very rational. Therefore we now move on to a more stringent analyses which assumes observations ad dependent variable and can be influence by other effect. We will analyse the data set with both **Fixed-effect models and Random-effect models**.
+
+```{r}
+#lets load the package 
+library(lme4)
+
+# Create a random intercept model
+BPRS_ref <- lmer(bprs ~ week + treatment + (1 | subject), data = BPRSL, REML = FALSE)
+
+# Print the summary of the model
+summary(BPRS_ref)
+confint(BPRS_ref)
+```
+Lets first reflect on our BPRS data set. Our maxima and minima is 95 and 18 respectively. Given the high variance, the baseline seems to differ from the outcomes. 
+
+Let’s fit the random intercept and random slope model to our data:
+
+### 6.10 Random Intercept and Random Slope Model
+
+`Fitting a random intercept and random slope model allows the linear regression fits for each individual to differ in intercept but also in slope. This allows us to account for the individual differences in the individuals symptom (BRPS score) profiles, but also the effect of time.`
+
+```{r}
+# create a random intercept and random slope model
+BPRS_ref1 <- lmer(bprs ~ week * treatment + (week | subject), data = BPRSL, REML = FALSE)
+
+# print a summary of the model
+
+summary(BPRS_ref1)
+confint((BPRS_ref1))
+```
+```{r}
+# perform an ANOVA test on the two models to assess formal differences between them
+anova(BPRS_ref1, BPRS_ref)
 ```
 
+ANOVA test seems significant (p < 0.05). Addition of slope definitely increases the model fit. Its clear that addition of a random intercept model increased the inter individual variance. Treatment group seems unaffected over time. Lets see the slope model and see the outcomes.
 
-### 6.3 Individuals on the plot
+### 6.11 Random Intercept and Random Slope Model with interaction
 
+```{r}
+BPRS_ref2 <- lmer(bprs ~ week * treatment + (week | subject), data = BPRSL, REML = FALSE)
 
+# print a summary of the model
 
+summary(BPRS_ref2)
+```
+```{r}
+# perform an ANOVA test on the two models
+anova(BPRS_ref2, BPRS_ref1)
+```
+Finally, looking at the model, the two model and outcomes seems similar. Comparing the ANOVA test conforms there isn't much significant difference between them. Adding the interaction variable as mentioned above in model 1 doesn't seem to work out as the model didn't change and the significance level hasn't changed either.
 
+### 6.12 Plotting the observed BPRS values and the fitted BPRS values
 
+```{r}
+# draw the plot of BPRSL with the observed BPRS values
+ggplot(BPRSL, aes(x = week, y = bprs, group = subject, col= treatment)) +
+  geom_line(aes(linetype = treatment)) +
+  scale_x_continuous(name = "Time (weeks)", breaks = seq(0, 4, 8)) +
+  scale_y_continuous(name = "Observed BPRS") +
+  theme(legend.position = "right") +
+  facet_grid(. ~ treatment, labeller=label_both)
+```
+```{r}
+# Create a vector of the fitted values
+Fitted <- fitted(BPRS_ref)
+Fitted1 <- fitted(BPRS_ref1)
+Fitted2 <- fitted(BPRS_ref2)
 
+# Create a new column fitted to BPRSL
+BPRSL <- BPRSL %>% mutate(bprs_fitted_values_BPRSL_ref = Fitted, bprs_fitted_values_BPRSL_ref1 = Fitted1, bprs_fitted_values_BPRSL_ref2 = Fitted2)
+head(BPRSL)
+```
+```{r}
+ # draw the plot of BPRSL with the Fitted values of bprs model 1
+ggplot(BPRSL, aes(x = week, y = bprs_fitted_values_BPRSL_ref, group = subject, col=treatment)) +
+  geom_line(aes(linetype = treatment)) +
+  scale_x_continuous(name = "Time (weeks)", breaks = seq(0, 4, 8)) +
+  scale_y_continuous(name = "Fitted BPRS (model 1: rnd intercept)") +
+  theme(legend.position = "right") +
+  facet_grid(. ~ treatment, labeller=label_both)
+```
+```{r}
+# draw the plot of BPRSL with the Fitted values of bprs model 2
+ggplot(BPRSL, aes(x = week, y = bprs_fitted_values_BPRSL_ref1, group = subject, col=treatment)) +
+  geom_line(aes(linetype = treatment)) +
+  scale_x_continuous(name = "Time (weeks)", breaks = seq(0, 4, 8)) +
+  scale_y_continuous(name = "Fitted BPRS (model 2: rnd intercept + slope)") +
+  theme(legend.position = "right") +
+  facet_grid(. ~ treatment, labeller=label_both)
+```
+From the plot, we can see random intercept model differs from random intercept and slope model. Adding a slope intercept didn't change the outcomes however. We can also see the final plot random intercept and slope with interaction model also different from all three model above. In conclusion we can say that random intercept model doesn't highlight the individual's effect on bprs over time and also the outcomes didn't change with subsequent model. 
 
-
-
-
-
-
+************************************************************************* END *************************************************************************
 
 **DONE AND DUSTED** $\large \surd$ !!! 
 
