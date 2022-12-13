@@ -889,6 +889,48 @@ random.effect %>% ggplot(aes(x = `(Intercept)`))+
 
 The random effects are roughly normally distributed around a mean of about -3 (near to 0). 
 
+### 2.6 Shrinkage and partial pooling.
+
+In mixed effects modeling, group levels with low sample size and/or poor information (i.e., no strong relationship) are more strongly influenced by the grand mean, which is serving to add information to an otherwise poorly-estimated group. However, a group with a large sample size and/or strong information (i.e., a strong relationship) will have very little influence of the grand mean and largely reflect the information contained entirely within the group. This process is called partial pooling. Partial pooling results in the phenomenon known as shrinkage, which refers to the group-level estimates being shrink toward the mean. This could be a very interesting phenomenon to look at. I will extract the intercept of the mixed effects and interaction model (the best one I arrived at) for each individual as the mixed-effects estimates; and then run a set of linear regressions, one for the data of each individual, resulting in a pool of estimated intercept for each separate linear regression. Next, I will plot them as density plot to see if there is any shrinkage going on.
+
+```{r}
+intercept <- matrix(nrow= 40, ncol = 1)#set a matrix
+
+for (i in 1:40){ #define a loop that run through 1:40 participants
+  data <- bprslf %>% filter(subject == i) #select one participants each time
+  fit <- lm(rating ~ week, data) #fit a model each time
+  intercept[i,] <- coef(fit)[1] #save the intercept from fitted model into matrix
+}
+
+a <- c(intercept)#convert matrix into vector
+df <- data.frame(value = a) #trun the vector into a data frame
+
+#get the by-individual intercepts and pass into an object "re"
+re <-  ranef(bprs_interaction)$subject + fixef(bprs_interaction)[1]
+
+#extract the first column of re to a new object, which is intercept
+df.intercept1<- re[1]
+
+#rename
+names(df.intercept1) <- "value"
+
+#create a label saying "random" for all data points in object
+df.intercept1 <- df.intercept1 %>% mutate(label = "random")
+
+#create a label saying "separate" for all data points in object df
+#and pass it to a new object
+df.intercept2 <- df %>% mutate(label = "separate")
+
+#combine the object by column names
+df <- rbind(df.intercept1, df.intercept2)
+
+#density plot
+df %>% ggplot(aes(x = value, color = label, fill = label))+
+  geom_density(alpha = 0.3)
+```
+
+Thought the distributions are not perfectly, but it is showing that the tails of the distribution of random effect model, in comparison to separate model, have been pulled toward the overall effect, resulting in a tighter distribution. This somewhat corresponds to shrinkage effect, I guess.
+
 ## 3 Summary
 
 a. In this exercise, I tested the hypothesis that different treatment would lead to different BPRS ratings.
@@ -900,52 +942,6 @@ c. Both the approaches reported same coefficients (as we would expect) and signi
 d. It is worth noting that the mixed-effect approach does provide more information and more extrpolative results. for example, via this approach I get the idea that individual patient's BPRS rating at baseline would influence the rating change greatly, and that individual patient's BPRS rating at baseline would lead to tremendously different reaction to treatment.
 
 e. Random intercept and slope model is more informative than random intercept only model in the context of this data in a way that it tells us although the insignificant effect of treatment types, some patients might react more responsively to the treatment. It might be meaningful to identify that subgroup of patients. 
-
-
-
-```{r}
-
-intercept <- matrix(nrow= 40, ncol = 1)
-
-for (i in 1:40){
-  data <- bprslf %>% filter(subject == i)
-  fit <- lm(rating ~ week, data)
-  intercept[i,] <- coef(fit)[1]
-}
-
-a <- c(intercept)
-df <- data.frame(value = a)
-df
-```
-
-
-
-```{r}
-#get the by-individual intercepts and pass into an object "re"
-re <-  ranef(bprs_interaction)$subject + fixef(bprs_interaction)[1]
-#generate density plot
-qplot(x = `(Intercept)`, geom = 'density',  data = re)
-qplot(x = value, geom = 'density',  data = df)
-
-df.intercept1<- re[1]
-names(df.intercept1) <- "value"
-
-df.intercept1 <- df.intercept1 %>% mutate(label = "random")
-
-df.intercept2 <- df %>% mutate(label = "fixed")
-
-df.intercept1 
-df <- rbind(df.intercept1, df.intercept2)
-
-df %>% ggplot(aes(x = value, color = label, fill = label))+
-  geom_density(alpha = 0.3)
-```
-
-```{r}
-re <-  ranef(bprs_interaction)$subject
-qplot(x = `(Intercept)`, geom = 'density',  data = re)
-```
-
 
 
 
