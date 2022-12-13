@@ -91,7 +91,12 @@ According to the checks above，there are one by-individual identifier "ID", whi
 
 In the data, the variable I am interested in is "weight". The reasons are _a._ it is a numeric variable and hence carries more information than factors; _b._ it is the only variable that varies across all the observations; _c._ Digging into how types of nutritional diet would influence weight has substantial practical meaning in health and nutritional science. 
 
-Now that I have chosen a numeric variable "weight" as the dependent variable, linear model is definitely one of the preferred choices for modeling. But before a decision, I should check if there is any potential linear relationship between weight and the most important predictors "group" (diet group) and "time" (days when measurements were performed).
+Now that I have chosen a numeric variable "weight" as the dependent variable, linear model is definitely one of the preferred choices for modeling. To fit this model, two options are possible. The first option would be to aggregate or to distill observations of each individual rat into one observation. In this case our total sample size goes from 176 down to 16 (176/11), which is the number of unique rats in the data. This approach also ignores within-rat variation, which is dangerous because it may be a large part of the overall variance and thus result in a loss of information and power. When aggregating, each sample becomes a sub-sample. So in a way we’re not actually modeling any of the observed data, but rather we are modeling means or averages of the data.
+
+A second approach to modeling this data may be to disaggregate it and consider the random effect. By disaggregating it all observations would be used. Each observation is considered an independent replicate sample, which we know is not likely to be true because measurements within one rat are more likely to be similar than compared to other rats We also know that rats with more observations sample sizes would contribute disproportionately to the coefficients even though their groups are not being explicitly included (although in our context we have same number of observation for each rat, but considering out-lier removal is required by the assignment, we will inevitably meet the issue). For example, if we had a rat for which there were 11 observations retained after out-lier removal and a rat in which there were only one observation retained, under a disaggregated approach the rat with a large number of observations would have a disproportionate influence on the outcome of a disaggregated model. Hence, I need also to consider random effect in the data for this disaggregating approach. In other word, I will view the levels of rats (n = 20) as a sample of larger population out there and include into the model the fact that overall baseline effect and weight relationship to be similar among same rat, but not the same. 
+
+
+Before carrying out approach one, I should check if there is any potential linear relationship between weight and the most important predictors "group" (diet group) and "time" (days when measurements were performed). I will do it as follows:
 
 *(1) Linear relationship between group and weight*
 
@@ -173,6 +178,8 @@ According to the checks above I would say the assumption of linearity is somewha
 Next, I need to decide--do I need to consider random effect in my model and is my data appropriate for a random model. I will do it in the next section 1.4.2.
 
 #### 1.4.2 Check if random effect is approporiate for the data (section 1.4.2 is outside the requirement of assignment. Please go to section 2 if you're not interested)
+
+Before carrying out appraoch two, I need to check if the rats are really starting out differently in weight (random intercept) and if rats with different baseline have different trajectory of gaining weight (random slope). I need also to reflect if mixed-model is really a proper choice for my hypothesis.
 
 ##### 1.4.2.1 Graphical display of measures by individual
 
@@ -266,13 +273,17 @@ Yes, I have multiple observations from the same diet group within a factor "ID" 
 
 These done, I am confidently going to account for random effects(random intercept) for my linear model.
 
-##### 1.4.2.3  An alternative way to test hypothesis
+##### 1.4.2.3  Plan for ajusting the influence of baseline weight for each appraoch
 
- My preliminary hypothesis is--different types of nutrition diet will contribute differently to the weight increase of the rats, even after adjusting for the effect of different weight at baseline. (see 1.4.1). The baseline effect will be adjusted by adding the baseline into the model formula as a predictor, so that the variability components explained by baseline could be correctly assigned to a variable recording baseline weight, and the the net variability explained by types of nutrition diet will be revealed. This is fine. However, there is still an alternative approach to test the hypothesis--by introducing random intercept into our model instead of adjusting for baseline weight. Adjustment approach assigns part of the variability to the difference in baseline; while random intercept per rat allows us to gain information about the individual rat, while recognizing the uncertainty with regard to the overall average that we were underestimating before. This is made possible by allowing each rat to be vertically shifted by their own customized amount. 
+My preliminary hypothesis is--different types of nutrition diet will contribute differently to the weight increase of the rats, even after adjusting for the effect of different weight at baseline. (see 1.4.1). 
+
+In approach one (aggregated approach), the baseline effect will be adjusted by adding the baseline into the model formula as a co-variate, so that the variability components explained by baseline could be correctly assigned to a variable recording baseline weight, and the the net variability explained by types of nutrition diet will be revealed. 
+
+In approach one (aggregated approach), the adjustment will be made possible by introducing random intercept into our model instead of adjusting for baseline weight. Adjustment approach assigns part of the variability to the difference in baseline; while random intercept per rat allows us to gain information about the individual rat, while recognizing the uncertainty with regard to the overall average that we were underestimating before. Mathematically, this is made possible by allowing the fitted line of each rat to be vertically shifted by their own customized amount. 
  
 ## 2  Testing the effect of different nutrition diet on weight of rats using two approaches
 
-### 2.1 Ajusting Baseline Approach
+### 2.1 Aggregated approach
 
 #### 2.1.1 Removing out-liers
 
@@ -313,6 +324,7 @@ rats.clean %>%
   scale_y_continuous(name = "mean(weight), Time points 2-11")+
   geom_text(aes(label = outlier), na.rm = TRUE, hjust = -0.3)
 ```
+
 Each of the three group has one out-lier, respectively. Group 2's mean skewed to right, while group 3's mean skewed to the left. 
 
 ```{r}
@@ -326,16 +338,19 @@ rats.clean %>%
   stat_summary(fun = "mean", geom = "point", shape=23, size=4, fill = "red") +
   scale_y_continuous(name = "mean(weight), Time points 2-11")
 ```
+
 Now the out-liers were removed. The skewness of group 2 and 3 is minimized to some extent.
 
 #### 2.1.2 ANOVA to test the difference among 3 groups
+
+Now that the data has been aggregated with regard to each rat without considering repeated-measurement any longer. A easy-to-do method to detect difference among nutrition diets is ANOVA. 
 
 ```{r}
 rats.anova <- aov(mean ~ group, data = rats.clean)
 summary(rats.anova)
 ```
 
-The null hypothesis that there is no difference in means is rejected (_p_<0.001). There are some difference in the mean of weight across the rats from 3 groups. But it is still unclear which pair of group(s) have signficant difference, and post-hoc test for pairwise comparisions will be done.
+The null hypothesis that there is no difference in means is rejected (_p_<0.001). There are some difference in the mean of weight across the rats from 3 groups. But it is still unclear which pair of group(s) have significant difference, and post-hoc test for pairwise comparisons will be done.
 
 ```{r}
 tukey.test <- TukeyHSD(rats.anova)
@@ -344,7 +359,7 @@ tukey.test
 
 From the post-hoc test results, we see that there are statistically significant differences (p < 0.0001) between each pair of groups, indicating differences between group 1 and 2, group 1 and 3 and group 2 and 3 are all significant. However, this is fine except that the different baseline is not sufficiently adjusted. Still linear regression with baseline adjusted is needed, as we discussed. 
 
-#### 2.1.3 Linear regression with baseline adjusted
+#### 2.1.3 Linear regression with baseline adjusted using aggregated data
 
 ```{r}
 # Add the baseline from the original data as a new variable to the summary data
@@ -371,7 +386,7 @@ anova(fit)
 
 The results show after adjusting for baseline effect, comparing to nutrition group 1, the weight change of rats from nutrition group 2 and nutrition group 3 are significantly higher. Specifically, the rats have an average weight of 221.3094 at time point 2. Changing from group 1 to group 2 would cause a rat to increase, on average, 152.72 grams in weight; while changing from group 1 to group 3 would cause a rat to increase, on average 219.62 grams in weight. Overall, the model explains 99.82 variability of rats' weight.
 
-### 2.2 Random intercept approach (section 1.5.2 is outside the requirement of assignment. Please skip this part and go to section 2 if you're not interested)
+### 2.2 Disagregated approach  with random intercept (section 2.2 is outside the requirement of assignment. Please skip this part and go to next section if you're not interested)
 
 #### 2.2.1 Remove out-liers
 
@@ -404,8 +419,6 @@ summary(rats.ri)
 The fixed effects tabulated above shows that starting out, i.e. when time is day 1, the average weight, denoted by the intercept, is 244.92 grams. In addition, as a rat move from group 1 to group2, we can expect its weight to increase by about 219.52 (95% interval: 179.99 to 260.08, see table below) grams; while as a rat move from group 1 to group 3 , we can expect its weight to increase by about 262.49 (95% interval: 221.95 to 303.03, see table below) grams ; as a rat move from one day to the next, its weight is expected to increase by 0.56 (95%CI: 0.50 to 0.62) grams, indicating for the full experiment period, which lasts for 63 days, a rat is expected to have a weight gain of 35.28 grams. Note that in comparison to different groups, the effect of time change per day is way smaller, indicating the appreciable influence of different nutrition diet on weight. 
 
 The random effects tabulated above shows that weight bounces around by a standard deviation of 31.68 grams. In other words, even after making a prediction based on time and group, each rat has their own unique deviation of 31.68 grams. Note that in comparison to the different group, this effect of baseline is much smaller. For example, a rat changing from group 1 to group 3 would experience, on average, roughly 8 times more weight gain than moving from one rat to another, on average. 
-
-
 
 ```{r}
 confint(rats.ri)
@@ -440,6 +453,21 @@ qplot(x = `(Intercept)`, geom = 'density',  data = re)
 ```
 
 The density plot is notably skewed, indicating the rats might not be a random sample of rats in nature. This will bias the estimation from random intercept model and the results should be interpreted with caution.
+
+## 3 Summary
+
+a. In this exercise, I tested the hypothesis that different nutrition diets would lead to different weight change of rats.
+
+b. The hypothesis is tested using two approach--aggregated and disagregated approaches. The former corresponds to the requirement of the current assignment.
+
+c. Although the aggregated approach ignores within-rat variation, which is dangerous in terms of information and power loss, the model built upon this approach is quite good, detecting the baseline effect does significantly influence weight, and also explaining more than 90% of variability. However, we should also take note this goodness of fit is achieved by ignoring important information in a way we’re not actually modeling any of the observed data, but rather we are modeling means or averages of the data. If these information were brough back, the goodness might also be compromised. 
+
+d. It is worth noting that the disaggregated approach with random intercept does provide more information and more extrapolative results. For example, via this approach I get the idea how much individual rat's weight at baseline would influence the weight change and could draw conclusion for a larger population of rats out there.
+
+f. Random slope is not included in the model since I do not find evidence that different starting weight leads to different trajectory of weight change. 
+
+g. One of the assumptions for mixed-model that the intercept should normally distribute around a mean of 0 is violated. We should as such interpret the results with caution. 
+
 
 # Implement the analyses of Chapter 9 of MABS using BPRS data
 
@@ -784,15 +812,17 @@ To summarize, even after making a prediction based on time point and treatment, 
 
 Although the effect of treatment types is still insignificant, with random intercept and slope model, I get more variations of participants' ratings explained by individual difference at baseline and individual difference in reacting to the treatment, and these differences are even larger than the effect of time, another significant predictor (coefficient -2.27, 95%CI: -2.57 to -1.97).
 
+## 3 Summary
 
+a. In this exercise, I tested the hypothesis that different treatment would lead to different BPRS ratings.
 
+b. The hypothesis was tested using two approaches--standard linear model and the mixed-effect model (random intercept only model and random intercept plus slope were fitted, respectively)
 
+c. Both the approaches reported same coefficients (as we would expect) and significance value for the predictors.
 
+d. It is worth noting that the mixed-effect approach does provide more information and more extrpolative results. for example, via this approach I get the idea that individual patient's BPRS rating at baseline would influence the rating change greatly, and that individual patient's BPRS rating at baseline would lead to tremendously different reaction to treatment.
 
-
-
-
-
+e. Random intercept and slope model is more informative than random intercept only model in the context of this data in a way that it tells us although the insignificant effect of treatment types, some patients might react more responsively to the treatment. It might be meaningful to identify that subgroup of patients. 
 
 
 
