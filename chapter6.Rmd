@@ -800,7 +800,6 @@ summary (bprs_both)
 
 #show CI
 confint(bprs_both, devtol = Inf)
-confint.merMod(bprs_both, devtol = 1e-6)
 ```
 
 The fixed effect part of model summary above shows same results of coefficient with standard regression, as would be their interpretation. The standard errors, on the other hand are different here, though in the end our conclusion would be the same as far as statistical significance goes. 
@@ -813,25 +812,82 @@ Although the effect of treatment types is still insignificant, with random inter
 
 #### 2.3.3 Random intercept and slope model with more random effect item
 
-```{r}
-#fit it
-bprs_both_more <- lmer(rating ~ week + treatment + (treatment | subject) + (0 + week | subject), 
-                  data = bprslf, 
-                  REML = FALSE)
-summary(bprs_both_more)
-```
-
-
-#### 2.3.3 Random intercept and slope model with interaction
+The interaction between time and treatment is considered in the following model.
 
 ```{r}
 #fit it
-bprs_interaction <- lmer(rating ~ week*treatment + (treatment | subject), 
+bprs_interaction <- lmer(rating ~ week * treatment + (1 + treatment | subject), 
                   data = bprslf, 
                   REML = FALSE)
 summary(bprs_interaction)
-
 ```
+
+The interaction between week and treatment is significant. However, even after taking out the variance explained by their interaction, the effect of treatment types on BPRS rating is still insignificant. 
+
+### 2.4 Model comparison
+
+A couple of models has been fitted. All of them explains the variability of BPRS rating to some extent. These models will be compared via the Likelihood ratio test, where Likelihood is the probability of seeing the data you collected given your model. The logic of the likelihood ratio test is to compare the likelihoods, or Akaike Information Criteria (AIC), of two models with each other.
+
+#### 2.4.1 Compare standard linear model with random intercept only model
+
+```{r}
+anova(bprs_intercept, bprs_lm)
+```
+
+The random intercept model has lower AIC and the comparison produced significant _p_ value, meaning the random intercept only model is better than the standard linear model.
+
+#### 2.4.2 Compare random intercept only model with random intercept and slope model
+
+```{r}
+anova(bprs_both, bprs_intercept)
+```
+
+The random intercept and slope model actually has higher AIC and the comparison produced insignificant _p_ value, meaning this more complicated model is no better than the random intercept only model. According to the rule of parsimony, I will stick to random intercept only model in the following comparison.
+
+#### 2.4.3 Compare random intercept and slope model with interaction model
+
+```{r}
+anova(bprs_interaction, bprs_intercept)
+```
+
+The random intercept and slope model actually has lower AIC and the comparison produced significant _p_ value, meaning this more complicated model is better than the random intercept only model. Consequently, the random intercept and slope model with interaction is the best model I arrive at. 
+
+### 2.5 Assumption check
+
+To trust the results from mixed-effect model, several assumptions need to be checked. They are a. Linearity; b. Homogeneity; c. Normality of error term; d. Normality of random effect; e. Dependent data within clusters.
+
+Among them, a and e have already been checked and discussed beforehand. I will check the others one by one.
+
+#### 2.5.1 Normality of error term
+
+```{r}
+library(sjPlot)#install.packages("sjPlot")#install.packages("glmmTMB")
+library(glmmTMB)
+plot_model(bprs_interaction, type = "diag", show.values = TRUE)[[1]]
+plot_model(bprs_interaction, type = "diag", show.values = TRUE)[[3]]
+```
+
+The distribution of residual is roughly normal, except that the distribution has slight positive kurtosis.
+
+#### 2.5.2 Homogeneity
+
+```{r}
+plot_model(bprs_interaction, type = "diag", show.values = TRUE)[[4]]
+```
+
+The amount and distance of the points scattered above/below line is rougly equaly. 
+
+#### 2.5.3 Normality of random effect
+
+```{r}
+#pass all estimated random effect into an object
+random.effect <-  ranef(bprs_interaction)$subject
+#produce density plot
+random.effect %>% ggplot(aes(x = `(Intercept)`))+
+  geom_density(fill = "red", alpha = 0.3)
+```
+
+The random effects are roughly normally distributed around a mean of about -3 (near to 0). 
 
 ## 3 Summary
 
@@ -846,69 +902,6 @@ d. It is worth noting that the mixed-effect approach does provide more informati
 e. Random intercept and slope model is more informative than random intercept only model in the context of this data in a way that it tells us although the insignificant effect of treatment types, some patients might react more responsively to the treatment. It might be meaningful to identify that subgroup of patients. 
 
 
-
-
-```{r}
-anova(bprs_intercept, bprs_both)
-```
-
-
-
-
-```{r}
-#fit it
-bprs_interaction <- lmer(rating ~   week*treatment + (treatment | subject), 
-                  data = bprslf, 
-                  REML = FALSE)
-summary(bprs_interaction)
-confint(bprs_interaction)
-```
-
-```{r}
-severe <- bprslf %>% filter(week == 0& rating > 50) %>% pull(var = subject)
-bprslf.severe <- bprslf %>% filter(subject %in% severe)
-
-bprs_severe_both <- lmer(rating ~  week + treatment + (treatment | subject), 
-                  data = bprslf.severe, 
-                  REML = FALSE)
-summary(bprs_severe_both)
-confint.merMod(bprs_severe_both, devtol = 1e-6)
-```
-
-```{r}
-mild <- bprslf %>% filter(week == 0& rating < 50) %>% pull(var = subject)
-bprslf.mild <- bprslf %>% filter(subject %in% mild)
-
-bprs_mild_both <- lmer(rating ~  week + treatment + (treatment | subject), 
-                  data = bprslf.mild, 
-                  REML = FALSE)
-summary(bprs_mild_both)
-confint.merMod(bprs_mild_both, devtol = 1e-6)
-summarize_model
-```
-
-```{r}
-bprs_interaction_random <- lmer(rating ~ treatment + (1|subject:treatment), bprslf)
-summary(bprs_interaction_random)
-confint(bprs_interaction_random)
-```
-
-```{r}
-bprs_interaction_random_com <- lmer(rating ~ treatment + (1|subject:treatment) + (1|subject), bprslf)
-summary(bprs_interaction_random_com)
-confint(bprs_interaction_random_com)
-```
-```{r}
-anova(bprs_interaction, bprs_intercept)
-fixef(bprs_interaction)[1]+fixef(bprs_interaction)[2]+ranef(bprs_interaction)$subject
-fixef(bprs_interaction)[1]
-fixef(bprs_interaction)[2]
-ranef(bprs_interaction)$subject
-coef(bprs_interaction)
-47.88556 +3.83187436	
--0.177140664	-2.628333 
--2.628333 -0.177140664	
-```
 
 ```{r}
 
