@@ -51,4 +51,43 @@ ratsl <- rats %>%
   arrange(time)
 
 
+# take a serious look at the new data sets and compare them with their wide form 
+#versions: Check the variable names
+
+names(bprs);names(bprsl)
+names(rats);names(ratsl)
+
+
+#view the data contents and structures
+head(bprs);tail(bprs)
+head(bprsl);tail(bprsl)
+
+head(rats);tail(rats)
+head(ratsl);tail(ratsl)
+
+
+# create some brief summaries of the variables
+summary(bprs);summary(bprsl)
+summary(rats);summary(ratsl)
+
+library(finalfit)
+ff_glimpse(bprsl)
+ff_glimpse(ratsl)
+
+#save the datasets
+write.csv(bprsl, "data/bprsl.csv")
+write.csv(ratsl, "data/ratsl.csv")
+
+bprsl
+
+
+
+
+
+
+
+
+
+
+
 

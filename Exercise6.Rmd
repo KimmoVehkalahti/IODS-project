@@ -365,10 +365,10 @@ is_outlier <- function(x) {
 }
 
 
-is_outlier(s)
+
 
 s <- rnorm(7,2,9)
-
+is_outlier(s)
 BPRSL8S <- BPRSL8S %>% group_by(treatment) %>% 
   mutate(outlier = ifelse(is_outlier(mean), subject, as.factor(NA)))
 
@@ -424,6 +424,7 @@ BPRSL8S <- BPRSL %>%
 rm(BPRSL)
 BPRSL8S1 <- BPRSL8S %>%
   filter(mean < 60)
+BPRSL8S
 ```
 
 ### Instructions
@@ -458,6 +459,42 @@ fit <- lm(mean~treatment+baseline, data = BPRSL8S2)
 anova(fit)
 
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ## 6.8 Meet and Repeat: PART II
