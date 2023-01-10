@@ -1,0 +1,83 @@
+---
+title: "lit review"
+author: "Rong Guang"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+#Inaccuracy of risk estimates in survey studies
+
+There is evidence that people have limited appreciation for small probabilities ([Viscusi, 1998](https://academic.oup.com/book/1466)).  In some areas where risks have to be conveyed to the subjects, researchers/practitioners have long had the concerns about the validity of risk or risk-related estimates. As was pointed out by [Phaedra](https://link.springer.com/article/10.1023/A:1011184119153), when respondents do not understand the magnitude of the risk, their responses are unlikely to accurately represent their true estimates. 
+
+#Problem in CV estimates in economy
+
+  In economy, for example, “value per statistical life” (VSL) is most often estimated using contingent-valuation (CV) methods. Under CV, survey respondents are asked to state their willingness-to-pay (WTP) for a specified hypothetical risk reduction.  Although economic theory suggests that WTP for a small mortality-risk reduction should be nearly proportionate to the magnitude of the risk reduction, most CV studies have estimated WTP values that vary less than proportionately to the risk reduction. One explanation for the typically inadequate sensitivity to magnitude is that the small risk changes have not been adequately communicated to survey respondents. 
+  
+#Efforts done in improving CV estimates
+    As such, a number of risk communication tools have been developed to assist respondents in comprehending the magnitude of risk reductions. [Kunreuther et al.](https://nehrpsearch.nist.gov/static/files/NSF/PB289950.pdf) presented respondents with a table reporting the probabilities of a newborn surviving to various ages (Fig. 1). [Jones-Lee et al.](https://www.jstor.org/stable/2233468#metadata_info_tab_contents) used graph paper containing 100,000 squares with the appropriate number blacked out (As described in the paper, all probability statements supplemented by a pictorial representation in which the appropriate number of squares had been blacked out on a piece of graph paper containing 100,000 squares). [Mitchell and Carson](https://www.epa.gov/environmental-economics/valuing-drinking-water-risk-reductions-using-contingent-valuation-method) used “risk ladders” which present the numerical probabilities of dying from various causes on a visual scale (Fig. 2). [Smith and Desvousges](https://www.journals.uchicago.edu/doi/abs/10.1086/261443) used a series of pie charts (Fig. 3). [Hammitt and Graham](https://link.springer.com/article/10.1023/A:1007760327375) used verbal “probability analogies” expressing numerical risks as analogous to the corresponding number of minutes in a year (As was described in the paper, The analogies that were considered included distance in a mile, time in a year., population size of particular cities; football stadium attendance, games of chance coin flipping, card dealing., as well as other concepts). [Corso et al.](https://link.springer.com/article/10.1023/A:1011184119153) and [Andrea et al.](https://link.springer.com/article/10.1007/s10640-008-9214-z) visualized the risk variation using a linear or logarithmic scale for a better understanding of the annual risk change (see Fig 4 and 5). 
+
+
+Figure 1 Risk estimation aids by table reporting the probabilities of a newborn surviving to various ages
+![Figure 1 Risk estimation aids by table reporting the probabilities of a newborn surviving to various ages](graph/table_risk.png)
+
+Figure 2 A ladder presenting numerical probabilities of dying from various causes on a visual scale
+![Figure 2 A ladder presenting numerical probabilities of dying from various causes on a visual scale](graph/ladder_risk.png)
+
+Figure 3 Risk cards for two levels of exposure risk
+![Figure 3 Risk cards for two levels of exposure risk](graph/pie_risk.png)
+
+Figure 4 Linear risk scale  (Corso et al.)
+![Figure 4 Linear risk scale  (Corso et al.)](graph/linear_scale.png)
+
+Figure 5 Logarithmic risk scale  (Corso et al.)
+![Figure 5 Logarithmic risk scale  (Corso et al.)](graph/log_scale.png)
+
+#Communicating risk in medicine
+
+Risk communication in medicine is more on the practical side. Explaining risks to patients in an effective way is an essential part of ensuring that consent is “informed.” While the information presented is accurately communicated among experts, it is provided in a format that makes people without adequate domain knowledge have a biased idea that medical screenings and treatments seem more beneficial than they actually are.  [John Parling](https://www.bmj.com/content/bmj/327/7417/745.full.pdf) has summarized seven rules to follow for better communicating risk, and one of them is using visual aids for probabilities. This echoes the trending preference of using visual aids in CV estimates in economy. 
+
+Abundant evidence exists that descriptive terms reflect the speaker’s perspective, with the patient often understanding the risks to be of a totally different order of magnitude. A solution is using appropriate visual aids in helping patients from all backgrounds to understand risk explanations. Paling perspective scale is a widely-used tool in medicine to communicate risk. A graphical way for the public to compare the odds of different risks in a visual context in a way that cuts through the sometimes-misunderstood technical language used by risk assessors. These visual formats can transform data into useful information that helps people to make their own judgments about the issues that concern them. Figure 6 is the blank Paling scale; Figure 7 and 8 are two examples where Paling scale is used by showing risk with which we are "at home".
+
+
+Figure 6 Paling risk perspective scale
+![Figure 6 Paling risk perspective scale](graph/paling_scale.png)
+
+Figure 7 Risks from smallpox
+![Figure 7 Risks from smallpox](graph/smallpox_risk.png)
+
+Figure 8 Risks with which we are at home
+![Figure 8 Risks with which we are at home](graph/risk_at_home.png)
+
+Paling Risk Perspective Scale uses similar ideas as the logarithmic scale for CV estimation in economy. In addition to that, it includes a 7-grade risk category from negligible to very high, which we could refer to in developing the likelihood item. 
+
+Summary
+
+a. Risk estimation/communication is well-studied in economy and medicine;
+
+b. In economy, it is mainly used in research setting, where CV is to be estimated. Having respondents understand the magnitude of risk is important to an accurate estimation. 
+
+c. Tools have been developed in economy to improve risk estimation, including verbal analogous, risk ladder, risk pie chart and linear/logarithmic risk scale.
+
+d. In medicine, risk communication is important with respect to doctor-patient communication.
+
+f. To make patient with various background understand the risk, visual aids is very often used. Here one of these aids, Paling Risk Perspective Scale, is presented. It is based on similar ideas as the logarithmic scale for CV estimation in economy study.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
