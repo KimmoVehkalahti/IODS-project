@@ -1,13 +1,27 @@
+# IODS Course Project
+
+SUBAM KATHET 
+
+This course was recommended by a friend who is in the masters program in data science at the University of Helsinki. Data management, mining, data analytic and machine learning among many other within the same sphere are the next generation skill set everyone is recommended to acquire and here I am. I am a bit nervous, very exited and mostly curious to take a deep dive into the world of data science. 
 
 # About the project
 
-*Write a short description about the course and add a link to your GitHub repository here. This is an R Markdown (.Rmd) file so you should use R Markdown syntax.*
+Here is the link to my github webpage.
+
+https://iamsubam.github.io/IODS-project/
+
+And here is the link to my course diary.
+
+https://github.com/iamsubam/IODS-project
+
+# Week 1: Start me up !! The book and material 
+
+I have only had some time to browse through the R for Health Data Science. Coming from a background of experimental epidemiology, I was drawn immediately by linear and logistic regression because this is something I often rely on in my work. I looked into survival analysis briefly because of my interest and found it quite interesting. Although I need to practice a lot before I can get my hands around the analysis. I think the book gives a great over view of essential statistical analysis required on a fundamental level. Some knowledge of statistics can be of great advantage as R platform is already designed with a steep learning curve.
 
 ```{r}
 # This is a so-called "R chunk" where you can write R code.
 
 date()
-
+# Trying to check if the chunk works or not. It is usually a struggle especially when R version is outdated and the packages doesn't work. Then re installing and updating the packages and coming back to work it out is a big struggle. 
 ```
-The text continues here.
 

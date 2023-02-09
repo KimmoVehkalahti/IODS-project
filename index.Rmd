@@ -1,13 +1,17 @@
 ---
 title: "IODS course project"
+author: "Subam Kathet"
 output:
   html_document:
     theme: cosmo
-    toc: true
+    toc: yes
     toc_depth: 2
-    fig_caption: true
+    fig_caption: yes
     fig_width: 6
     fig_height: 4
+  pdf_document:
+    toc: yes
+    toc_depth: '2'
 ---
 
 ***
@@ -15,16 +19,47 @@ output:
 # Introduction to Open Data Science - Course Project
 
 ```{r child = "chapter1.Rmd"}
+install.packages("tidyverse")
 # This will include Chapter 1 (that is updated in its own file) in the document.
 ```
   
 ***
   
 ```{r child = "chapter2.Rmd"}
+#Testing to see if I can write something in this chunk
 # This will include Chapter 2 (that is updated in its own file) in the document.
+#lets see if I can print the date ??
+
+date()
 ```
 
 ***
 
-(more chapters to be added similarly as we proceed with the course!)
+```{r child = "chapter3.Rmd"}
+#Includes exercise and assignment from exercise 3 - Logistic Regression
+```
+
+***
+
+```{r child = "chapter4.Rmd"}
+#This weeks exercises includes tasks from exercise 4, Clustering and classification
+```
+
+***
+
+```{r child = "chapter5.Rmd"}
+#This weeks exercises includes tasks from exercise 5, Dimensionality reduction techniques
+```
+
+***
+
+```{r child = "chapter6.Rmd"}
+#This weeks exercises includes tasks from exercise 5, Dimensionality reduction techniques
+```
+
+***
+
+
+
+
 
