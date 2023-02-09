@@ -1,0 +1,947 @@
+---
+title: "Analysis of longitudinal data"
+author: "Rong Guang"
+date: "11/12/2022"
+output:
+  html_document:
+    fig_caption: yes
+    theme: flatly
+    highlight: haddock
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+    number_section: no
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+subtitle: Chapter 6
+bibliography: citations.bib
+---
+
+# **Chapter 6: Analysis of longitudinal data**
+
+# Part I: Implement the analyses of Chapter 8 of MABS using RATS data
+
+## 1 Preparation
+
+### 1.1 Read the dataset
+
+```{r}
+#read the wide format dataset
+rats <- read.csv("data/rats.csv")#I prefer lower case object name for typing                                            # convenience
+#read the long format dataset
+ratsl <- read.csv("data/ratsl.csv")#"l" is for long format
+
+#delete the redundant X variable, which are the row names.
+rats <- rats[-1]
+ratsl <- ratsl[-1]
+```
+
+### 1.2 Factor the categorical variables
+
+R does not recognize categorical variables automatically as factors. I will do manually that here.
+
+
+```{r}
+library(tidyverse)
+#for wide format dataset
+ratsf <- rats %>% mutate(ID = factor(ID), 
+                        Group = factor(Group))
+#for long format dataset
+ratslf <- ratsl %>% mutate(ID = factor(ID), 
+                        group = factor(Group), #I dont like uppercase names
+                        Group = NULL) %>%  #delete upper case name
+  dplyr::select(ID, group, time, weight) #recorder the variables
+```
+
+
+### 1.3 Check the wide format dataset
+
+In longitudinal study, data are usually analyzed in wide format, so that variables carrying same indicators for different clusters (e.g. time points) could enter model as one parameter. To distinguish values from different clusters, another variable is generated for labeling the identity of clusters. For the reason, I will only analyze the long format dataset and check if the frame corresponds to the above-mentioned idea.
+
+```{r}
+library(tidyverse)
+#check names 
+names(ratslf)
+
+#check dimension
+
+dim(ratslf)
+
+#check variable types
+sapply(ratslf, function(x)class(x))
+
+#check variable levels and frequency of each level for factors
+ratslf %>% 
+  select_if(is.factor) %>%  #select factor variables
+  apply(2,function(x)table(x)) %>% # generate table for levels per variable 
+  lapply(function(x)data.frame(x)) # convert to dataframe
+
+#check the descriptive statistics for numeric variable
+library(finalfit)
+ratslf %>% select_if(is.numeric) %>% 
+  ff_glimpse()
+```
+
+According to the checks above，there are one by-individual identifier "ID", which is a factor; two by-cluster identifier "group" and "time", which are factor and numeric, respectively; one by-observation measure "weight", which is numeric. The frequency table reveals that there are 16 individual rats, each has 11 repeated measures, resulting in 176 (16×11) unique observations; the rats can be clustered into 3 treatment groups, with a sample of 8, 4 and 4, respectively; or they can be clustered into 11 times points, and at each point every rat's weight was measured and recorded into variable "weight". According to the descriptive statistics for weight, the rats, irrespective of individual and time effects, have a weight of 384.5±127.2 grams. No missing values is present in the data.
+
+### 1.4 Determine sensible model for the data 
+
+#### 1.4.1 Hypothesis
+
+In the data, the variable I am interested in is "weight". The reasons are _a._ it is a numeric variable and hence carries more information than factors; _b._ it is the only variable that varies across all the observations; _c._ Digging into how types of nutritional diet would influence weight has substantial practical meaning in health and nutritional science. 
+
+Now that I have chosen a numeric variable "weight" as the dependent variable, linear model is definitely one of the preferred choices for modeling. To fit this model, two options are possible. The first option would be to aggregate or to distill observations of each individual rat into one observation. In this case our total sample size goes from 176 down to 16 (176/11), which is the number of unique rats in the data. This approach also ignores within-rat variation, which is dangerous because it may be a large part of the overall variance and thus result in a loss of information and power. When aggregating, each sample becomes a sub-sample. So in a way we’re not actually modeling any of the observed data, but rather we are modeling means or averages of the data.
+
+A second approach to modeling this data may be to disaggregate it and consider the random effect. By disaggregating it all observations would be used. Each observation is considered an independent replicate sample, which we know is not likely to be true because measurements within one rat are more likely to be similar than compared to other rats We also know that rats with more observations sample sizes would contribute disproportionately to the coefficients even though their groups are not being explicitly included (although in our context we have same number of observation for each rat, but considering out-lier removal is required by the assignment, we will inevitably meet the issue). For example, if we had a rat for which there were 11 observations retained after out-lier removal and a rat in which there were only one observation retained, under a disaggregated approach the rat with a large number of observations would have a disproportionate influence on the outcome of a disaggregated model. Hence, I need also to consider random effect in the data for this disaggregating approach. In other word, I will view the levels of rats (n = 20) as a sample of larger population out there and include into the model the fact that overall baseline effect and weight relationship to be similar among same rat, but not the same. 
+
+
+Before carrying out approach one, I should check if there is any potential linear relationship between weight and the most important predictors "group" (diet group) and "time" (days when measurements were performed). I will do it as follows:
+
+*(1) Linear relationship between group and weight*
+
+Note that group is conceptually a categorical variable, the linearity of which with any variable does not make much sense. Nonetheless, the context of our data reveals each group was assigned a different type of nutritional diet. A sensible deduction these diets might differ in amount of absolute nutrition, though I have now idea about the order of contents. In this matter, it is somewhat legitimate to check the linearity between group and weight, to see if there is any notable variation of weight between groups (or different nutrition levels). Considering the guesstimate nature of this assumption, please interpret the results with caution.
+
+```{r}
+#generate more explicit labels to show on each facet of graph
+time.labs <- sapply(c(seq(1,64,7),44), function(x)paste("Measure #", x, sep = ""))
+names(time.labs) <- c(seq(1,64,7),44)
+
+#plot weight against group
+ratslf %>% ggplot(aes(x= as.numeric(group), y = weight)) +
+  geom_point()+
+  geom_smooth()+ #use default lowess smoothing
+  facet_wrap(~time, #wrap the picture by time
+             labeller = labeller(time = time.labs))+ # apply the label generated
+  scale_x_continuous(name = "Groups", breaks = c(1,2,3))+ 
+  labs(y = "Weight(grams)", caption = "Error bar is 95% confidence interval")+
+  stat_summary(fun.data = "mean_cl_normal", #calculate and show error bar
+               geom = "errorbar", 
+               width = 0.1,
+               color = "red")+
+  theme(plot.caption = element_text(color = "red")) #change caption texts in red
+
+```
+
+According to the scatter plot above, as groups change, the weight statistics increases, with group #1 and #2 and #1 and #3 having statistically significant change. This indicates, if our assumption that different levels of nutrition existed across the groups held, we could conclude there is some linear relationships between groups (assumed to reflect different level of nutrition) and weight. 
+
+*(1) Linear relationship between time(days) and weight*
+
+This is quite intuitive since both of the variables are continuous. 
+
+```{r}
+# Summary data with mean and standard error of rats by group and time 
+rats.group <- ratslf %>%
+  group_by(group, time) %>%
+  summarise( mean = mean(weight), se = sd(weight)/sqrt(n()) ) %>%
+  ungroup()
+
+# check the data
+library(DT)
+rats.group %>%  datatable()
+
+#create an object that saves dodge position so that point and line dodge 
+#simultaneously (for preventing overlap)
+
+dodgeposition <- position_dodge(width = 0.3)
+
+# Plot the mean profiles
+rats.group %>% 
+  ggplot(aes(x = time, 
+             y = mean, 
+             shape = group,
+             color = group)) +
+  geom_line(position = dodgeposition) + #dodge to avoid overlap
+  geom_point(size=3, position = dodgeposition) +#dodge to avoid overlap
+  scale_shape_manual(values = c(16,2,5)) + #set scale shape manually
+  geom_errorbar(aes(ymin=mean-2*se, ymax=mean+2*se), 
+                width=0.5, #set width of error bar
+                position =dodgeposition) +#dodge to avoid overlap
+  theme(legend.position = c(0.9,0.5),
+        panel.background = element_rect(fill = "white",
+                                        color = "black"),
+        panel.grid = element_line(color = "grey",
+                                  size = 0.1),
+        axis.text = element_text(size = 10),
+        axis.title = element_text (size = 13),
+        plot.title = element_text(size = 15,
+                                  face = "bold")) + 
+  labs(title = "Fig 1.4.1(b) change of weight statistics (mean±sd) over time",
+       x = "Time(days)",
+       y = "mean(bprs) +/- 2×se(bprs)")
+```
+
+It is observed that over time, the weight of rats, on average, is increasing, albeit the relatively limited effect reflected by the near-to-flat slope. However, rats differed tremendously in weight when starting out at baseline (week 1). 
+
+According to the checks above I would say the assumption of linearity is somewhat met. Linear regression can be used to fit the model. My preliminary hypothesis is different types of nutrition diet will contribute differently to the weight increase of the rats, even after adjusting for the effect of different weight at baseline. I will use linear regression to fit the model, and adjust for baseline effect by adding weight at baseline as a co-variate. Please see section 1.5.1.
+
+Next, I need to decide--do I need to consider random effect in my model and is my data appropriate for a random model. I will do it in the next section 1.4.2.
+
+#### 1.4.2 Check if random effect is approporiate for the data (section 1.4.2 is outside the requirement of assignment. Please go to section 2 if you're not interested)
+
+Before carrying out appraoch two, I need to check if the rats are really starting out differently in weight (random intercept) and if rats with different baseline have different trajectory of gaining weight (random slope). I need also to reflect if mixed-model is really a proper choice for my hypothesis.
+
+##### 1.4.2.1 Graphical display of measures by individual
+
+Another way to deal with different starting-out effect is by introducing random intercept into my model. In the context of our data, random intercepts assume that some rats are more and some less heavy in weight at baseline, resulting in different intercepts. It is also reasonable to check if rats with different baseline weight would gain weights differently (random slope). As such, it is helpful to display my data in a by-individual manner. 
+
+```{r}
+#Access the package ggplot2
+library(ggplot2)
+#generate labels for the panel graph
+group.labs <- sapply(1:3, function(x)paste("Treatment #", x, sep = ""))
+names(group.labs) <- 1:3
+
+# Draw the plot
+p1 <- ggplot(ratslf, aes(x = time, y = weight, group = ID, color = group)) +
+  geom_line()+
+  geom_point()+
+  labs(title = "Fig. 1.4.2.1(a) Change of weight by groups and rats in one graph",
+       x = "Time (days)",
+       y = "Weight (grams)")+
+  theme(plot.title = element_text(size = 12, face = "bold"),
+        panel.background = element_rect(fill = "white",
+                                        color = "black"),
+        panel.grid.major = element_line(color = "grey", size = 0.2),
+        panel.grid.minor = element_line(color = "grey", size = 0.2),
+        strip.background = element_rect(color = "black",#adjust the strips aes
+                                        fill = "steelblue"),
+        strip.text = element_text(size =10, 
+                                  color = "white"),
+        legend.position = "none")+
+  facet_wrap(~group,
+             labeller = labeller(group = group.labs))
+p1
+```
+
+It is interesting to find out that rats might have a lot of variability in weight when starting out. However, some lines overlaps each other, which prevents a decisive conclusion. I will wrap the line chart into multiple graphs, one representing one rat.
+
+```{r, fig.width=14, fig.height=8}
+#generate more explicit labels to show on each facet of graph
+rats.labs <- sapply(1:16, function(x)paste("Rat #", x, sep = ""))
+names(rats.labs) <- c(1:16)
+
+#plot it 
+p2 <- ggplot(ratslf, aes(x = time, y = weight, group = ID, color = group)) +
+  geom_line(size = 1)+
+  geom_point()+
+  facet_wrap(~ID, #wrap by ID
+             labeller = labeller(ID = rats.labs))+ #apply the label generated
+  scale_x_continuous(name = "Time (days)", 
+                     breaks = seq(0, 60, 20)) + #set x scale values manually 
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(), #get rid of the ugly grids
+        panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white",#adjust the background
+                                        color = "black"),
+        strip.background = element_rect(color = "black",#adjust the strips aes
+                                        fill = "steelblue"),
+        strip.text = element_text(size =12, 
+                                  color = "white"), #adjust the strip text
+        axis.title.x = element_text(size = 20), #adjust the x text
+        axis.title.y = element_text(size = 20), # adjust the y text
+        plot.title = element_text(size = 22, face = "bold"),#adjust the title
+        axis.text.x = element_text(size = 12),#adjust size of x axis text
+        axis.text.y = element_text(size = 12),#adjust size of y axis text
+        plot.caption = element_text(color = "red", size = 15))+  
+  labs(title = "Fig. 1.4.2.1(b) Change of weight by groups and rats in panel graph",
+       caption = "Colors of lines indicate different nutrition groups")
+p2
+```
+
+Now according to the graph above it is crystal clear that rats have a lot of variability in weight when starting out. For example, rats from the first and second rows of the graph started very light in weight, while rats from the third and fourth rows started heavier. This justifies an adoption of random intercept model to account for this variability. However, the general trend in weight is upward over time as we would expect and the individual rat only vary very slightly in trajectory. Following the rule of parsimony, I will adopt a random intercept only model. 
+
+##### 1.4.2.2 Theoretical reflection of the appropriateness in adopting random intercept model
+
+According to an outside material _Data Analysis in R_ (https://bookdown.org/steve_midway/DAR/random-effects.html#should-i-consider-random-effects), one should consider the following question to check if random effect is necessary to consdier. They are:
+
+*(1) Can the factor(s) be viewed as a random sample from a probability distribution?*
+
+Both the individual rat and each nutrition diet used for the analysis are not population of the possible choices and could be viewed as a random sample from a probability distribution. So the answer is yes.
+
+*(2) Does the intended scope of inference extend beyond the levels of a factor included in the current analysis to the entire population of a factor? *
+
+Of course. I want to use the rats in data to extrapolate the rats out there in the world, and I want to use the types of diet to extrapolate the diets of larger number of choices(perhaps base on their trends in nutrition type or level).
+
+*(3) Are the coefficients of a given factor going to be modeled?*
+
+Yes, variable "group" is a factor and is going to be modeled. 
+
+*(4)Is there a lack of statistical independence due to multiple observations from the same level within a factor over space and/or time?*
+
+Yes, I have multiple observations from the same diet group within a factor "ID" (rats) over time (days). There is a lack of statistical independence among these observations from same rats.
+
+These done, I am confidently going to account for random effects(random intercept) for my linear model.
+
+##### 1.4.2.3  Plan for ajusting the influence of baseline weight for each appraoch
+
+My preliminary hypothesis is--different types of nutrition diet will contribute differently to the weight increase of the rats, even after adjusting for the effect of different weight at baseline. (see 1.4.1). 
+
+In approach one (aggregated approach), the baseline effect will be adjusted by adding the baseline into the model formula as a co-variate, so that the variability components explained by baseline could be correctly assigned to a variable recording baseline weight, and the the net variability explained by types of nutrition diet will be revealed. 
+
+In approach one (aggregated approach), the adjustment will be made possible by introducing random intercept into our model instead of adjusting for baseline weight. Adjustment approach assigns part of the variability to the difference in baseline; while random intercept per rat allows us to gain information about the individual rat, while recognizing the uncertainty with regard to the overall average that we were underestimating before. Mathematically, this is made possible by allowing the fitted line of each rat to be vertically shifted by their own customized amount. 
+ 
+## 2  Testing the effect of different nutrition diet on weight of rats using two approaches
+
+### 2.1 Aggregated approach
+
+#### 2.1.1 Removing out-liers
+
+Outliers may have a strong influence over the fitted slope and intercept, giving a poor fit to the bulk of the data points. Outliers tend to increase the estimate of residual variance, lowering the chance of rejecting the null hypothesis. Before performing each approach, I will check and, if there is any, remove the outliers in the data.
+
+```{r}
+#generate a summary data by group and ID with mean as the 
+#summary variable (ignoring baseline day 1)
+rats.clean <- ratslf %>%   
+  filter(time > 1) %>%
+  group_by(group, ID) %>%
+  summarise( mean=mean(weight) ) %>%
+  ungroup()
+#check the dataset
+rats.clean %>% datatable
+```
+
+```{r}
+#create a function that automatically detect out-liers
+is_outlier <- function(x) {
+  return(x < quantile(x, 0.25) - 1.5 * IQR(x) | x > quantile(x, 0.75) + 1.5 * IQR(x))
+}
+
+#clearn a new variable "out-lier" to tag outlier weight
+rats.clean <- rats.clean %>% 
+  group_by(group) %>% 
+  mutate(outlier = ifelse(is_outlier(mean), ID, as.factor(NA))) #create outlier label
+
+```
+
+
+```{r}
+#plot out-lier
+rats.clean %>% 
+  ggplot(aes(x = group, y = mean)) +
+  geom_boxplot() +
+  stat_summary(fun = "mean", geom = "point", shape=23, size=4, fill = "red") +
+  scale_y_continuous(name = "mean(weight), Time points 2-11")+
+  geom_text(aes(label = outlier), na.rm = TRUE, hjust = -0.3)
+```
+
+Each of the three group has one out-lier, respectively. Group 2's mean skewed to right, while group 3's mean skewed to the left. 
+
+```{r}
+# Create a new data by filtering the outlier and draw the box plot again
+rats.clean <- rats.clean %>% 
+  filter(is.na(outlier))
+
+rats.clean %>% 
+  ggplot(aes(x = group, y = mean)) +
+  geom_boxplot() +
+  stat_summary(fun = "mean", geom = "point", shape=23, size=4, fill = "red") +
+  scale_y_continuous(name = "mean(weight), Time points 2-11")
+```
+
+Now the out-liers were removed. The skewness of group 2 and 3 is minimized to some extent.
+
+#### 2.1.2 ANOVA to test the difference among 3 groups
+
+Now that the data has been aggregated with regard to each rat without considering repeated-measurement any longer. A easy-to-do method to detect difference among nutrition diets is ANOVA. 
+
+```{r}
+rats.anova <- aov(mean ~ group, data = rats.clean)
+summary(rats.anova)
+```
+
+The null hypothesis that there is no difference in means is rejected (_p_<0.001). There are some difference in the mean of weight across the rats from 3 groups. But it is still unclear which pair of group(s) have significant difference, and post-hoc test for pairwise comparisons will be done.
+
+```{r}
+tukey.test <- TukeyHSD(rats.anova)
+tukey.test
+```
+
+From the post-hoc test results, we see that there are statistically significant differences (p < 0.0001) between each pair of groups, indicating differences between group 1 and 2, group 1 and 3 and group 2 and 3 are all significant. However, this is fine except that the different baseline is not sufficiently adjusted. Still linear regression with baseline adjusted is needed, as we discussed. 
+
+#### 2.1.3 Linear regression with baseline adjusted using aggregated data
+
+```{r}
+# Add the baseline from the original data as a new variable to the summary data
+rats.clean <- rats.clean %>%
+  mutate(outlier = NULL)
+rats <- rats %>% mutate(group = as.factor(Group),
+                        ID = as.factor(ID))
+rats.baseline <- inner_join(rats.clean, rats, by = c("group", "ID")) %>% 
+  dplyr::select(group, ID, mean, WD1) %>% 
+  mutate(baseline = WD1,
+         WD1 = NULL)
+```
+
+
+```{r}
+fit <- lm(mean~group+baseline, data = rats.baseline)
+summary(fit)
+```
+
+```{r}
+# Compute the analysis of variance table for the fitted model with anova()
+anova(fit)
+```
+
+The results show after adjusting for baseline effect, comparing to nutrition group 1, the weight change of rats from nutrition group 2 and nutrition group 3 are significantly higher. Specifically, the rats have an average weight of 221.3094 at time point 2. Changing from group 1 to group 2 would cause a rat to increase, on average, 152.72 grams in weight; while changing from group 1 to group 3 would cause a rat to increase, on average 219.62 grams in weight. Overall, the model explains 99.82 variability of rats' weight.
+
+### 2.2 Disagregated approach  with random intercept (section 2.2 is outside the requirement of assignment. Please skip this part and go to next section if you're not interested)
+
+#### 2.2.1 Remove out-liers
+
+```{r}
+#generate a variable 
+ratslf.clean <- ratslf %>% 
+  group_by(group) %>% 
+  mutate(outlier = is_outlier(weight)) %>% 
+  ungroup
+
+ratslf.clean <- ratslf.clean %>%
+  filter(outlier == F)
+```
+
+#### 2.2.2 Fit a random intercept model
+
+Weight will be modeled as a function of time and group (nutrition diet type), knowing that different rats have different weights at baseline.
+
+```{r}
+# access library lme4
+library(lme4)#install.packages("lme4")
+
+# Create a random intercept model
+rats.ri <- lmer(weight ~ time + group + (1 | ID), 
+                data = ratslf.clean,
+                REML = FALSE)
+summary(rats.ri)
+```
+
+The fixed effects tabulated above shows that starting out, i.e. when time is day 1, the average weight, denoted by the intercept, is 244.92 grams. In addition, as a rat move from group 1 to group2, we can expect its weight to increase by about 219.52 (95% interval: 179.99 to 260.08, see table below) grams; while as a rat move from group 1 to group 3 , we can expect its weight to increase by about 262.49 (95% interval: 221.95 to 303.03, see table below) grams ; as a rat move from one day to the next, its weight is expected to increase by 0.56 (95%CI: 0.50 to 0.62) grams, indicating for the full experiment period, which lasts for 63 days, a rat is expected to have a weight gain of 35.28 grams. Note that in comparison to different groups, the effect of time change per day is way smaller, indicating the appreciable influence of different nutrition diet on weight. 
+
+The random effects tabulated above shows that weight bounces around by a standard deviation of 31.68 grams. In other words, even after making a prediction based on time and group, each rat has their own unique deviation of 31.68 grams. Note that in comparison to the different group, this effect of baseline is much smaller. For example, a rat changing from group 1 to group 3 would experience, on average, roughly 8 times more weight gain than moving from one rat to another, on average. 
+
+```{r}
+confint(rats.ri)
+```
+
+#### 2.2.3 Interclass correlation coefficient
+
+Inter-class correlation coefficient (ICC) is an indicator for how much group-specific information is available for a random effect to help with. It has a range of 0~1 and the closer to 1, the better. 
+
+$$
+ICC=\frac{\sigma_{a}^{2} }{\sigma_{a}^{2}+\sigma^{2}}
+$$
+
+In our mixed model with a random intercept,  ICC is hence calculated as 1003.61/(1003.61+60.51)= 94%, which is very high and strongly suggestive that there is within-individual variability that would benefit from a random effect. 
+
+#### 2.2.4 Display the random intercept effects
+
+The following plot is the estimated random effects for each rat and their interval estimate.  Random effects are assumed to be normally distributed with a mean of zero, shown by the horizontal line. Intervals that do not include zero are in bold. In this case, such rats are relatively higher or lower starting out compared to a typical rat. However, the number of rats with higher baseline weight (n=4) is much smaller than those with lower baseline weight (n=4), indicating the assumption is somewhat violated. In this case, random intercept model is not a robust estimator of the effect and results should be interpreted with caution. 
+
+```{r}
+library(merTools)
+plotREsim(REsim(rats.ri))
+```
+
+I will further generate a density plot for the by-individual estimates of intercept. Normally, it should be normally distributed. If not, it indicates random intercept model is not a robust estimator of the effect. 
+
+```{r}
+#get the by-individual intercepts and pass into an object "re"
+re <-  ranef(rats.ri)$ID
+#generate density plot
+qplot(x = `(Intercept)`, geom = 'density',  data = re)
+```
+
+The density plot is notably skewed, indicating the rats might not be a random sample of rats in nature. This will bias the estimation from random intercept model and the results should be interpreted with caution.
+
+## 3 Summary
+
+a. In this exercise, I tested the hypothesis that different nutrition diets would lead to different weight change of rats.
+
+b. The hypothesis is tested using two approach--aggregated and disagregated approaches. The former corresponds to the requirement of the current assignment.
+
+c. Although the aggregated approach ignores within-rat variation, which is dangerous in terms of information and power loss, the model built upon this approach is quite good, detecting the baseline effect does significantly influence weight, and also explaining more than 90% of variability. However, we should also take note this goodness of fit is achieved by ignoring important information in a way we’re not actually modeling any of the observed data, but rather we are modeling means or averages of the data. If these information were brough back, the goodness might also be compromised. 
+
+d. It is worth noting that the disaggregated approach with random intercept does provide more information and more extrapolative results. For example, via this approach I get the idea how much individual rat's weight at baseline would influence the weight change and could draw conclusion for a larger population of rats out there.
+
+f. Random slope is not included in the model since I do not find evidence that different starting weight leads to different trajectory of weight change. 
+
+g. One of the assumptions for mixed-model that the intercept should normally distribute around a mean of 0 is violated. We should as such interpret the results with caution. 
+
+
+# Part II: Implement the analyses of Chapter 9 of MABS using BPRS data
+
+## 1 Preparation
+
+### 1.1 Read the dataset
+
+```{r}
+#read the wide format dataset
+bprs <- read.csv("data/bprs.csv")#I prefer lower case object name for typing                                            # convenience
+#read the long format dataset
+bprsl <- read.csv("data/bprsl.csv")#"l" is for long format
+
+#delete the redundant X variable, which are the row names.
+bprs <- bprs[-1]
+bprsl <- bprsl[-1]
+```
+
+### 1.2 Factor the categorical variables
+
+R does not recognize categorical variables automatically as factors. I will do manually that here.
+
+```{r}
+library(tidyverse)
+#for wide format dataset
+bprsf <- bprs %>% mutate(treatment = factor(treatment),
+                         subject = factor(subject)) 
+#for long format dataset
+bprslf <- bprsl %>% mutate(treatment = factor(treatment),
+                         subject = factor(subject)) 
+
+```
+
+
+### 1.3 Check the wide format dataset
+
+In longitudinal study, data are usually analyzed in wide format, so that variables carrying same indicators for different clusters (e.g. time points) could enter model as one parameter. To distinguish values from different clusters, another variable is generated for labeling the identity of clusters. For the reason, I will only analyze the long format dataset and check if the frame corresponds to the above-mentioned idea.
+
+```{r}
+library(tidyverse)
+#check names 
+names(bprslf)
+
+#check dimension
+
+dim(bprslf)
+
+#check variable types
+sapply(bprslf, function(x)class(x))
+
+#check variable levels and frequency of each level for factors
+bprslf %>% count(treatment, subject)
+
+#check the descriptive statistics for numeric variable
+library(finalfit)
+bprslf %>% select_if(is.numeric) %>% 
+  ff_glimpse()
+```
+
+According to the checks above，there are one by-individual identifier "subject", which is a factor; two by-cluster identifier "treatment" and "week", which are factor and numeric, respectively; one by-observation measurement "rating", which is numeric. The frequency table reveals that there are 2 types of treatments, each with 180 individual measurement; there are 20 participants for each treatment, and each participant was measured 9 times (the first measurement for each participant is baseline before treatment), resulting in 360 measurements. According to the descriptive statistics for rating, the participants, irrespective of treatment and time effects, have a rating of 37.7±13.7. No missing values is present in the data.
+
+
+```{r}
+head(bprslf)
+```
+
+
+### 1.4 Determine sensible model for the data 
+
+#### 1.4.1 Hypothesis
+
+In the data, the variable I am interested in is "rating" (brief psychiatric rating scale). The reasons are _a._ it is a numeric variable and hence carries more information than factors; _b._ it is the only variable that varies across all the observations; _c._ Digging into how types of treatments would influence psychiatric tendency has substantial practical meaning in public health. 
+
+Now that I have chosen a numeric variable "rating" as the dependent variable, linear model is definitely one of the preferred choices for modeling. I will entertain two options. The first option would be to use simple linear regression. In this case BPRS rating scores will be modeled as a function of treatments and time (week) without considering the cluster level (individual-level) information. In other words, I will adopt a fixed effect model. But before a decision, I should check if there is any potential linear relationship between rating and the one of predictors "week". This will be done in section 1.4.1.1.
+
+A second approach to modeling this data is to model the rating as a function of treatment and time (week), while also include the cluster-level (individual-level) information. In other words, I will adopt a mixed effect model. But before a decision, I should check if participants are starting out differently and having different trajectory of rating change over this 9 weeks, and also reflect on some important assumptions for using mixed model. This will be done in section 
+
+
+#### 1.4.2 Check linearity
+
+This is quite intuitive since both of the variables are continuous. 
+
+*(1) by-participant BPRS rating and week relationship*
+
+```{r}
+treatment.lab <- c("Treatment #1", "Treatment #2")
+names(treatment.lab) <- c(1,2)
+ggplot(bprslf, aes(x = week, y = rating, group = subject, color = subject)) +
+  geom_line()+
+  facet_wrap(~treatment, labeller = labeller(treatment = treatment.lab))+
+  theme(legend.position = "none",
+        panel.grid = element_line(color = "grey", size = 0.1),
+        panel.background = element_rect(color = "black",
+                                        fill = "white"),
+        strip.background = element_rect(color = "black",
+                                        fill = "steelblue"),
+        strip.text = element_text(color = "white",
+                                  face = "bold",
+                                  size = 10),
+        axis.title  = element_text(size = 12),
+        axis.text = element_text(size = 10))+
+  labs(title = "Fig 1.4.2 (a) treatment effect over week by individual",
+       x = "Time (weeks)",
+       y = "BPRS rating")
+```
+
+*(2) average BPRS rating (denoted by mean±2sd) and week relationship*
+
+```{r}
+# Summary data with mean and standard error of participants by treatment and week 
+bprs.group <- bprslf %>%
+  group_by(treatment, week) %>%
+  summarise( mean = mean(rating), se = sd(rating)/sqrt(n()) ) %>%
+  ungroup()
+
+# check the data
+bprs.group %>%  datatable()
+
+#create an object that saves dodge position so that point and line dodge 
+#simultaneously (for preventing overlap)
+
+dodgeposition <- position_dodge(width = 0.3)
+
+# Plot the mean profiles
+bprs.group %>% 
+  ggplot(aes(x = week, 
+             y = mean, 
+             shape = treatment,
+             color = treatment)) +
+  geom_line(position = dodgeposition) + #dodge to avoid overlap
+  geom_point(size=3, position = dodgeposition) +#dodge to avoid overlap
+  scale_shape_manual(values = c(16,2,5)) + #set scale shape manually
+  geom_errorbar(aes(ymin=mean-2*se, ymax=mean+2*se), 
+                width=0.5, #set width of error bar
+                position =dodgeposition) +#dodge to avoid overlap
+  theme(legend.position = c(0.9,0.8),
+        panel.background = element_rect(fill = "white",
+                                        color = "black"),
+        panel.grid = element_line(color = "grey",
+                                  size = 0.1),
+        axis.text = element_text(size = 10),
+        axis.title = element_text (size = 13),
+        plot.title = element_text(size = 15,
+                                  face = "bold")) + 
+  labs(title = "Fig 1.4.2 (b) change of rating statistics (mean±sd) over time",
+       x = "Time(weeks)",
+       y = "mean(bprs) +/- 2×se(bprs)")
+```
+
+It is observed that over time, the BPRS rating of participants, on average, is decreasing. However, individual participants differed tremendously in the rating when starting out at baseline (week 0), and also differed greatly in the trajectory.
+
+According to the checks above I would say the assumption of linearity is somewhat met. Linear regression can be used to fit the model. My preliminary hypothesis is different types of treatment will contribute differently to the BPRS rating decrease, even after adjusting for the effect of different BPRS rating at baseline. I will use linear regression to fit the model, using treatment and week as predictors. Please see section 1.5.1 (below).
+
+Next, I need to decide--do I need to consider random effect in my model and is my data appropriate for a random model. 
+
+#### 1.4.3 Check if random effect is approporiate for the data 
+
+*(1) Graphical display of measures by individual*
+
+Another way to deal with different starting-out effect is by introducing random effect including random intercept and slope into my model. In the context of our data, random intercepts assume that some individual participants are more and some less severe in psychiatric in terms of BPRS rating at baseline, resulting in different intercepts. It is also reasonable to check if participants with different baseline BPRS rating would react differently to the different treatment (random slope). As such, it is helpful to display my data in a by-individual manner. 
+
+
+```{r, fig.width=14, fig.height=8}
+#generate more explicit labels to show on each facet of graph
+participant.labs <- sapply(1:20, function(x)paste("Participant #", x, sep = ""))
+names(participant.labs) <- c(1:20)
+
+#plot it 
+bprslf %>% 
+  filter (treatment == 1) %>% 
+  ggplot(aes(x = week, y = rating, group = subject)) +
+  geom_line(size = 1, color = "coral")+
+  geom_point()+
+  facet_wrap(~subject, #wrap by subject
+             labeller = labeller(subject = participant.labs))+ #apply the label generated
+  scale_x_continuous(name = "Time (weeks)") + #set x scale values manually 
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(), #get rid of the ugly grids
+        panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white",#adjust the background
+                                        color = "black"),
+        strip.background = element_rect(color = "black",#adjust the strips aes
+                                        fill = "steelblue"),
+        strip.text = element_text(size =12, 
+                                  color = "white"), #adjust the strip text
+        axis.title.x = element_text(size = 20), #adjust the x text
+        axis.title.y = element_text(size = 20), # adjust the y text
+        plot.title = element_text(size = 22, face = "bold"),#adjust the title
+        axis.text.x = element_text(size = 12),#adjust size of x axis text
+        axis.text.y = element_text(size = 12),#adjust size of y axis text
+        plot.caption = element_text(color = "red", size = 15))+  
+  labs(title = "Fig. 1.4.3 (a) Change of BPRS rating by participants for treatment #1 in panel graph",
+       y = "BPRS rating")
+```
+
+```{r, fig.width=14, fig.height=8}
+#plot it 
+bprslf %>% 
+  filter (treatment == 2) %>% 
+  ggplot(aes(x = week, y = rating, group = subject)) +
+  geom_line(size = 1, color = "coral")+
+  geom_point()+
+  facet_wrap(~subject, #wrap by subject
+             labeller = labeller(subject = participant.labs))+ #apply the label generated
+  scale_x_continuous(name = "Time (weeks)") + #set x scale values manually 
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(), #get rid of the ugly grids
+        panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white",#adjust the background
+                                        color = "black"),
+        strip.background = element_rect(color = "black",#adjust the strips aes
+                                        fill = "steelblue"),
+        strip.text = element_text(size =12, 
+                                  color = "white"), #adjust the strip text
+        axis.title.x = element_text(size = 20), #adjust the x text
+        axis.title.y = element_text(size = 20), # adjust the y text
+        plot.title = element_text(size = 22, face = "bold"),#adjust the title
+        axis.text.x = element_text(size = 12),#adjust size of x axis text
+        axis.text.y = element_text(size = 12),#adjust size of y axis text
+        plot.caption = element_text(color = "red", size = 15))+  
+  labs(title = "Fig. 1.4.3 (b) Change of BPRS rating by participants for treatment #2 in panel graph",
+       y = "BPRS rating")
+```
+
+Now according to the graph above it is clear that participants have a lot of variability in weight when starting out. For example, at baseline of week 0, participant #11 from treatment #1 has a very low BPRS rating of around 30 (see fig 1.4.3 a), while participant #11 from treatment #2 has a much higher BPRS rating of around 75  (see fig 1.4.3 b).
+
+Additionally, although the general trend in weight is downward over time as we would expect,  individual participants vary very tremendously in trajectory, for example, participant #16 from treatment #2 experienced a stable decrease of the rating over the period of 8 weeks, while participant #1 from treatment #2 underwent two big worsening and fluctuating of ratings  (see fig 1.4.3 b). 
+
+*(2) Theoretical reflection of the appropriateness in adopting mixed model*
+
+According to an outside material _Data Analysis in R_ (https://bookdown.org/steve_midway/DAR/random-effects.html#should-i-consider-random-effects), one should consider the following question to check if random effect is necessary to consider. They are:
+
+*a. Can the factor(s) be viewed as a random sample from a probability distribution?*
+
+Both the individual participant and the relationship between participants' different baseline and treatments could be viewed as a random sample from a probability distribution. So the answer is yes.
+
+*b. Does the intended scope of inference extend beyond the levels of a factor included in the current analysis to the entire population of a factor? *
+
+Of course. I want to use participant in data to extrapolate the trends of a larger population. and the two treatments in the study can be viewed as a sample of underlying treatments which is not represented in the model.
+
+*c. Are the coefficients of a given factor going to be modeled?*
+
+Yes, variable "subject" is a factor and is going to be modeled. Furthermore, it has 40 levels (20 for each treatments), which will provide considerable cluster-level information 
+
+*d. Is there a lack of statistical independence due to multiple observations from the same level within a factor over space and/or time?*
+
+Yes, I have 9 observations receiving a same treatment within a factor "subject" (participant) over a period of 9 weeks. There is a lack of statistical independence among these observations.
+
+These done, I am confidently going to account for random effects(random intercept and slope) for my linear model. 
+
+## 2. Fitting the model using fixed-effect and random-effect respectively
+
+### 2.1 wrangling
+
+Variable subject uses number 1 to 20 twice denoting different individual participant receiving two treatments, hence same number does not necessarily mean same participant. This might cause problem in the mixed-effect modeling since participant indexing will be included in model. I will convert it here. 
+
+```{r}
+bprslf <- bprslf %>% 
+  mutate(subject = as.numeric(subject), #convert to numeric for math conversion
+         subject.treatment2 = subject +20) %>% #create temporary variable 21, 22...
+  mutate(subject.new = 
+           case_when ((treatment == 1)~subject,  #treatment 1 uses old indexing
+                      (treatment == 2)~subject.treatment2) # treatment 2 uses new
+         )
+                     
+                                  
+  
+bprslf <- bprslf %>% 
+  mutate(subject = NULL, #remove old subject
+         subject.treatment2 = NULL, #remove tempo variable
+         subject = subject.new %>% factor()) #save new subject as subject, factor it 
+
+
+bprslf$subject #check if subject's levels grow from 20 to 40.
+```
+
+Now I have 40 levels for subject.
+
+### 2.2 fixed-effect model
+
+```{r}
+#fit linear regression model
+bprs_lm <- lm(rating ~ week + treatment, data = bprslf, REML = FALSE)
+
+#model summary
+summary(bprs_lm)
+
+#confidence interval
+confint(bprs_lm)
+```
+
+We can see from the above summary that the participants have an average BPRS rating score of 46.45 at baseline. For every new week, they will experience an decrease of rating by 2.27 (95%CI -2.77 to -1.77) from the previous one, on average. The average influence of treatment type is very small at 0.5722, indicating participant will only have an change in rating of 0.58 on average if they moved from one treatment to another ( _t_ = 0.44, _p_ = 0.66). Besides, only 18% of variability is explained by the model.  In other words, the finding of mixed model shows the two types of treatment do not have any influence on BPRS rating, while time has very small influence on the rating.
+
+
+### 2.3 Random-effect model
+
+#### 2.3.1 Random intercept model
+
+Herein I model the BPRS rating as a function of treatment and time, knowing (including into model the consideration) that people (subjects) have different rating baselines. Note that I do not assume treatment types and different baseline have a relationship here since I am considering random intercept here.
+
+```{r}
+#fit it
+bprs_intercept <- lmer(rating ~  week + treatment + (1 | subject), 
+                       data = bprslf, 
+                       REML = FALSE)
+#summarize it
+summary (bprs_intercept) 
+
+#show CI
+confint(bprs_intercept)
+```
+
+The fixed effect part of model summary above shows same results of coefficient with standard regression, as would be their interpretation. The standard errors, on the other hand are different here, though in the end our conclusion would be the same as far as statistical significance goes. Note specifically that the standard error for the intercept has increased. This makes sense in that with random aspects included uncertainty with regard to the overall average was more properly estimated (instead of being underestimated).
+
+The random effect part of the summary above shows, on average, BPRS rating bounces around 9.87(95%CI: 41.74 to 51.16) as we move from one participant to another. In other words, even after making a prediction based on time point and treatment, each participant has their own unique deviation, and this deviation is almost 20 times as high as the effect of a different types of treatment, and almost 5 times as high as the effect of time (change from one week to the next).
+
+Although the effect of treatment types is still insignificant, with random intercept model, I get more variations of participants' ratings explained by individual difference, and this difference is even larger than the effect of time, another significant predictor (coefficient -2.27, 95%CI: -2.56 to -1.97).
+
+#### 2.3.2 Random intercept and slope model
+
+Herein I model the BPRS rating as a function of treatment and time, knowing (including into model the consideration) that people (subjects) have different rating baselines (random intercept) and also that treatment types and different baseline have a correlation (randome slope).
+
+```{r}
+#fit it
+bprs_both <- lmer(rating ~  week + treatment + (treatment | subject), 
+                  data = bprslf, 
+                  REML = FALSE)
+#summarize it
+summary (bprs_both) 
+
+#show CI
+confint(bprs_both, devtol = Inf)
+```
+
+The fixed effect part of model summary above shows same results of coefficient with standard regression, as would be their interpretation. The standard errors, on the other hand are different here, though in the end our conclusion would be the same as far as statistical significance goes. 
+
+The random effect part of the summary above shows, on average, BPRS rating bounces around 8.027(95%CI: 42.43 to 50.47) as we move from one participant to another. Note that this is a lower estimate but tighter interval than random intercept only model. The deviation for the treatment is as high as 7.58, roughly 13 times as high as the mean slope for treatment types (fixed effect). This indicates as we move from one patients to another, the effect of a different treatment could be huge, and this is an important finding since this shed some lights on why a different treatment does not show significantly different effect (it might still work on some subgroup of the patient! The future is we should identify that subgroup!)
+
+To summarize, even after making a prediction based on time point and treatment, each participant has their own unique deviation, and this deviation is almost 16 times as high as the effect of a different types of treatment, and some of the patients might react tremendously different to the intervention with an effect of 7.58 unit change of rating as we move from one patient and treatment to another patient and treatment. 
+
+Although the effect of treatment types is still insignificant, with random intercept and slope model, I get more variations of participants' ratings explained by individual difference at baseline and individual difference in reacting to the treatment, and these differences are even larger than the effect of time, another significant predictor (coefficient -2.27, 95%CI: -2.57 to -1.97).
+
+#### 2.3.3 Random intercept and slope model with more random effect item
+
+The interaction between time and treatment is considered in the following model.
+
+```{r}
+#fit it
+bprs_interaction <- lmer(rating ~ week * treatment + (1 + treatment | subject), 
+                  data = bprslf, 
+                  REML = FALSE)
+summary(bprs_interaction)
+```
+
+The interaction between week and treatment is significant. However, even after taking out the variance explained by their interaction, the effect of treatment types on BPRS rating is still insignificant. 
+
+### 2.4 Model comparison
+
+A couple of models has been fitted. All of them explains the variability of BPRS rating to some extent. These models will be compared via the Likelihood ratio test, where Likelihood is the probability of seeing the data you collected given your model. The logic of the likelihood ratio test is to compare the likelihoods, or Akaike Information Criteria (AIC), of two models with each other.
+
+#### 2.4.1 Compare standard linear model with random intercept only model
+
+```{r}
+anova(bprs_intercept, bprs_lm)
+```
+
+The random intercept model has lower AIC and the comparison produced significant _p_ value, meaning the random intercept only model is better than the standard linear model.
+
+#### 2.4.2 Compare random intercept only model with random intercept and slope model
+
+```{r}
+anova(bprs_both, bprs_intercept)
+```
+
+The random intercept and slope model actually has higher AIC and the comparison produced insignificant _p_ value, meaning this more complicated model is no better than the random intercept only model. According to the rule of parsimony, I will stick to random intercept only model in the following comparison.
+
+#### 2.4.3 Compare random intercept and slope model with interaction model
+
+```{r}
+anova(bprs_interaction, bprs_intercept)
+```
+
+The random intercept and slope model actually has lower AIC and the comparison produced significant _p_ value, meaning this more complicated model is better than the random intercept only model. Consequently, the random intercept and slope model with interaction is the best model I arrive at. 
+
+### 2.5 Assumption check
+
+To trust the results from mixed-effect model, several assumptions need to be checked. They are a. Linearity; b. Homogeneity; c. Normality of error term; d. Normality of random effect; e. Dependent data within clusters.
+
+Among them, a and e have already been checked and discussed beforehand. I will check the others one by one.
+
+#### 2.5.1 Normality of error term
+
+```{r}
+library(sjPlot)#install.packages("sjPlot")#install.packages("glmmTMB")
+library(glmmTMB)
+plot_model(bprs_interaction, type = "diag", show.values = TRUE)[[1]]
+plot_model(bprs_interaction, type = "diag", show.values = TRUE)[[3]]
+```
+
+The distribution of residual is roughly normal, except that the distribution has slight positive kurtosis.
+
+#### 2.5.2 Homogeneity
+
+```{r}
+plot_model(bprs_interaction, type = "diag", show.values = TRUE)[[4]]
+```
+
+The amount and distance of the points scattered above/below line is rougly equaly. 
+
+#### 2.5.3 Normality of random effect
+
+```{r}
+#pass all estimated random effect into an object
+random.effect <-  ranef(bprs_interaction)$subject
+#produce density plot
+random.effect %>% ggplot(aes(x = `(Intercept)`))+
+  geom_density(fill = "red", alpha = 0.3)
+```
+
+The random effects are roughly normally distributed around a mean of about -3 (near to 0). 
+
+### 2.6 Shrinkage and partial pooling.
+
+In mixed effects modeling, group levels with low sample size and/or poor information (i.e., no strong relationship) are more strongly influenced by the grand mean, which is serving to add information to an otherwise poorly-estimated group. However, a group with a large sample size and/or strong information (i.e., a strong relationship) will have very little influence of the grand mean and largely reflect the information contained entirely within the group. This process is called partial pooling. Partial pooling results in the phenomenon known as shrinkage, which refers to the group-level estimates being shrink toward the mean. This could be a very interesting phenomenon to look at. I will extract the intercept of the mixed effects and interaction model (the best one I arrived at) for each individual as the mixed-effects estimates; and then run a set of linear regressions, one for the data of each individual, resulting in a pool of estimated intercept for each separate linear regression. Next, I will plot them as density plot to see if there is any shrinkage going on.
+
+```{r}
+intercept <- matrix(nrow= 40, ncol = 1)#set a matrix
+
+for (i in 1:40){ #define a loop that run through 1:40 participants
+  data <- bprslf %>% filter(subject == i) #select one participants each time
+  fit <- lm(rating ~ week, data) #fit a model each time
+  intercept[i,] <- coef(fit)[1] #save the intercept from fitted model into matrix
+}
+
+a <- c(intercept)#convert matrix into vector
+df <- data.frame(value = a) #trun the vector into a data frame
+
+#get the by-individual intercepts and pass into an object "re"
+re <-  ranef(bprs_interaction)$subject + fixef(bprs_interaction)[1]
+
+#extract the first column of re to a new object, which is intercept
+df.intercept1<- re[1]
+
+#rename
+names(df.intercept1) <- "value"
+
+#create a label saying "random" for all data points in object
+df.intercept1 <- df.intercept1 %>% mutate(label = "random")
+
+#create a label saying "separate" for all data points in object df
+#and pass it to a new object
+df.intercept2 <- df %>% mutate(label = "separate")
+
+#combine the object by column names
+df <- rbind(df.intercept1, df.intercept2)
+
+#density plot
+df %>% ggplot(aes(x = value, color = label, fill = label))+
+  geom_density(alpha = 0.3)
+```
+
+Thought the distributions are not perfectly, but it is showing that the tails of the distribution of random effect model, in comparison to separate model, have been pulled toward the overall effect, resulting in a tighter distribution. This somewhat corresponds to shrinkage effect, I guess.
+
+## 3 Summary
+
+a. In this exercise, I tested the hypothesis that different treatment would lead to different BPRS ratings.
+
+b. The hypothesis was tested using two approaches--standard linear model and the mixed-effect model (random intercept only model and random intercept plus slope were fitted, respectively)
+
+c. Both the approaches reported same coefficients (as we would expect) and significance value for the predictors.
+
+d. It is worth noting that the mixed-effect approach does provide more information and more extrpolative results. for example, via this approach I get the idea that individual patient's BPRS rating at baseline would influence the rating change greatly, and that individual patient's BPRS rating at baseline would lead to tremendously different reaction to treatment.
+
+e. Random intercept and slope model is more informative than random intercept only model in the context of this data in a way that it tells us although the insignificant effect of treatment types, some patients might react more responsively to the treatment. It might be meaningful to identify that subgroup of patients. 
+
+
+

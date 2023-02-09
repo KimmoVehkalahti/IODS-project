@@ -1,0 +1,245 @@
+---
+title: "supplement codes"
+author: "Rong Guang"
+date: '2022-11-11'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+### read the data set
+
+```{r}
+library(tidyverse)
+learn <- read_csv(file = "data/learning2014.csv")
+```
+
+### Code categorical data
+
+```{r}
+learn <- learn %>% 
+  mutate(gender = gender %>%
+           factor() %>% 
+           fct_recode("Female" = "F",
+                      "Male" = "M"))
+```
+
+### generate cooks' distance for each obs
+
+```{r}
+fit2 <- learn %>% 
+  lm(points ~ attitude  + poly(age, 2, raw =T), data = .)
+summary(fit2)
+```
+
+```{r}
+cooksd <- cooks.distance(fit2)
+cooksd <- data.frame(index = 1:length(cooksd), cooksd = cooksd)
+```
+
+### plot cooks's distance against index number
+
+```{r}
+plot(cooksd$index, 
+     cooksd$cooksd, 
+     pch="*", cex=1.5, 
+     main="Influential Obs by Cooks distance") +
+abline(h = 4*mean(cooksd$cooksd), 
+       col="red")+
+text(x=cooksd$index+4, 
+     y=cooksd$cooksd, 
+     labels= ifelse(cooksd$cooksd>4*mean(cooksd$cooksd, na.rm=T),
+                    cooksd$index,""),
+     col="red")
+
+
+```
+
+### generate an index for original data set and merge cooks's distance into it 
+
+```{r}
+learn <- learn %>% mutate(index = 1:nrow(learn))
+learn <- left_join(learn, cooksd, by = "index")
+```
+
+### check the variables with large influence
+
+```{r}
+learn %>% filter(index %in% c(1,4,3,10,19,24,35,56,145)) %>% arrange(desc(cooksd))
+```
+
+###check the varible with large influence to residual normality and linearity
+
+```{r}
+plot(fit2, which = c(1,2))
+```
+
+It is found that the data points 145, 35, and 56 have large influence on residuals' normality and linearity as well as the predictor's estimated coefficient. I will remove these observations and fit the model again from a data-drive perspective.
+
+```{r}
+fit3 <- learn %>% 
+  filter(!index %in% c(56, 145, 35)) %>% 
+  lm(points ~ attitude  + poly(age, 2, raw =T), data = .)
+summary(fit3)
+```
+
+The new model with influential cases removed showed significant coefficient estimates for each predictor, as the previous model. More notably, the adjusted R-squared has increased to 0.303, indicating the model would explain 30.3% of variability of exam points. This is a remarkable increase from the previous model, which had a adjusted R-squared of 0.23. 
+
+
+```{r}
+#Codes not in use
+#learn <- learn %>% mutate(age.factor = age %>% 
+#                            cut(breaks =c(0,19,22,25,27,34,100)))
+```
+
+------
+
+
+
+#simlating random coefficient model
+
+```{r}
+set.seed(1234)  # this will allow you to exactly duplicate your result
+Ngroups <-  100
+NperGroup <-  10
+N <-  Ngroups * NperGroup
+groups <-  factor(rep(1:Ngroups, each = NperGroup))
+u <-  rnorm(Ngroups, sd = .5)
+e <-  rnorm(N, sd = .25)
+x <-  rnorm(N)
+y <-  2 + .5 * x + u[groups] + e
+
+d <-  data.frame(x, y, groups)
+d
+```
+
+
+```{r}
+library(lme4)
+library(ggplot2)
+model <-  lmer(y ~ x + (1|groups), data=d)
+
+summary(model)
+
+confint(model)
+
+
+library(ggplot2)
+
+ggplot(aes(x, y), data=d) +
+  geom_point()
+```
+
+
+```{r}
+re <-  ranef(model)$groups
+
+qplot(x = `(Intercept)`, geom = 'density', xlim = c(-3, 3), data = re)
+names(re)
+```
+
+
+
+
+```{r}
+coef(model)$groups
+```
+
+
+```{r}
+ranef(model)$groups
+aa <- ranef(model)
+```
+
+
+```{r}
+install.packages("merTools")
+library(merTools)
+predictInterval(model)
+```
+
+```{r}
+REsim(model)
+```
+
+```{r}
+plotREsim(REsim(model))
+```
+
+
+
+
+```{r}
+model2 <-  lmer(y ~ x + (1+ x|groups), data=d)
+summary(model2)
+```
+
+
+
+```{r}
+re <-  ranef(model2)$groups
+
+qplot(x = `(Intercept)`, geom = 'density', xlim = c(-3, 3), data = re)
+
+lr <- lm(y~x)
+
+```
+
+
+
+
+```{r}
+fixef(model)
+ranef(model)$groups
+```
+
+```{r}
+as.data.frame(t(apply(ranef(model)$groups, 1,function(x) fixef(model) + x)))
+```
+
+```{r}
+apply(ranef(model)$groups, 1,function(x) fixef(model) + x)
+```
+
+```{r}
+summary(model2)
+```
+
+
+```{r}
+fixef(model2) + ranef(model2)$groups[1,]
+```
+
+```{r}
+ranef(model2)$groups[1,]
+```
+
+```{r}
+fixef(model2)
+```
+
+
+
+```{r}
+t(apply(ranef(model2)$groups, 1,function(x) fixef(model2) + x))
+df <- as.data.frame(t(apply(ranef(model2)$groups, 1,function(x) fixef(model2) + x)))
+df
+```
+
+
+```{r}
+pred_model2 <- melt(apply(df,1,function(x) x[1] + x[2]*0:10), value.name = "Reaction")
+```
+```{r}
+df[2]*0:9
+```
+
+
+```{r}
+apply(df,1,function(x) x[1] + x[2]*0:9)
+```
+
+
