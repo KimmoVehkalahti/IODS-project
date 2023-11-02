@@ -4,29 +4,15 @@
 *Write a short description about the course and add a link to your GitHub repository here. This is an R Markdown (.Rmd) file so you should use R Markdown syntax.*
 
 ```{r}
-# This is a so-called "R chunk" where you can write R code.
-
 date()
-
-# Using RStudio seems still quite fine, loading files to GitHub seems still
-# a bit unclear and I hope I will get more comfortable with it as the course
-# goes on.
-# Exercise set 1. was quite extensive, most was familiar/known, but it's not
-# bad to refresh your memory.
-
-# GitHub repository:
-
-# https://github.com/venkatharina/IODS-project
-
-
 ```
-There seems to be many new things to learn, especially with  GitHub with me.
-Learning to work with GitHub, as mentioned, I am expecting to improve during
-the course, as well as statistics on large data sets with R.
+[1] "Thu Nov  2 13:02:54 2023"
 
-The Exercise1.Rmd-file had nice summary on handling the data in R in chapters
-1 & 2. Some of them I had gotten more familiar with, but there where a lot of
-things to learn, especially chapter 2 had nice suggestions/tricks in the
-examples how to handle data frames. 
+There seems to be many new things to learn, especially with  GitHub with me. Learning to work with GitHub, as mentioned, I am expecting to improve during the course, as well as statistics on large data sets with R.
 
-https://github.com/venkatharina/IODS-project
+The Exercise1.Rmd-file had nice summary on handling the data in R in chapters 1 & 2. Some of them I had gotten more familiar with, but there where a lot of things to learn, especially chapter 2 had nice suggestions/tricks in the examples how to handle data frames. 
+
+Using RStudio seems still quite fine, loading files to GitHub seems still a bit unclear and I hope I will get more comfortable with it as the course goes on. Exercise set 1. was quite extensive, most was familiar/known, but it's not bad to refresh your memory.
+
+GitHub repository: https://github.com/venkatharina/IODS-project
+GitHub diary: https://venkatharina.github.io/IODS-project/
