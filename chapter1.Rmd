@@ -8,6 +8,15 @@
 
 date()
 
+# Using RStudio seems still quite fine, loading files to GitHub seems still
+# a bit unclear and I hope I will get more comfortable with it as the course
+# goes on.
+# Exercise set 1. was quite extensive, most was familiar/known, but it's not
+# bad to refresh your memory.
+
+# GitHub repository:
+# https://github.com/venkatharina/IODS-project
+
 ```
 There seems to be many new things to learn, especially with  GitHub with me.
 Learning to work with GitHub, as mentioned, I am expecting to improve during
