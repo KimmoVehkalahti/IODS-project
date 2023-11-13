@@ -404,7 +404,7 @@ Analysis exercises</a></li>
 GitHub repository here. This is an R Markdown (.Rmd) file so you should
 use R Markdown syntax.</em></p>
 <pre class="r"><code>date()</code></pre>
-<pre><code>## [1] &quot;Mon Nov 13 13:49:36 2023&quot;</code></pre>
+<pre><code>## [1] &quot;Mon Nov 13 13:54:53 2023&quot;</code></pre>
 <p>[1] “Thu Nov 2 13:02:54 2023”</p>
 <p>There seems to be many new things to learn, especially with GitHub
 with me. Learning to work with GitHub, as mentioned, I am expecting to
@@ -427,7 +427,7 @@ diary: <a href="https://venkatharina.github.io/IODS-project/" class="uri">https:
 <div id="week-2-regression-and-model-validation" class="section level3">
 <h3>Week 2: Regression and model validation</h3>
 <pre class="r"><code>date() </code></pre>
-<pre><code>## [1] &quot;Mon Nov 13 13:49:36 2023&quot;</code></pre>
+<pre><code>## [1] &quot;Mon Nov 13 13:54:53 2023&quot;</code></pre>
 </div>
 <div id="data-wrangling-exercises" class="section level2">
 <h2>1) Data wrangling exercises</h2>
@@ -498,7 +498,16 @@ library(tidyverse)</code></pre>
 ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()</code></pre>
-<pre class="r"><code>write_csv(x=azero, &#39;azero.csv&#39;, col_names = TRUE)</code></pre>
+<pre class="r"><code>write_csv(x=azero, &#39;learning2014.csv&#39;, col_names = TRUE)
+azeronew &lt;- read_csv(&quot;learning2014.csv&quot;)</code></pre>
+<pre><code>## Rows: 166 Columns: 7
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## dbl (7): Gender, Age, Attitude, Deep, Stra, Surf, Points
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>#table saved as csv-file, also able to open</code></pre>
 </div>
 <div id="analysis-exercises" class="section level2">
 <h2>2) Analysis exercises</h2>

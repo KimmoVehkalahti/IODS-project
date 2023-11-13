@@ -1,18 +1,82 @@
-# Insert chapter 2 title here
-
-*Describe the work you have done this week and summarize your learning.*
-
-- Describe your work and results clearly. 
-- Assume the reader has an introductory course level understanding of writing and reading R code as well as statistical methods.
-- Assume the reader has no previous knowledge of your data or the more advanced methods you are using.
+### Week 2: Regression and model validation
 
 ```{r}
 date() 
 ```
 
-- This week I got set up with R, RStudion and GitHub
-- I have already been working with R and RStudio, so I had no issues there
-- I set up a new project for this course in RStudio
-- I had more learning to do with GitHub, I had difficulties to "push" my data there
+## 1) Data wrangling exercises 
 
+```{r}
+#reading txt table from URL:
+myfile <- read.table(url("https://www.mv.helsinki.fi/home/kvehkala/JYTmooc/JYTOPKYS2-data.txt"), sep = "\t", header = TRUE)
+#dimensions of the table
+dim(myfile)
+#table has 183 rows and 97 columns (variables)
+colnames(myfile)
+rownames(myfile)
+#column names and row names listed
+
+#Create an analysis dataset with the variables 
+#Gender, Age, Attitude, Deep, Stra, Surf and Points
+a <- subset(myfile, select=c(Gender,Age,Attitude, Deep, Stra, Surf, Points))
+dim(a)
+#Combination Variables are Attitude, Deep, Stra and Surf are scaled to mean
+aa <- scale(a[,3:6],center=TRUE, scale=FALSE)
+a[,3:6] <- aa
+dim(a)
+#Deleting rows where Points=0
+azero <- a[a$Points != 0,]
+dim(azero)
+#166 rows with 7 variables
+library(tidyverse)
+write_csv(x=azero, 'learning2014.csv', col_names = TRUE)
+azeronew <- read_csv("learning2014.csv")
+#table saved as csv-file, also able to open
+```
+
+## 2) Analysis exercises
+
+```{r}
+newfile <- read.table(url("https://raw.githubusercontent.com/KimmoVehkalahti/Helsinki-Open-Data-Science/master/datasets/learning2014.txt"), sep = ",", header = TRUE)
+dim(newfile) #166 rows and 7 columns
+head(newfile)
+colnames(newfile) 
+#column names:"gender","age","attitude","deep","stra","surf","points"
+
+###
+library(GGally)
+library(ggplot2)
+
+summary(newfile)
+table(newfile$gender)
+ggpairs(newfile, lower = list(combo = wrap("facethist", bins = 20)))
+#as individuals mean values are age:25.5, attitude:3.143, deep:3.68, stra:3.12, surf:2.78, points:22.7
+#there are 110 females, and 56 males
+#there is significant correlation between surf-attitude*, points-attitude***, surf-deep*** and surf-stra*
+#visually, attitude, stra, surf seem normally distributed
+
+#choosing three variables: attitude, surf, stra
+model = lm(points ~ attitude+surf+stra, data=newfile)
+summary(model)
+par(mfrow = c(2,2))
+#attitude with p-value 1.93e-08 *** seem highly significant in the model
+#where as surf and stra are not significant to explain points
+#model explains ~20% of variance of points (multiple r-squared)
+
+#if we remove variables surf and stra we get model2
+model2 = lm(points ~ attitude, data=newfile)
+summary(model2)
+#attitude explains significantly points but only 19% of variance (multiple r-squared)
+
+#plotting models
+par(mfrow = c(2,2))
+plot(model)
+par(mfrow = c(2,2))
+plot(model2)
+#generally all the plots look good (model linear)
+#top left: residuals vs fitted plot; close to zero (independent from each other), fitted values are forecasts of  observed values, residuals what are left out of forecast
+#to right: QQ-plot; residuals compared to normal distribution seem very linear (on the line)
+#low left: scale-location plot; absolute residuals values with fitted values, similar magnitudes of residuals across fitted values
+#low right: residuals vs leverage plot; how far independent variables are from observations; no points with high residue and high leverage
+```
 
