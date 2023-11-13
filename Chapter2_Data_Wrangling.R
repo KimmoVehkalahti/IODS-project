@@ -1,4 +1,6 @@
 #Chapter 2: Regression and model validation
+#Date: 13.11.2023
+#Katharina Ven
 
 #Data wrangling (max 5 points)
 
